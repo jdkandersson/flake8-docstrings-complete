@@ -231,7 +231,7 @@ Attrs:
 Attrs:
     attr_1:
     """,
-            docstring.Docstring(args=("attr_1",)),
+            docstring.Docstring(attrs=("attr_1",)),
             id="attrs single",
         ),
         pytest.param(
@@ -240,7 +240,7 @@ Attrs:
     attr_1:
     attr_2:
     """,
-            docstring.Docstring(args=("attr_1", "attr_2")),
+            docstring.Docstring(attrs=("attr_1", "attr_2")),
             id="attrs multiple",
         ),
         pytest.param(
@@ -248,7 +248,7 @@ Attrs:
 attrs:
     attr_1:
     """,
-            docstring.Docstring(args=("attr_1",)),
+            docstring.Docstring(attrs=("attr_1",)),
             id="attrs lower case",
         ),
         pytest.param(
@@ -256,8 +256,40 @@ attrs:
 Attributes:
     attr_1:
     """,
-            docstring.Docstring(args=("attr_1",)),
+            docstring.Docstring(attrs=("attr_1",)),
             id="attrs alternate Attributes",
+        ),
+        pytest.param(
+            """short description
+Raises:
+    """,
+            docstring.Docstring(raises=()),
+            id="raises empty",
+        ),
+        pytest.param(
+            """short description
+Raises:
+    exc_1:
+    """,
+            docstring.Docstring(raises=("exc_1",)),
+            id="raises single",
+        ),
+        pytest.param(
+            """short description
+Raises:
+    exc_1:
+    exc_2:
+    """,
+            docstring.Docstring(raises=("exc_1", "exc_2")),
+            id="raises multiple",
+        ),
+        pytest.param(
+            """short description
+raises:
+    exc_1:
+    """,
+            docstring.Docstring(raises=("exc_1",)),
+            id="raises lower case",
         ),
     ],
 )

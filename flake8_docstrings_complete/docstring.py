@@ -37,7 +37,7 @@ class Docstring(NamedTuple):
     attrs: tuple[()] | tuple[str, ...] | None = None
     returns: bool = False
     yields: bool = False
-    raises: tuple[()] | tuple[str] | None = None
+    raises: tuple[()] | tuple[str, ...] | None = None
 
 
 _SECTION_NAMES = {
