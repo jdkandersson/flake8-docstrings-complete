@@ -7,8 +7,6 @@ import pytest
 
 from flake8_docstrings_complete import docstring
 
-from . import factories
-
 
 @pytest.mark.parametrize(
     "lines, expected_sections",

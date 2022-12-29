@@ -1,5 +1,7 @@
 """Parse a docstring to retrieve the sections and sub-sections."""
 
+from __future__ import annotations
+
 import contextlib
 import itertools
 import re
@@ -27,7 +29,7 @@ class Docstring(NamedTuple):
             section.
         attrs: The attributes described in the docstring. None if the docstring doesn't have the
             attrs section.
-        returns: Whether the docstring has the returns section.
+        yields: Whether the docstring has the returns section.
         yields: Whether the docstring has the yields section.
         raises: The exceptions described in the docstring. None if the docstring doesn't have the
             raises section.
@@ -41,11 +43,13 @@ class Docstring(NamedTuple):
 
 
 _SECTION_NAMES = {
-    "args": ("args", "arguments", "parameters"),
-    "attrs": ("attributes", "attrs"),
-    "returns": ("return", "returns"),
-    "yields": ("yield", "yields"),
-    "raises": ("raises",),
+    "args": {"args", "arguments", "parameters"},
+    "attrs": {"attributes", "attrs"},
+    "returns": {"return", "returns"},
+    "yields": {"yield", "yields"},
+    "raises": {
+        "raises",
+    },
 }
 _WHITESPACE_REGEX = r"\s*"
 _SECTION_START_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
@@ -84,6 +88,23 @@ def _get_sections(lines: Iterable[str]) -> Iterator[_Section]:
             yield _Section(name=section_name, subs=tuple(sub_sections))
 
 
+def _get_section_by_name(name: str, sections: Iterable[_Section]) -> _Section | None:
+    """Get the section by name.
+
+    Args:
+        name: The name of the section.
+        sections: The sections to retrieve from.
+
+    Returns:
+        The section or None if it wasn't found.
+    """
+    sections = iter(sections)
+    return next(
+        (section for section in sections if section.name.lower() in _SECTION_NAMES[name]),
+        None,
+    )
+
+
 def parse(value: str) -> Docstring:
     """Parse a docstring.
 
@@ -93,3 +114,16 @@ def parse(value: str) -> Docstring:
     Returns:
         The parsed docstring.
     """
+    sections = list(_get_sections(lines=value.splitlines()))
+
+    args_section = _get_section_by_name("args", sections)
+    attrs_section = _get_section_by_name("attrs", sections)
+    raises_section = _get_section_by_name("raises", sections)
+
+    return Docstring(
+        args=args_section.subs if args_section is not None else None,
+        attrs=attrs_section.subs if attrs_section is not None else None,
+        returns=_get_section_by_name("returns", sections) is not None,
+        yields=_get_section_by_name("yields", sections) is not None,
+        raises=raises_section.subs if raises_section is not None else None,
+    )
