@@ -30,6 +30,8 @@ Note:
 * `test_.*` methods are skipped in `test_.*\.py` files (function and file names
   are configurable).
 
+## Docstring Examples
+
 Examples of function/ method and class docstrings are:
 
 ```Python
@@ -61,6 +63,8 @@ class Foo:
 
         self.bar = bar
 ```
+
+## Sections
 
 There are several alternative names for each of the sections which are captured
 case-insensitive:

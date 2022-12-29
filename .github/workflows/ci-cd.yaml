@@ -1,0 +1,166 @@
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  constants:
+    name: Constants
+    runs-on: ubuntu-latest
+    outputs:
+      package_name: ${{ steps.output.outputs.package_name }}
+      package_version: ${{ steps.output.outputs.package_version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - id: output
+        run: |
+          echo package_name=$(python -c 'import tomllib;from pathlib import Path;print(tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["tool"]["poetry"]["name"])') >> $GITHUB_OUTPUT
+          echo package_version=$(python -c 'import tomllib;from pathlib import Path;print(tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["tool"]["poetry"]["version"])') >> $GITHUB_OUTPUT
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install tox
+        run: python -m pip install tox
+      - name: Run linting
+        run: tox -e lint
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install tox
+        run: python -m pip install tox
+      - name: Run testing
+        run: tox -e test
+  release-test-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test
+      - lint
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install poetry
+        run: python -m pip install poetry
+      - name: Publish
+        run: |
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry publish --build -u __token__ -p ${{ secrets.test_pypi_password }} -r test-pypi
+  test-release-test-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - release-test-pypi
+      - constants
+    strategy:
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run check
+        run: |
+          for i in 1 2 3 4 5; do python -m pip install flake8 ${{ needs.constants.outputs.package_name }}==${{ needs.constants.outputs.package_version }} --extra-index-url https://test.pypi.org/simple/ && break || sleep 10; done
+          echo '"""Docstring."""' > test_.py
+          flake8 test_.py
+  release-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-release-test-pypi
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install poetry
+        run: python -m pip install poetry
+      - name: Publish
+        run: poetry publish --build -u __token__ -p ${{ secrets.pypi_password }}
+  release-github:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - release-pypi
+    steps:
+      - name: Get version from tag
+        id: tag_name
+        run: |
+          echo current_version=${GITHUB_REF#refs/tags/v} >> $GITHUB_OUTPUT
+        shell: bash
+      - uses: actions/checkout@v3
+      - name: Get latest Changelog Entry
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: v${{ steps.tag_name.outputs.current_version }}
+          path: ./CHANGELOG.md
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.changelog_reader.outputs.version }}
+          release_name: Release ${{ steps.changelog_reader.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
+          draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
+  test-release-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - release-pypi
+      - constants
+    strategy:
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run check
+        run: |
+          for i in 1 2 3 4 5; do python -m pip install flake8 ${{ needs.constants.outputs.package_name }}==${{ needs.constants.outputs.package_version }} && break || sleep 10; done
+          echo '"""Docstring."""' > test_.py
+          flake8 test_.py

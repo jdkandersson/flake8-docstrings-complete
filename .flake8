@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 99
+max-doc-length = 99
+extend-ignore = E203,W503
+per-file-ignores =
+    tests/*:D205,D400
+    flake8_docstring/*:N802
