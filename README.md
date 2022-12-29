@@ -1,9 +1,10 @@
-# flake8-docstring
+# flake8-docstrings-complete
 
 Linter that checks docstrings of functions, methods and classes. It should be
-used in conjuction with `pydocstyle` as the linter assumes that the docstrings
-already pass `pydocstyle` checks. `flake8-docstring` adds the following checks
-to complement `pydocstyle`:
+used in conjuction with `pydocstyle` (or `flake8-docstrings`) as the linter
+assumes that the docstrings already pass `pydocstyle` checks.
+`flake8-docstrings-complete` adds the following checks to complement
+`pydocstyle`:
 
 1. If a function/ method has arguments, that the arguments section is included.
 2. If a function/ method has arguments, that all function/ method arguments are

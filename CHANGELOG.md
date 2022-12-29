@@ -9,4 +9,4 @@
 - Lint check that ensures all function arguments are documented
 
 [//]: # "Release links"
-[v1.0.0]: https://github.com/jdkandersson/flake8-docstring/releases/v1.0.0
+[v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0
