@@ -22,8 +22,6 @@ assumes that the docstrings already pass `pydocstyle` checks.
   attributes section.
 9. If an attributes section is in the class docstring, the attributes section
   contains no attributes the class doesn't have.
-10. There is only one section for each of the arguments, return value, yield
-  value, raises and attributes.
 
 Note:
 * `self` and `cls` are not counted as arguments.
