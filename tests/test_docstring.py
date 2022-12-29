@@ -7,6 +7,8 @@ import pytest
 
 from flake8_docstrings_complete import docstring
 
+from . import factories
+
 
 @pytest.mark.parametrize(
     "lines, expected_sections",
@@ -143,7 +145,7 @@ from flake8_docstrings_complete import docstring
 def test__get_sections(
     lines: tuple[()] | tuple[str, ...],
     expected_sections: tuple[()] | tuple[docstring._Section, ...],
-) -> None:
+):
     """
     arrange: given lines of a docstring
     act: when _get_sections is called with the lines
@@ -155,3 +157,76 @@ def test__get_sections(
     returned_sections = tuple(docstring._get_sections(lines=lines))
 
     assert returned_sections == expected_sections
+
+
+@pytest.mark.parametrize(
+    "value, expected_docstring",
+    [
+        pytest.param("", docstring.Docstring(), id="empty"),
+        pytest.param("short description", docstring.Docstring(), id="short description"),
+        pytest.param(
+            """short description
+
+long description""",
+            docstring.Docstring(),
+            id="short and long description",
+        ),
+        pytest.param(
+            """short description
+Args:
+    """,
+            docstring.Docstring(args=()),
+            id="args empty",
+        ),
+        pytest.param(
+            """short description
+Args:
+    arg_1:
+    """,
+            docstring.Docstring(args=("arg_1",)),
+            id="args single",
+        ),
+        pytest.param(
+            """short description
+Args:
+    arg_1:
+    arg_2:
+    """,
+            docstring.Docstring(args=("arg_1", "arg_2")),
+            id="args multiple",
+        ),
+        pytest.param(
+            """short description
+args:
+    arg_1:
+    """,
+            docstring.Docstring(args=("arg_1",)),
+            id="args lower case",
+        ),
+        pytest.param(
+            """short description
+Arguments:
+    arg_1:
+    """,
+            docstring.Docstring(args=("arg_1",)),
+            id="args alternate Arguments",
+        ),
+        pytest.param(
+            """short description
+Parameters:
+    arg_1:
+    """,
+            docstring.Docstring(args=("arg_1",)),
+            id="args alternate Parameters",
+        ),
+    ],
+)
+def test_parse(value: str, expected_docstring: docstring.Docstring):
+    """
+    arrange: given docstring value
+    act: when parse is called with the docstring
+    assert: then the expected docstring information is returned.
+    """
+    returned_docstring = docstring.parse(value=value)
+
+    assert returned_docstring == expected_docstring

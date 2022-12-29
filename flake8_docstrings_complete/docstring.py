@@ -33,11 +33,11 @@ class Docstring(NamedTuple):
             raises section.
     """
 
-    args: tuple[()] | tuple[str, ...] | None
-    attrs: tuple[()] | tuple[str, ...] | None
-    returns: bool
-    yields: bool
-    raises: tuple[()] | tuple[str] | None
+    args: tuple[()] | tuple[str, ...] | None = None
+    attrs: tuple[()] | tuple[str, ...] | None = None
+    returns: bool = False
+    yields: bool = False
+    raises: tuple[()] | tuple[str] | None = None
 
 
 _SECTION_NAMES = {
