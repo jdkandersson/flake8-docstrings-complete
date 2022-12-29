@@ -261,6 +261,36 @@ Attributes:
         ),
         pytest.param(
             """short description
+Returns:
+    """,
+            docstring.Docstring(returns=True),
+            id="returns empty",
+        ),
+        pytest.param(
+            """short description
+Returns:
+    The return value.
+    """,
+            docstring.Docstring(returns=True),
+            id="returns single line",
+        ),
+        pytest.param(
+            """short description
+Yields:
+    """,
+            docstring.Docstring(yields=True),
+            id="yields empty",
+        ),
+        pytest.param(
+            """short description
+Yields:
+    The return value.
+    """,
+            docstring.Docstring(yields=True),
+            id="yields single line",
+        ),
+        pytest.param(
+            """short description
 Raises:
     """,
             docstring.Docstring(raises=()),
