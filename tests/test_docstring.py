@@ -219,6 +219,46 @@ Parameters:
             docstring.Docstring(args=("arg_1",)),
             id="args alternate Parameters",
         ),
+        pytest.param(
+            """short description
+Attrs:
+    """,
+            docstring.Docstring(attrs=()),
+            id="attrs empty",
+        ),
+        pytest.param(
+            """short description
+Attrs:
+    attr_1:
+    """,
+            docstring.Docstring(args=("attr_1",)),
+            id="attrs single",
+        ),
+        pytest.param(
+            """short description
+Attrs:
+    attr_1:
+    attr_2:
+    """,
+            docstring.Docstring(args=("attr_1", "attr_2")),
+            id="attrs multiple",
+        ),
+        pytest.param(
+            """short description
+attrs:
+    attr_1:
+    """,
+            docstring.Docstring(args=("attr_1",)),
+            id="attrs lower case",
+        ),
+        pytest.param(
+            """short description
+Attributes:
+    attr_1:
+    """,
+            docstring.Docstring(args=("attr_1",)),
+            id="attrs alternate Attributes",
+        ),
     ],
 )
 def test_parse(value: str, expected_docstring: docstring.Docstring):
