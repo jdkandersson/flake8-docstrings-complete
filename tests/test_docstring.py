@@ -173,6 +173,7 @@ long description""",
         ),
         pytest.param(
             """short description
+
 Args:
     """,
             docstring.Docstring(args=()),
@@ -180,6 +181,7 @@ Args:
         ),
         pytest.param(
             """short description
+
 Args:
     arg_1:
     """,
@@ -188,6 +190,7 @@ Args:
         ),
         pytest.param(
             """short description
+
 Args:
     arg_1:
     arg_2:
@@ -197,6 +200,7 @@ Args:
         ),
         pytest.param(
             """short description
+
 args:
     arg_1:
     """,
@@ -205,6 +209,7 @@ args:
         ),
         pytest.param(
             """short description
+
 Arguments:
     arg_1:
     """,
@@ -213,6 +218,7 @@ Arguments:
         ),
         pytest.param(
             """short description
+
 Parameters:
     arg_1:
     """,
@@ -221,6 +227,7 @@ Parameters:
         ),
         pytest.param(
             """short description
+
 Attrs:
     """,
             docstring.Docstring(attrs=()),
@@ -228,6 +235,7 @@ Attrs:
         ),
         pytest.param(
             """short description
+
 Attrs:
     attr_1:
     """,
@@ -236,6 +244,7 @@ Attrs:
         ),
         pytest.param(
             """short description
+
 Attrs:
     attr_1:
     attr_2:
@@ -245,6 +254,7 @@ Attrs:
         ),
         pytest.param(
             """short description
+
 attrs:
     attr_1:
     """,
@@ -253,6 +263,7 @@ attrs:
         ),
         pytest.param(
             """short description
+
 Attributes:
     attr_1:
     """,
@@ -261,6 +272,7 @@ Attributes:
         ),
         pytest.param(
             """short description
+
 Returns:
     """,
             docstring.Docstring(returns=True),
@@ -268,6 +280,7 @@ Returns:
         ),
         pytest.param(
             """short description
+
 Returns:
     The return value.
     """,
@@ -276,6 +289,7 @@ Returns:
         ),
         pytest.param(
             """short description
+
 Yields:
     """,
             docstring.Docstring(yields=True),
@@ -283,6 +297,7 @@ Yields:
         ),
         pytest.param(
             """short description
+
 Yields:
     The return value.
     """,
@@ -291,6 +306,7 @@ Yields:
         ),
         pytest.param(
             """short description
+
 Raises:
     """,
             docstring.Docstring(raises=()),
@@ -298,6 +314,7 @@ Raises:
         ),
         pytest.param(
             """short description
+
 Raises:
     exc_1:
     """,
@@ -306,6 +323,7 @@ Raises:
         ),
         pytest.param(
             """short description
+
 Raises:
     exc_1:
     exc_2:
@@ -315,11 +333,35 @@ Raises:
         ),
         pytest.param(
             """short description
+
 raises:
     exc_1:
     """,
             docstring.Docstring(raises=("exc_1",)),
             id="raises lower case",
+        ),
+        pytest.param(
+            """short description
+
+Attrs:
+    attr_1:
+
+Args:
+    arg_1:
+
+Returns:
+    The return value.
+
+Yields:
+    The yield value.
+
+Raises:
+    exc_1:
+    """,
+            docstring.Docstring(
+                attrs=("attr_1",), args=("arg_1",), returns=True, yields=True, raises=("exc_1",)
+            ),
+            id="all defined",
         ),
     ],
 )
