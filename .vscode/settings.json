@@ -1,5 +1,6 @@
 {
     "python.analysis.typeCheckingMode": "basic",
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.formatting.provider": "black"
 }

@@ -39,7 +39,7 @@ pylint = "^2"
 pydocstyle = "^6"
 toml = "^0"
 astpretty = "^3"
-hypothesis = "^6"
+flake8-test-docs = "^1"
 
 [build-system]
 requires = ["poetry-core"]

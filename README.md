@@ -84,4 +84,4 @@ Section information is extracted using the following algorithm:
   whitespace characters followed by a word, optionally followed by whitespace
   and any characters within round brackets followed by a colon.
 3. The section ends if any line with zero or more whitespace characters is
-  encountered.
+  encountered or the end of the docstring is reached.
