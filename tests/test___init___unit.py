@@ -119,6 +119,42 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
+def function_1(*args):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"2:16 {ARG_NOT_IN_DOCSTR_MSG % 'args'}",),
+            id="function has *args docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(**kwargs):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"2:17 {ARG_NOT_IN_DOCSTR_MSG % 'kwargs'}",),
+            id="function has **kwargs docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(*args, **kwargs):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (
+                f"2:16 {ARG_NOT_IN_DOCSTR_MSG % 'args'}",
+                f"2:24 {ARG_NOT_IN_DOCSTR_MSG % 'kwargs'}",
+            ),
+            id="function has *args and **kwargs docstring no arg",
+        ),
+        pytest.param(
+            '''
 def function_1(arg_1, arg_2):
     """Docstring 1.
 
@@ -247,6 +283,43 @@ def function_1(arg_1):
 ''',
             (),
             id="function single arg docstring single arg",
+        ),
+        pytest.param(
+            '''
+def function_1(*args):
+    """Docstring 1.
+
+    Args:
+        args:
+    """
+''',
+            (),
+            id="function single arg docstring *args",
+        ),
+        pytest.param(
+            '''
+def function_1(**kwargs):
+    """Docstring 1.
+
+    Args:
+        kwargs:
+    """
+''',
+            (),
+            id="function single arg docstring **kwargs",
+        ),
+        pytest.param(
+            '''
+def function_1(*args, **kwargs):
+    """Docstring 1.
+
+    Args:
+        args:
+        kwargs:
+    """
+''',
+            (),
+            id="function single arg docstring *args and **kwargs",
         ),
         pytest.param(
             '''

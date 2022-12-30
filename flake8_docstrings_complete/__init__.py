@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from copy import deepcopy
 from typing import NamedTuple, Iterator, Iterable
 
 import astpretty
@@ -62,7 +63,22 @@ class Problem(NamedTuple):
     msg: str
 
 
-def _check_args(docstr_node: ast.Constant, args: Iterable[ast.arg]) -> Iterator[Problem]:
+def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
+    """Iterate over all arguments.
+
+    Adds vararg and kwarg to the args.
+
+    Yields:
+        All the arguments.
+    """
+    yield from args.args
+    if args.vararg:
+        yield args.vararg
+    if args.kwarg:
+        yield args.kwarg
+
+
+def _check_args(docstr_node: ast.Constant, args: ast.arguments) -> Iterator[Problem]:
     """Check that all function arguments are described in the docstring.
 
     Assume that docstr_node is a str constant.
@@ -76,12 +92,13 @@ def _check_args(docstr_node: ast.Constant, args: Iterable[ast.arg]) -> Iterator[
     """
     assert isinstance(docstr_node.value, str)
     docstr_info = docstring.parse(value=docstr_node.value)
+    all_args = list(_iter_args(args))
 
-    if args and docstr_info.args is None:
+    if all_args and docstr_info.args is None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
-    if not args and docstr_info.args is not None:
+    if not all_args and docstr_info.args is not None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
-    elif args and docstr_info.args is not None:
+    elif all_args and docstr_info.args is not None:
         docstr_args = set(docstr_info.args)
 
         # Check for multiple args sections
@@ -95,12 +112,12 @@ def _check_args(docstr_node: ast.Constant, args: Iterable[ast.arg]) -> Iterator[
         # Check for function arguments that are not in the docstring
         yield from (
             Problem(arg.lineno, arg.col_offset, ARG_NOT_IN_DOCSTR_MSG % arg.arg)
-            for arg in args
+            for arg in all_args
             if arg.arg not in docstr_args
         )
 
         # Check for arguments in the docstring that are not function arguments
-        func_args = set(arg.arg for arg in args)
+        func_args = set(arg.arg for arg in all_args)
         yield from (
             Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
             for arg in sorted(docstr_args - func_args)
@@ -146,7 +163,7 @@ class Visitor(ast.NodeVisitor):
             and isinstance(node.body[0].value.value, str)
         ):
             # Check args
-            self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args.args))
+            self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args))
 
             astpretty.pprint(node)
 
