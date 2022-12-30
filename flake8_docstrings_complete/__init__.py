@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import enum
 import re
 from pathlib import Path
 from typing import Iterator, NamedTuple
@@ -53,6 +54,10 @@ TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
 TEST_FUNCTION_PATTERN_DEFAULT = r"test_.*"
+FIXTURE_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-fixture-filename-pattern"
+FIXTURE_FILENAME_PATTERN_DEFAULT = r"conftest\.py"
+FIXTURE_DECORATOR_PATTERN_ARG_NAME = "--docstrings-complete-fixture-decorator-pattern"
+FIXTURE_DECORATOR_PATTERN_DEFAULT = r"(^|\.)fixture$"
 SKIPPED_ARGS = {"self", "cls"}
 
 
@@ -81,6 +86,20 @@ class Problem(NamedTuple):
     lineno: int
     col_offset: int
     msg: str
+
+
+class FileType(str, enum.Enum):
+    """The type of file being processed.
+
+    Attrs:
+        TEST: A file with tests.
+        FIXTURE: A file with fixtures.
+        DEFAULT: All other files.
+    """
+
+    TEST = "test"
+    FIXTURE = "fixture"
+    DEFAULT = "default"
 
 
 def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
@@ -157,22 +176,26 @@ class Visitor(ast.NodeVisitor):
     """
 
     problems: list[Problem]
-    _test_file: bool
+    _file_type: FileType
     _test_function_pattern: str
+    _fixture_decorator_pattern: str
 
-    def __init__(self, test_file: bool, test_function_pattern: str) -> None:
+    def __init__(
+        self, file_type: FileType, test_function_pattern: str, fixture_decorator_pattern: str
+    ) -> None:
         """Construct.
 
         Args:
-            test_file: Whether to enable function pattern checks. Usually
-                enabled for test files.
+            file_type: The type of file being processed.
             test_function_pattern: The pattern to match test functions with.
+            fixture_decorator_pattern: The pattern to match decorators of fixture function with.
         """
         self.problems = []
-        self._test_file = test_file
+        self._file_type = file_type
         self._test_function_pattern = test_function_pattern
+        self._fixture_decorator_pattern = fixture_decorator_pattern
 
-    def skp_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+    def skip_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check whether to skip a function.
 
         Args:
@@ -181,11 +204,23 @@ class Visitor(ast.NodeVisitor):
         Returns:
             Whether to skip the function.
         """
-        if not self._test_file:
+        if self._file_type == FileType.DEFAULT:
             return False
 
-        if not re.match(self._test_function_pattern, node.name):
+        if self._file_type == FileType.TEST and not re.match(
+            self._test_function_pattern, node.name
+        ):
             return False
+
+        if self._file_type == FileType.FIXTURE:
+            import astpretty
+
+            astpretty.pprint(node)
+            return any(
+                isinstance(decorator, ast.Name)
+                and re.search(self._fixture_decorator_pattern, decorator.id, re.IGNORECASE)
+                for decorator in node.decorator_list
+            )
 
         return True
 
@@ -195,7 +230,7 @@ class Visitor(ast.NodeVisitor):
         Args:
             node: The function definition to check.
         """
-        if not self.skp_function(node=node):
+        if not self.skip_function(node=node):
             if (
                 not node.body
                 or not isinstance(node.body[0], ast.Expr)
@@ -236,6 +271,8 @@ class Plugin:
     name = __name__
     _test_filename_pattern: str = TEST_FILENAME_PATTERN_DEFAULT
     _test_function_pattern: str = TEST_FUNCTION_PATTERN_DEFAULT
+    _fixture_filename_pattern: str = FIXTURE_FILENAME_PATTERN_DEFAULT
+    _fixture_decorator_pattern: str = FIXTURE_DECORATOR_PATTERN_DEFAULT
     _tree: ast.AST
     _filename: str
 
@@ -248,6 +285,20 @@ class Plugin:
         """
         self._tree = tree
         self._filename = Path(filename).name
+
+    def _get_file_type(self) -> FileType:
+        """Get the file type from a filename.
+
+        Returns:
+            The type of file.
+        """
+        if re.match(self._test_filename_pattern, self._filename) is not None:
+            return FileType.TEST
+
+        if re.match(self._fixture_filename_pattern, self._filename) is not None:
+            return FileType.FIXTURE
+
+        return FileType.DEFAULT
 
     # No coverage since this only occurs from the command line
     @staticmethod
@@ -298,9 +349,11 @@ class Plugin:
         Yields:
             All the problems that were found.
         """
+        file_type = self._get_file_type()
         visitor = Visitor(
-            re.match(self._test_filename_pattern, self._filename) is not None,
-            self._test_function_pattern,
+            file_type=file_type,
+            test_function_pattern=self._test_function_pattern,
+            fixture_decorator_pattern=self._fixture_decorator_pattern,
         )
         visitor.visit(self._tree)
         yield from (

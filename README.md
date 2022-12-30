@@ -8,40 +8,54 @@ assumes that the docstrings already pass `pydocstyle` checks.
 
 1. If a function/ method has arguments, that the arguments section is included.
 2. If a function/ method has arguments, that all function/ method arguments are
-  in the argument section.
+   in the argument section.
 3. If an arguments section is in the function/ method docstring, the argument
-  section contains no arguments the function doesn't have.
+   section contains no arguments the function doesn't have.
 4. If a function/ method has a return statement with a value, the return value
-  section is included.
+   section is included.
 5. If a function/ method has a yield statement with a value, the yield value
-  section is included.
+   section is included.
 6. If a function/ method raises an exception, the raises section is included
-  with a description for each exception that is raised.
+   with a description for each exception that is raised.
 7. If a class has public attributes, that the attributes section is included.
 8. If a class has public attributes, that all public attributes are in the
-  attributes section.
+   attributes section.
 9. If an attributes section is in the class docstring, the attributes section
-  contains no attributes the class doesn't have.
+   contains no attributes the class doesn't have.
 
 Note:
-* `self` and `cls` are not counted as arguments.
-* `test_.*` methods are skipped in `test_.*\.py` files (function and file names
+
+- `self` and `cls` are not counted as arguments.
+- `test_.*` methods are skipped in `test_.*\.py` files (function and file names
   are configurable).
+
+## Configuration
+
+The plugin adds the following configurations to `flake8`:
+
+- `--docstrings-complete-test-filename-pattern`: The filename pattern for test
+  files. Defaults to `test_.*\.py`.
+- `--docstrings-complete-test-function-pattern`: The function name pattern for
+  test functions. Defaults to `test_.*`.
+- `--docstrings-complete-fixture-filename-pattern`: The filename pattern for
+  fixture files. Defaults to `conftest\.py`.
+- `--docstrings-complete-fixture-decorator-pattern`: The decorator name pattern
+  for fixture functions. Defaults to `(^|\.)fixture$`.
 
 ## Rules
 
 A few rules have been defined to allow for selective suppression:
 
-* `DCO001`: docstring missing on a function/ method.
-* `DCO002`: function/ method has one or more arguments and the docstring does
+- `DCO001`: docstring missing on a function/ method.
+- `DCO002`: function/ method has one or more arguments and the docstring does
   not have an arguments section.
-* `DCO003`: function/ method with no arguments and the docstring has an
+- `DCO003`: function/ method with no arguments and the docstring has an
   arguments section.
-* `DCO004`: function/ method with one or more arguments and the docstring has
+- `DCO004`: function/ method with one or more arguments and the docstring has
   multiple arguments sections.
-* `DCO005`: function/ method has one or more arguments not described in the
+- `DCO005`: function/ method has one or more arguments not described in the
   docstring.
-* `DCO006`: function/ method has one or more arguments described in the
+- `DCO006`: function/ method has one or more arguments described in the
   docstring which are not arguments of the function/ method.
 
 ### Fix DCO001
@@ -384,18 +398,18 @@ class Foo:
 There are several alternative names for each of the sections which are captured
 case-insensitive:
 
-* arguments: `Args`, `Arguments`, `Parameters`
-* return value: `Return`, `Returns`
-* yield value: `Yield`, `Yields`
-* raise: `Raises`
-* attributes: `Attrs`, `Attributes`
+- arguments: `Args`, `Arguments`, `Parameters`
+- return value: `Return`, `Returns`
+- yield value: `Yield`, `Yields`
+- raise: `Raises`
+- attributes: `Attrs`, `Attributes`
 
 Section information is extracted using the following algorithm:
 
 1. Look for a line that has zero or more whitespace characters, followed by a
-  section name (non-case-sensistive) followed by a colon.
+   section name (non-case-sensistive) followed by a colon.
 2. Look for any sub-sections on a line which starts with zero or more
-  whitespace characters followed by a word, optionally followed by whitespace
-  and any characters within round brackets followed by a colon.
+   whitespace characters followed by a word, optionally followed by whitespace
+   and any characters within round brackets followed by a colon.
 3. The section ends if any line with zero or more whitespace characters is
-  encountered or the end of the docstring is reached.
+   encountered or the end of the docstring is reached.

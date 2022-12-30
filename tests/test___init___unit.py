@@ -594,6 +594,105 @@ def test_():
             (),
             id="test file test function in directory",
         ),
+        pytest.param(
+            """
+def foo():
+    pass
+""",
+            "conftest.py",
+            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            id="normal file not fixture function",
+        ),
+        pytest.param(
+            """
+@fixture
+def foo():
+    pass
+""",
+            "source.py",
+            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            id="source file fixture function",
+        ),
+        pytest.param(
+            """
+@fixture
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function",
+        ),
+        pytest.param(
+            """
+@fixture
+def foo():
+    pass
+""",
+            "test_.py",
+            (),
+            id="test file fixture function",
+        ),
+        pytest.param(
+            """
+@FIXTURE
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function capitalised",
+        ),
+        pytest.param(
+            """
+@pytest.fixture
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function prefix",
+        ),
+        pytest.param(
+            """
+@pytest.fixture(scope="module")
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function prefix call",
+        ),
+        pytest.param(
+            """
+@additional.pytest.fixture
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function nested prefix",
+        ),
+        pytest.param(
+            """
+@fixture(scope="module")
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function arguments",
+        ),
+        pytest.param(
+            """
+@fixture
+def foo():
+    pass
+""",
+            "tests/conftest.py",
+            (),
+            id="fixture file fixture function in directory",
+        ),
     ],
 )
 def test_plugin_filename(code: str, filename: str, expected_result: tuple[str, ...]):
