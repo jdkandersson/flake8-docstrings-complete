@@ -157,19 +157,19 @@ class Visitor(ast.NodeVisitor):
     """
 
     problems: list[Problem]
-    _test_function_pattern_enabled: bool
+    _test_file: bool
     _test_function_pattern: str
 
-    def __init__(self, test_function_pattern_enabled: bool, test_function_pattern: str) -> None:
+    def __init__(self, test_file: bool, test_function_pattern: str) -> None:
         """Construct.
 
         Args:
-            test_function_pattern_enabled: Whether to enable function pattern checks. Usually
+            test_file: Whether to enable function pattern checks. Usually
                 enabled for test files.
             test_function_pattern: The pattern to match test functions with.
         """
         self.problems = []
-        self._test_function_pattern_enabled = test_function_pattern_enabled
+        self._test_file = test_file
         self._test_function_pattern = test_function_pattern
 
     # The function must be called the same as the name of the node
@@ -179,9 +179,7 @@ class Visitor(ast.NodeVisitor):
         Args:
             node: The FunctionDef node.
         """
-        if not self._test_function_pattern_enabled or not re.match(
-            self._test_function_pattern, node.name
-        ):
+        if not self._test_file or not re.match(self._test_function_pattern, node.name):
             if (
                 not node.body
                 or not isinstance(node.body[0], ast.Expr)

@@ -280,14 +280,14 @@ pydocstyle = ">=2.1"
 
 [[package]]
 name = "flake8-test-docs"
-version = "1.0.6"
+version = "1.0.7"
 description = "A linter that checks test docstrings for the arrange/act/assert structure"
 category = "dev"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "flake8_test_docs-1.0.6-py3-none-any.whl", hash = "sha256:05aaa060dc889bedab9ebbb6271bface8eaf219d3fd3e2cdf4021a70c2aa62e1"},
-    {file = "flake8_test_docs-1.0.6.tar.gz", hash = "sha256:dd34228aa401af91bab81c8c3fcd1203ef86124b62b8dd416e461386893f135a"},
+    {file = "flake8_test_docs-1.0.7-py3-none-any.whl", hash = "sha256:f5ad2814414c535bdcd32c9cc9a78147bc697fcb70a10d4a2dee5ab28ec194a6"},
+    {file = "flake8_test_docs-1.0.7.tar.gz", hash = "sha256:a217d870a5b8045e38333e322cde68ef076f4e962ddc8e32abe6c676066dde07"},
 ]
 
 [package.dependencies]
