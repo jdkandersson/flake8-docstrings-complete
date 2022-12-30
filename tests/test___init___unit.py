@@ -11,6 +11,7 @@ from flake8_docstrings_complete import (
     DOCSTR_MISSING_FUNC_MSG,
     ARG_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
+    ARGS_SECTION_IN_DOCSTR_MSG,
 )
 
 
@@ -64,11 +65,14 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
-def function_1(arg_1, arg_2):
-    """Docstring 1."""
+def function_1():
+    """Docstring 1.
+
+    Args:
+    """
 ''',
-            (f"3:4 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",),
-            id="function has multiple arg docstring no args section",
+            (f"3:4 {ARGS_SECTION_IN_DOCSTR_MSG}",),
+            id="function has no args docstring args section",
         ),
         pytest.param(
             '''

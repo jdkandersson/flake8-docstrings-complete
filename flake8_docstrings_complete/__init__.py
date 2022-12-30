@@ -20,11 +20,17 @@ DOCSTR_MISSING_FUNC_MSG = (
 )
 ARGS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}002"
 ARGS_SECTION_NOT_IN_DOCSTR_MSG = (
-    f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function with arguments "
-    "should have the arguments section in the docstring"
+    f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function with arguments should have the arguments "
+    "section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
-ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}003"
+ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}003"
+ARGS_SECTION_IN_DOCSTR_MSG = (
+    f"{ARGS_SECTION_IN_DOCSTR_CODE} a function without arguments should not have the arguments "
+    "section in the docstring"
+    f"{MORE_INFO_BASE}{ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
+)
+ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
 ARG_NOT_IN_DOCSTR_MSG = (
     f"{ARG_NOT_IN_DOCSTR_CODE} %s{MORE_INFO_BASE}{ARG_NOT_IN_DOCSTR_CODE.lower()}"
 )
@@ -62,6 +68,8 @@ def _check_args(
     """
     if args and docstr_info.args is None:
         yield Problem(docstr_lineno, docstr_col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
+    if not args and docstr_info.args is not None:
+        yield Problem(docstr_lineno, docstr_col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
     elif args and docstr_info.args is not None:
         docstr_args = set(docstr_info.args)
         yield from (
