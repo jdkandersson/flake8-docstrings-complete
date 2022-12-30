@@ -12,6 +12,7 @@ from flake8_docstrings_complete import (
     ARG_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_IN_DOCSTR_MSG,
+    ARG_IN_DOCSTR_MSG,
 )
 
 
@@ -82,7 +83,7 @@ def function_1(arg_1):
     Args:
     """
 ''',
-            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",),
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="function has single arg docstring no arg",
         ),
         pytest.param(
@@ -93,10 +94,7 @@ def function_1(arg_1, arg_2):
     Args:
     """
         ''',
-            (
-                f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",
-                f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2 should be described in the docstring'}",
-            ),
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}", f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}"),
             id="function multiple args docstring no arg",
         ),
         pytest.param(
@@ -108,7 +106,7 @@ def function_1(arg_1, arg_2):
         arg_1:
     """
 ''',
-            (f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2 should be described in the docstring'}",),
+            (f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}",),
             id="function multiple args docstring single arg first",
         ),
         pytest.param(
@@ -120,8 +118,84 @@ def function_1(arg_1, arg_2):
         arg_2:
     """
 ''',
-            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",),
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="function multiple args docstring single arg second",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+        arg_2:
+    """
+''',
+            (
+                f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",
+                f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_2'}",
+            ),
+            id="function has single arg docstring arg different",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+        arg_2:
+        arg_3:
+    """
+        ''',
+            (
+                f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",
+                f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_2'}",
+                f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_3'}",
+            ),
+            id="function single arg docstring multiple args different",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_3:
+        arg_4:
+    """
+        ''',
+            (
+                f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",
+                f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}",
+                f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_3'}",
+                f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_4'}",
+            ),
+            id="function multiple arg docstring multiple args different",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_3:
+        arg_2:
+    """
+        ''',
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}", f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_3'}"),
+            id="function multiple arg docstring multiple args first different",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+        arg_3:
+    """
+        ''',
+            (f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}", f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_3'}"),
+            id="function multiple arg docstring multiple args last different",
         ),
         pytest.param(
             '''

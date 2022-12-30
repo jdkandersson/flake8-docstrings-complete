@@ -32,12 +32,19 @@ ARGS_SECTION_IN_DOCSTR_MSG = (
 )
 ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
 ARG_NOT_IN_DOCSTR_MSG = (
-    f"{ARG_NOT_IN_DOCSTR_CODE} %s{MORE_INFO_BASE}{ARG_NOT_IN_DOCSTR_CODE.lower()}"
+    f"{ARG_NOT_IN_DOCSTR_CODE} %s should be described in the docstring{MORE_INFO_BASE}"
+    f"{ARG_NOT_IN_DOCSTR_CODE.lower()}"
+)
+ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}005"
+ARG_IN_DOCSTR_MSG = (
+    f"{ARG_IN_DOCSTR_CODE} %s should not be described in the docstring{MORE_INFO_BASE}"
+    f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
 
 
 class Problem(NamedTuple):
     """Represents a problem within the code.
+
     Attrs:
         lineno: The line number the problem occurred on
         col_offset: The column the problem occurred on
@@ -71,15 +78,19 @@ def _check_args(
     if not args and docstr_info.args is not None:
         yield Problem(docstr_lineno, docstr_col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
     elif args and docstr_info.args is not None:
+        # Check for function arguments that are not in the docstring
         docstr_args = set(docstr_info.args)
         yield from (
-            Problem(
-                arg.lineno,
-                arg.col_offset,
-                ARG_NOT_IN_DOCSTR_MSG % f"{arg.arg} should be described in the docstring",
-            )
+            Problem(arg.lineno, arg.col_offset, ARG_NOT_IN_DOCSTR_MSG % arg.arg)
             for arg in args
             if arg.arg not in docstr_args
+        )
+
+        # Check for arguments in the docstring that are not function arguments
+        func_args = set(arg.arg for arg in args)
+        yield from (
+            Problem(docstr_lineno, docstr_col_offset, ARG_IN_DOCSTR_MSG % arg)
+            for arg in sorted(docstr_args - func_args)
         )
 
 
