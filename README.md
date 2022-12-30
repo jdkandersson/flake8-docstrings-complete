@@ -36,10 +36,12 @@ A few rules have been defined to allow for selective suppression:
 * `DCO001`: docstring missing on a function.
 * `DCO002`: function has one or more arguments and the docstring does not have
   an arguments section.
-* `DCO003`: function with no arguments and the docstring has  an arguments
+* `DCO003`: function with no arguments and the docstring has an arguments
   section.
-* `DCO004`: function has one or more arguments not described in the docstring.
-* `DCO005`: function has one or more arguments described in the docstring which
+* `DCO004`: function with one or more arguments and the docstring has multiple
+  arguments sections.
+* `DCO005`: function has one or more arguments not described in the docstring.
+* `DCO006`: function has one or more arguments described in the docstring which
   are not arguments of the function.
 
 ### Fix DCO001
@@ -130,6 +132,61 @@ def foo():
 
 ### Fix DCO004
 
+This linting rule is triggered by a function that has one or more arguments and
+a docstring that has multiple arguments sections. For example:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+
+    Args:
+        bar: the value to perform the foo action on.
+    """
+
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+
+    Arguments:
+        bar: the value to perform the foo action on.
+
+    Parameters:
+        bar: the value to perform the foo action on.
+    """
+```
+
+This examples can be fixed by:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+    """
+
+def foo(bar):
+    """Perform foo action.
+
+    Arguments:
+        bar: the value to perform the foo action on.
+    """
+
+def foo(bar):
+    """Perform foo action.
+
+    Parameters:
+        bar: the value to perform the foo action on.
+    """
+```
+
+### Fix DCO005
+
 This linting rule is triggered by a function that has one or more arguments
 where one or more of those arguments is not described in the docstring. For
 example:
@@ -165,7 +222,7 @@ def foo(bar, baz):
     """
 ```
 
-### Fix DCO005
+### Fix DCO006
 
 This linting rule is triggered by a function that has one or more arguments and
 a docstring that describes one or more arguments where on or more of the

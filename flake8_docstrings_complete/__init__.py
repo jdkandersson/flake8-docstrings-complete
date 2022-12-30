@@ -30,12 +30,18 @@ ARGS_SECTION_IN_DOCSTR_MSG = (
     "section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
+MULT_ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
+MULT_ARGS_SECTION_IN_DOCSTR_MSG = (
+    f"{MULT_ARGS_SECTION_IN_DOCSTR_CODE} a docstring should only contain a single args section, "
+    "found %s"
+    f"{MORE_INFO_BASE}{MULT_ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
+)
+ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}005"
 ARG_NOT_IN_DOCSTR_MSG = (
     f"{ARG_NOT_IN_DOCSTR_CODE} %s should be described in the docstring{MORE_INFO_BASE}"
     f"{ARG_NOT_IN_DOCSTR_CODE.lower()}"
 )
-ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}005"
+ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}006"
 ARG_IN_DOCSTR_MSG = (
     f"{ARG_IN_DOCSTR_CODE} %s should not be described in the docstring{MORE_INFO_BASE}"
     f"{ARG_IN_DOCSTR_CODE.lower()}"
@@ -76,8 +82,17 @@ def _check_args(docstr_node: ast.Constant, args: Iterable[ast.arg]) -> Iterator[
     if not args and docstr_info.args is not None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
     elif args and docstr_info.args is not None:
-        # Check for function arguments that are not in the docstring
         docstr_args = set(docstr_info.args)
+
+        # Check for multiple args sections
+        if len(docstr_info.args_sections) > 1:
+            yield Problem(
+                docstr_node.lineno,
+                docstr_node.col_offset,
+                MULT_ARGS_SECTION_IN_DOCSTR_MSG % ",".join(docstr_info.args_sections),
+            )
+
+        # Check for function arguments that are not in the docstring
         yield from (
             Problem(arg.lineno, arg.col_offset, ARG_NOT_IN_DOCSTR_MSG % arg.arg)
             for arg in args
