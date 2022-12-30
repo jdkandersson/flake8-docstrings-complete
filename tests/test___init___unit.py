@@ -153,6 +153,40 @@ class Class1:
         ),
         pytest.param(
             '''
+def function_1(*, arg_1):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"2:18 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            id="function has single keyword only arg docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(*, arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"2:18 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}", f"2:25 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}"),
+            id="function has multiple keyword only arg docstring no arg",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    def function_1(self, *, arg_1):
+        """Docstring 1.
+
+        Args:
+        """
+''',
+            (f"3:28 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            id="method has single keyword only arg docstring no arg",
+        ),
+        pytest.param(
+            '''
 def function_1(*args):
     """Docstring 1.
 
@@ -186,6 +220,17 @@ def function_1(*args, **kwargs):
                 f"2:24 {ARG_NOT_IN_DOCSTR_MSG % 'kwargs'}",
             ),
             id="function has *args and **kwargs docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(*args, arg_1):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}", f"2:16 {ARG_NOT_IN_DOCSTR_MSG % 'args'}"),
+            id="function has *args docstring no arg",
         ),
         pytest.param(
             '''

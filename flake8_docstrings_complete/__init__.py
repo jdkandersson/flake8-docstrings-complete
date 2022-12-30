@@ -95,6 +95,7 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
     """
     yield from (arg for arg in args.args if arg.arg not in SKIPPED_ARGS)
     yield from (arg for arg in args.posonlyargs if arg.arg not in SKIPPED_ARGS)
+    yield from (arg for arg in args.kwonlyargs)
     if args.vararg:
         yield args.vararg
     if args.kwarg:
