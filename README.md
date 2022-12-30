@@ -34,6 +34,7 @@ Note:
 A few rules have been defined to allow for selective suppression:
 
 * `DCO001`: docstring missing on a function.
+* `DCO002`: function has one or more arguments not described in the docstring.
 
 ### Fix DCO001
 
@@ -49,6 +50,43 @@ This example can be fixed by:
 ```Python
 def foo():
     """Perform foo action."""
+```
+
+### Fix DCO002
+
+This linting rule is triggered by a function that has one or more arguments
+where one or more of those arguments is not described in the docstring. For
+example:
+
+```Python
+def foo(bar):
+    """Perform foo action."""
+
+def foo(bar, baz):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+    """
+```
+
+This examples can be fixed by:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+    """
+
+def foo(bar, baz):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+        baz: the modifier to the foo action.
+    """
 ```
 
 ## Docstring Examples

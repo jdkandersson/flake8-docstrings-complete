@@ -6,7 +6,7 @@ import ast
 
 import pytest
 
-from flake8_docstrings_complete import Plugin, DOCSTR_MISSING_FUNC_MSG
+from flake8_docstrings_complete import Plugin, DOCSTR_MISSING_FUNC_MSG, ARG_NOT_IN_DOCSTR_MSG
 
 
 def _result(code: str, filename: str = "test_.py") -> tuple[str, ...]:
@@ -51,11 +51,82 @@ def function_1():
         ),
         pytest.param(
             '''
+def function_1(arg_1):
+    """Docstring 1."""
+''',
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",),
+            id="function has single arg docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+    """
+        ''',
+            (
+                f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",
+                f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2 should be described in the docstring'}",
+            ),
+            id="function multiple args docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+    """
+''',
+            (f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2 should be described in the docstring'}",),
+            id="function multiple args docstring single arg first",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_2:
+    """
+''',
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",),
+            id="function multiple args docstring single arg second",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring 1."""
 ''',
             (),
             id="function docstring",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+    """
+''',
+            (),
+            id="function single arg docstring single arg",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+        arg_2:
+    """
+''',
+            (),
+            id="function multiple arg docstring multiple arg",
         ),
     ],
 )
