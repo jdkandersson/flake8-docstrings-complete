@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import argparse
 import ast
 import re
-from typing import NamedTuple, Iterator, Iterable
+from typing import NamedTuple, Iterator
 
-import astpretty
+from flake8.options.manager import OptionManager
 
 from . import docstring
 
@@ -51,6 +52,19 @@ TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
 TEST_FUNCTION_PATTERN_DEFAULT = r"test_.*"
+
+
+# Helper function for option management, tested in integration tests
+def _cli_arg_name_to_attr(cli_arg_name: str) -> str:
+    """Transform CLI argument name to the attribute name on the namespace.
+
+    Args:
+        cli_arg_name: The CLI argument name to transform.
+
+    Returns:
+        The namespace name for the argument.
+    """
+    return cli_arg_name.lstrip("-").replace("-", "_")  # pragma: nocover
 
 
 class Problem(NamedTuple):
@@ -176,8 +190,6 @@ class Visitor(ast.NodeVisitor):
                 # Check args
                 self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args))
 
-                astpretty.pprint(node)
-
         # Ensure recursion continues
         self.generic_visit(node)
 
@@ -205,6 +217,49 @@ class Plugin:
         """
         self._tree = tree
         self._filename = filename
+
+    # No coverage since this only occurs from the command line
+    @staticmethod
+    def add_options(option_manager: OptionManager) -> None:  # pragma: nocover
+        """Add additional options to flake8.
+
+        Args:
+            option_manager: The flake8 OptionManager.
+        """
+        option_manager.add_option(
+            TEST_FILENAME_PATTERN_ARG_NAME,
+            default=TEST_FILENAME_PATTERN_DEFAULT,
+            parse_from_config=True,
+            help=(
+                "The pattern to identify test files. "
+                f"(Default: {TEST_FILENAME_PATTERN_DEFAULT})"
+            ),
+        )
+        option_manager.add_option(
+            TEST_FUNCTION_PATTERN_ARG_NAME,
+            default=TEST_FUNCTION_PATTERN_DEFAULT,
+            parse_from_config=True,
+            help=(
+                "The pattern test functions to exclude in test files. "
+                f"(Default: {TEST_FUNCTION_PATTERN_DEFAULT})"
+            ),
+        )
+
+    # No coverage since this only occurs from the command line
+    @classmethod
+    def parse_options(cls, options: argparse.Namespace) -> None:  # pragma: nocover
+        """Record the value of the options.
+        Args:
+            options: The options passed to flake8.
+        """
+        cls._test_filename_pattern = (
+            getattr(options, _cli_arg_name_to_attr(TEST_FILENAME_PATTERN_ARG_NAME), None)
+            or TEST_FILENAME_PATTERN_DEFAULT
+        )
+        cls._test_function_pattern = (
+            getattr(options, _cli_arg_name_to_attr(TEST_FUNCTION_PATTERN_ARG_NAME), None)
+            or TEST_FUNCTION_PATTERN_DEFAULT
+        )
 
     def run(self) -> Iterator[tuple[int, int, str, type["Plugin"]]]:
         """Lint a file.
