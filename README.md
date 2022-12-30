@@ -29,6 +29,28 @@ Note:
 * `test_.*` methods are skipped in `test_.*\.py` files (function and file names
   are configurable).
 
+## Rules
+
+A few rules have been defined to allow for selective suppression:
+
+* `DCO001`: docstring missing on a function.
+
+### Fix DCO001
+
+This linting rule is triggered by a function without a docstring. For example:
+
+```Python
+def foo():
+    pass
+```
+
+This example can be fixed by:
+
+```Python
+def foo():
+    """Perform foo action."""
+```
+
 ## Docstring Examples
 
 Examples of function/ method and class docstrings are:

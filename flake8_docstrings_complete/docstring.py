@@ -18,7 +18,7 @@ class _Section(NamedTuple):
     """
 
     name: str
-    subs: tuple[()] | tuple[str, ...]
+    subs: tuple[str, ...]
 
 
 class Docstring(NamedTuple):
@@ -35,11 +35,11 @@ class Docstring(NamedTuple):
             raises section.
     """
 
-    args: tuple[()] | tuple[str, ...] | None = None
-    attrs: tuple[()] | tuple[str, ...] | None = None
+    args: tuple[str, ...] | None = None
+    attrs: tuple[str, ...] | None = None
     returns: bool = False
     yields: bool = False
-    raises: tuple[()] | tuple[str, ...] | None = None
+    raises: tuple[str, ...] | None = None
 
 
 _SECTION_NAMES = {
