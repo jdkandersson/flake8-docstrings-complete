@@ -52,6 +52,7 @@ TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
 TEST_FUNCTION_PATTERN_DEFAULT = r"test_.*"
+SKIPPED_ARGS = {"self", "cls"}
 
 
 # Helper function for option management, tested in integration tests
@@ -92,7 +93,8 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
     Yields:
         All the arguments.
     """
-    yield from args.args
+    yield from (arg for arg in args.args if arg.arg not in SKIPPED_ARGS)
+    yield from (arg for arg in args.posonlyargs if arg.arg not in SKIPPED_ARGS)
     if args.vararg:
         yield args.vararg
     if args.kwarg:

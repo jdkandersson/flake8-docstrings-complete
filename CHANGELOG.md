@@ -6,8 +6,11 @@
 
 ### Added
 
-- Lint check that ensures all function arguments are documented (including
-  `*args` and `**kwargs`)
+- Lint check that ensures all function/ method arguments are documented
+  (including `*args` and `**kwargs`)
+- Support positional only arguments
+- Support keyword only arguments
+- Support ignoring `self` and `cls` arguments
 - Support for skipping test functions in test files
 
 [//]: # "Release links"
