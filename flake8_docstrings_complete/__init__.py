@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import ast
-from copy import deepcopy
+import re
 from typing import NamedTuple, Iterator, Iterable
 
 import astpretty
@@ -47,6 +47,10 @@ ARG_IN_DOCSTR_MSG = (
     f"{ARG_IN_DOCSTR_CODE} %s should not be described in the docstring{MORE_INFO_BASE}"
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
+TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
+TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
+TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
+TEST_FUNCTION_PATTERN_DEFAULT = r"test_.*"
 
 
 class Problem(NamedTuple):
@@ -132,10 +136,14 @@ class Visitor(ast.NodeVisitor):
     """
 
     problems: list[Problem]
+    _test_function_pattern_enabled: bool
+    _test_function_pattern: str
 
-    def __init__(self) -> None:
+    def __init__(self, test_function_pattern_enabled: bool, test_function_pattern: str) -> None:
         """Construct."""
         self.problems = []
+        self._test_function_pattern_enabled = test_function_pattern_enabled
+        self._test_function_pattern = test_function_pattern
 
     # The function must be called the same as the name of the node
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:  # pylint: disable=invalid-name
@@ -144,28 +152,31 @@ class Visitor(ast.NodeVisitor):
         Args:
             node: The FunctionDef node.
         """
-        if (
-            not node.body
-            or not isinstance(node.body[0], ast.Expr)
-            or not isinstance(node.body[0].value, ast.Constant)
-            or not isinstance(node.body[0].value.value, str)
+        if not self._test_function_pattern_enabled or not re.match(
+            self._test_function_pattern, node.name
         ):
-            self.problems.append(
-                Problem(
-                    lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_FUNC_MSG
+            if (
+                not node.body
+                or not isinstance(node.body[0], ast.Expr)
+                or not isinstance(node.body[0].value, ast.Constant)
+                or not isinstance(node.body[0].value.value, str)
+            ):
+                self.problems.append(
+                    Problem(
+                        lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_FUNC_MSG
+                    )
                 )
-            )
 
-        if (
-            node.body
-            and isinstance(node.body[0], ast.Expr)
-            and isinstance(node.body[0].value, ast.Constant)
-            and isinstance(node.body[0].value.value, str)
-        ):
-            # Check args
-            self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args))
+            if (
+                node.body
+                and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, ast.Constant)
+                and isinstance(node.body[0].value.value, str)
+            ):
+                # Check args
+                self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args))
 
-            astpretty.pprint(node)
+                astpretty.pprint(node)
 
         # Ensure recursion continues
         self.generic_visit(node)
@@ -180,6 +191,8 @@ class Plugin:
     """
 
     name = __name__
+    _test_filename_pattern: str = TEST_FILENAME_PATTERN_DEFAULT
+    _test_function_pattern: str = TEST_FUNCTION_PATTERN_DEFAULT
     _tree: ast.AST
     _filename: str
 
@@ -199,7 +212,10 @@ class Plugin:
         Yields:
             All the problems that were found.
         """
-        visitor = Visitor()
+        visitor = Visitor(
+            re.match(self._test_filename_pattern, self._filename) is not None,
+            self._test_function_pattern,
+        )
         visitor.visit(self._tree)
         yield from (
             (problem.lineno, problem.col_offset, problem.msg, type(self))

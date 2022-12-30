@@ -17,7 +17,7 @@ from flake8_docstrings_complete import (
 )
 
 
-def _result(code: str, filename: str = "test_.py") -> tuple[str, ...]:
+def _result(code: str, filename: str = "source.py") -> tuple[str, ...]:
     """Generate linting results.
     Args:
         code: The code to check.
@@ -343,3 +343,44 @@ def test_plugin_invalid(code: str, expected_result: tuple[str, ...]):
     then: the expected result is returned
     """
     assert _result(code) == expected_result
+
+
+@pytest.mark.parametrize(
+    "code, filename, expected_result",
+    [
+        pytest.param(
+            """
+def test_():
+    pass
+""",
+            "source.py",
+            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            id="not test file",
+        ),
+        pytest.param(
+            """
+def foo():
+    pass
+""",
+            "test_.py",
+            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            id="test file not test function",
+        ),
+        pytest.param(
+            """
+def test_():
+    pass
+""",
+            "test_.py",
+            (),
+            id="test file test function",
+        ),
+    ],
+)
+def test_plugin_filename(code: str, filename: str, expected_result: tuple[str, ...]):
+    """
+    given: code and filename
+    when: linting is run on the code
+    then: the expected result is returned
+    """
+    assert _result(code, filename) == expected_result
