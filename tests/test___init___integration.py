@@ -209,3 +209,20 @@ def test_pass(code: str, filename: str, extra_args: str, tmp_path: Path):
 
         assert not stdout, stdout
         assert not proc.returncode
+
+
+def test_self():
+    """
+    given: working linter
+    when: flake8 is run against the source and tests of the linter
+    then: the process exits with zero code and empty stdout
+    """
+    with subprocess.Popen(
+        f"{sys.executable} -m flake8 flake8_docstrings_complete/ tests/ --ignore D205,D400,D103",
+        stdout=subprocess.PIPE,
+        shell=True,
+    ) as proc:
+        stdout = proc.communicate()[0].decode(encoding="utf-8")
+
+        assert not stdout, stdout
+        assert not proc.returncode

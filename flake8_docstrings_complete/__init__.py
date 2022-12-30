@@ -17,19 +17,19 @@ MORE_INFO_BASE = (
 )
 DOCSTR_MISSING_FUNC_CODE = f"{ERROR_CODE_PREFIX}001"
 DOCSTR_MISSING_FUNC_MSG = (
-    f"{DOCSTR_MISSING_FUNC_CODE} docstring should be defined for a function{MORE_INFO_BASE}"
-    f"{DOCSTR_MISSING_FUNC_CODE.lower()}"
+    f"{DOCSTR_MISSING_FUNC_CODE} docstring should be defined for a function/ method"
+    f"{MORE_INFO_BASE}{DOCSTR_MISSING_FUNC_CODE.lower()}"
 )
 ARGS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}002"
 ARGS_SECTION_NOT_IN_DOCSTR_MSG = (
-    f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function with arguments should have the arguments "
-    "section in the docstring"
+    f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function/ method with arguments should have the "
+    "arguments section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
 ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}003"
 ARGS_SECTION_IN_DOCSTR_MSG = (
-    f"{ARGS_SECTION_IN_DOCSTR_CODE} a function without arguments should not have the arguments "
-    "section in the docstring"
+    f"{ARGS_SECTION_IN_DOCSTR_CODE} a function/ method without arguments should not have the "
+    "arguments section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
 MULT_ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
@@ -85,6 +85,9 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
     """Iterate over all arguments.
 
     Adds vararg and kwarg to the args.
+
+    Args:
+        args: The arguments to iter over.
 
     Yields:
         All the arguments.
@@ -154,7 +157,13 @@ class Visitor(ast.NodeVisitor):
     _test_function_pattern: str
 
     def __init__(self, test_function_pattern_enabled: bool, test_function_pattern: str) -> None:
-        """Construct."""
+        """Construct.
+
+        Args:
+            test_function_pattern_enabled: Whether to enable function pattern checks. Usually
+                enabled for test files.
+            test_function_pattern: The pattern to match test functions with.
+        """
         self.problems = []
         self._test_function_pattern_enabled = test_function_pattern_enabled
         self._test_function_pattern = test_function_pattern

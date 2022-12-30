@@ -25,7 +25,6 @@ assumes that the docstrings already pass `pydocstyle` checks.
 
 Note:
 * `self` and `cls` are not counted as arguments.
-* `__init__` methods are skipped.
 * `test_.*` methods are skipped in `test_.*\.py` files (function and file names
   are configurable).
 
@@ -33,24 +32,31 @@ Note:
 
 A few rules have been defined to allow for selective suppression:
 
-* `DCO001`: docstring missing on a function.
-* `DCO002`: function has one or more arguments and the docstring does not have
-  an arguments section.
-* `DCO003`: function with no arguments and the docstring has an arguments
-  section.
-* `DCO004`: function with one or more arguments and the docstring has multiple
-  arguments sections.
-* `DCO005`: function has one or more arguments not described in the docstring.
-* `DCO006`: function has one or more arguments described in the docstring which
-  are not arguments of the function.
+* `DCO001`: docstring missing on a function/ method.
+* `DCO002`: function/ method has one or more arguments and the docstring does
+  not have an arguments section.
+* `DCO003`: function/ method with no arguments and the docstring has an
+  arguments section.
+* `DCO004`: function/ method with one or more arguments and the docstring has
+  multiple arguments sections.
+* `DCO005`: function/ method has one or more arguments not described in the
+  docstring.
+* `DCO006`: function/ method has one or more arguments described in the
+  docstring which are not arguments of the function/ method.
 
 ### Fix DCO001
 
-This linting rule is triggered by a function without a docstring. For example:
+This linting rule is triggered by a function/ method without a docstring. For
+example:
 
 ```Python
 def foo():
     pass
+
+class FooClass:
+
+    def foo(self):
+        pass
 ```
 
 This example can be fixed by:
@@ -58,16 +64,26 @@ This example can be fixed by:
 ```Python
 def foo():
     """Perform foo action."""
+
+class FooClass:
+
+    def foo(self):
+        """Perform foo action."""
 ```
 
 ### Fix DCO002
 
-This linting rule is triggered by a function that has one or more arguments and
-a docstring that does not have an arguments section. For example:
+This linting rule is triggered by a function/ method that has one or more
+arguments and a docstring that does not have an arguments section. For example:
 
 ```Python
 def foo(bar):
     """Perform foo action."""
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action."""
 ```
 
 This examples can be fixed by:
@@ -93,12 +109,21 @@ def foo(bar):
     Parameters:
         bar: the value to perform the foo action on.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
 ```
 
 ### Fix DCO003
 
-This linting rule is triggered by a function that has no arguments and a
-docstring that has an arguments section. For example:
+This linting rule is triggered by a function/ method that has no arguments and
+a docstring that has an arguments section. For example:
 
 ```Python
 def foo():
@@ -121,6 +146,15 @@ def foo():
     Parameters:
         bar: the value to perform the foo action on.
     """
+
+class FooClass:
+
+    def foo(self):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
 ```
 
 This examples can be fixed by:
@@ -128,12 +162,17 @@ This examples can be fixed by:
 ```Python
 def foo():
     """Perform foo action."""
+
+class FooClass:
+
+    def foo(self):
+        """Perform foo action."""
 ```
 
 ### Fix DCO004
 
-This linting rule is triggered by a function that has one or more arguments and
-a docstring that has multiple arguments sections. For example:
+This linting rule is triggered by a function/ method that has one or more
+arguments and a docstring that has multiple arguments sections. For example:
 
 ```Python
 def foo(bar):
@@ -158,6 +197,18 @@ def foo(bar):
     Parameters:
         bar: the value to perform the foo action on.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
 ```
 
 This examples can be fixed by:
@@ -183,13 +234,22 @@ def foo(bar):
     Parameters:
         bar: the value to perform the foo action on.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
 ```
 
 ### Fix DCO005
 
-This linting rule is triggered by a function that has one or more arguments
-where one or more of those arguments is not described in the docstring. For
-example:
+This linting rule is triggered by a function/ method that has one or more
+arguments where one or more of those arguments is not described in the
+docstring. For example:
 
 ```Python
 def foo(bar):
@@ -201,6 +261,11 @@ def foo(bar, baz):
     Args:
         bar: the value to perform the foo action on.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action."""
 ```
 
 This examples can be fixed by:
@@ -220,14 +285,22 @@ def foo(bar, baz):
         bar: the value to perform the foo action on.
         baz: the modifier to the foo action.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
 ```
 
 ### Fix DCO006
 
-This linting rule is triggered by a function that has one or more arguments and
-a docstring that describes one or more arguments where on or more of the
-described arguments are not arguments of the function. For
-example:
+This linting rule is triggered by a function/ method that has one or more
+arguments and a docstring that describes one or more arguments where on or more
+of the described arguments are not arguments of the function. For example:
 
 ```Python
 def foo(bar):
@@ -237,6 +310,16 @@ def foo(bar):
         bar: the value to perform the foo action on.
         baz: the modifier to the foo action.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+            baz: the modifier to the foo action.
+        """
 ```
 
 This examples can be fixed by:
@@ -248,6 +331,15 @@ def foo(bar):
     Args:
         bar: the value to perform the foo action on.
     """
+
+class FooClass:
+
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
 ```
 
 ## Docstring Examples
@@ -279,8 +371,11 @@ class Foo:
     """
 
     def __init__(self, bar):
-        """Construct."""
+        """Construct.
 
+        Args:
+            bar: the value to perform the foo actions on.
+        """
         self.bar = bar
 ```
 
