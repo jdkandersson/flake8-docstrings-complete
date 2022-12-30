@@ -172,12 +172,11 @@ class Visitor(ast.NodeVisitor):
         self._test_file = test_file
         self._test_function_pattern = test_function_pattern
 
-    # The function must be called the same as the name of the node
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:  # pylint: disable=invalid-name
-        """Visit all FunctionDef nodes and record any problems with the node.
+    def check_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        """Check a function definition node.
 
         Args:
-            node: The FunctionDef node.
+            node: The function definition to check.
         """
         if not self._test_file or not re.match(self._test_function_pattern, node.name):
             if (
@@ -203,6 +202,10 @@ class Visitor(ast.NodeVisitor):
 
         # Ensure recursion continues
         self.generic_visit(node)
+
+    # The function must be called the same as the name of the node
+    visit_FunctionDef = check_function  # noqa: N815
+    visit_AsyncFunctionDef = check_function  # noqa: N815
 
 
 class Plugin:

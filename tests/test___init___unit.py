@@ -122,6 +122,17 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
+async def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"2:21 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            id="async function has single arg docstring no arg",
+        ),
+        pytest.param(
+            '''
 def function_1(arg_1, /):
     """Docstring 1.
 
@@ -348,11 +359,19 @@ def function_1(arg_1, arg_2):
         ),
         pytest.param(
             '''
-def function_1():
+async def function_1():
     """Docstring 1."""
 ''',
             (),
             id="function docstring",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1."""
+''',
+            (),
+            id="async function docstring",
         ),
         pytest.param(
             '''
