@@ -172,13 +172,30 @@ class Visitor(ast.NodeVisitor):
         self._test_file = test_file
         self._test_function_pattern = test_function_pattern
 
-    def check_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+    def skp_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+        """Check whether to skip a function.
+
+        Args:
+            node: The function to check
+
+        Returns:
+            Whether to skip the function.
+        """
+        if not self._test_file:
+            return False
+
+        if not re.match(self._test_function_pattern, node.name):
+            return False
+
+        return True
+
+    def visit_any_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         """Check a function definition node.
 
         Args:
             node: The function definition to check.
         """
-        if not self._test_file or not re.match(self._test_function_pattern, node.name):
+        if not self.skp_function(node=node):
             if (
                 not node.body
                 or not isinstance(node.body[0], ast.Expr)
@@ -204,8 +221,8 @@ class Visitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     # The function must be called the same as the name of the node
-    visit_FunctionDef = check_function  # noqa: N815
-    visit_AsyncFunctionDef = check_function  # noqa: N815
+    visit_FunctionDef = visit_any_function  # noqa: N815
+    visit_AsyncFunctionDef = visit_any_function  # noqa: N815
 
 
 class Plugin:
