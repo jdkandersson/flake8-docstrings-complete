@@ -56,27 +56,25 @@ class Problem(NamedTuple):
     msg: str
 
 
-def _check_args(
-    docstr_info: docstring.Docstring,
-    args: Iterable[ast.arg],
-    docstr_lineno: int,
-    docstr_col_offset: int,
-) -> Iterator[Problem]:
+def _check_args(docstr_node: ast.Constant, args: Iterable[ast.arg]) -> Iterator[Problem]:
     """Check that all function arguments are described in the docstring.
 
+    Assume that docstr_node is a str constant.
+
     Args:
-        docstr_info: Information about the docstring, including all the arguments described.
+        docstr_node: The docstring node.
         args: The arguments of the function.
-        docstr_lineno: The line number the docstring starts on.
-        docstr_col_offset: The column offset to the start of the docstring.
 
     Yields:
         All the problems with the arguments.
     """
+    assert isinstance(docstr_node.value, str)
+    docstr_info = docstring.parse(value=docstr_node.value)
+
     if args and docstr_info.args is None:
-        yield Problem(docstr_lineno, docstr_col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
     if not args and docstr_info.args is not None:
-        yield Problem(docstr_lineno, docstr_col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
     elif args and docstr_info.args is not None:
         # Check for function arguments that are not in the docstring
         docstr_args = set(docstr_info.args)
@@ -89,7 +87,7 @@ def _check_args(
         # Check for arguments in the docstring that are not function arguments
         func_args = set(arg.arg for arg in args)
         yield from (
-            Problem(docstr_lineno, docstr_col_offset, ARG_IN_DOCSTR_MSG % arg)
+            Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
             for arg in sorted(docstr_args - func_args)
         )
 
@@ -132,17 +130,8 @@ class Visitor(ast.NodeVisitor):
             and isinstance(node.body[0].value, ast.Constant)
             and isinstance(node.body[0].value.value, str)
         ):
-            docstr_info = docstring.parse(value=node.body[0].value.value)
-
             # Check args
-            self.problems.extend(
-                _check_args(
-                    docstr_info=docstr_info,
-                    args=node.args.args,
-                    docstr_lineno=node.body[0].value.lineno,
-                    docstr_col_offset=node.body[0].value.col_offset,
-                )
-            )
+            self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args.args))
 
             astpretty.pprint(node)
 
