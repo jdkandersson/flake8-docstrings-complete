@@ -5,7 +5,7 @@ from __future__ import annotations
 import contextlib
 import itertools
 import re
-from typing import NamedTuple, Iterator, Iterable
+from typing import Iterable, Iterator, NamedTuple
 
 
 class _Section(NamedTuple):

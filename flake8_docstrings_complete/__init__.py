@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import argparse
 import ast
-from pathlib import Path
 import re
-from typing import NamedTuple, Iterator
+from pathlib import Path
+from typing import Iterator, NamedTuple
 
 from flake8.options.manager import OptionManager
 

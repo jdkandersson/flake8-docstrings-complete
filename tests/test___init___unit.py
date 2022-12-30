@@ -7,13 +7,13 @@ import ast
 import pytest
 
 from flake8_docstrings_complete import (
-    Plugin,
-    DOCSTR_MISSING_FUNC_MSG,
-    ARG_NOT_IN_DOCSTR_MSG,
-    ARGS_SECTION_NOT_IN_DOCSTR_MSG,
-    ARGS_SECTION_IN_DOCSTR_MSG,
     ARG_IN_DOCSTR_MSG,
+    ARG_NOT_IN_DOCSTR_MSG,
+    ARGS_SECTION_IN_DOCSTR_MSG,
+    ARGS_SECTION_NOT_IN_DOCSTR_MSG,
+    DOCSTR_MISSING_FUNC_MSG,
     MULT_ARGS_SECTION_IN_DOCSTR_MSG,
+    Plugin,
 )
 
 
