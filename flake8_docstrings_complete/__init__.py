@@ -53,8 +53,9 @@ class Visitor(ast.NodeVisitor):
         """
         if (
             not node.body
-            or not isinstance(node.body[0], ast.Constant)
-            or not isinstance(node.body[0].value, str)
+            or not isinstance(node.body[0], ast.Expr)
+            or not isinstance(node.body[0].value, ast.Constant)
+            or not isinstance(node.body[0].value.value, str)
         ):
             self.problems.append(
                 Problem(
