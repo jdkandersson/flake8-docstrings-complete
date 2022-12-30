@@ -174,7 +174,7 @@ long description""",
 
 Args:
     """,
-            docstring.Docstring(args=()),
+            docstring.Docstring(args=(), args_sections=("Args",)),
             id="args empty",
         ),
         pytest.param(
@@ -183,7 +183,7 @@ Args:
 Args:
     arg_1:
     """,
-            docstring.Docstring(args=("arg_1",)),
+            docstring.Docstring(args=("arg_1",), args_sections=("Args",)),
             id="args single",
         ),
         pytest.param(
@@ -193,7 +193,7 @@ Args:
     arg_1:
     arg_2:
     """,
-            docstring.Docstring(args=("arg_1", "arg_2")),
+            docstring.Docstring(args=("arg_1", "arg_2"), args_sections=("Args",)),
             id="args multiple",
         ),
         pytest.param(
@@ -202,7 +202,7 @@ Args:
 args:
     arg_1:
     """,
-            docstring.Docstring(args=("arg_1",)),
+            docstring.Docstring(args=("arg_1",), args_sections=("args",)),
             id="args lower case",
         ),
         pytest.param(
@@ -211,7 +211,7 @@ args:
 Arguments:
     arg_1:
     """,
-            docstring.Docstring(args=("arg_1",)),
+            docstring.Docstring(args=("arg_1",), args_sections=("Arguments",)),
             id="args alternate Arguments",
         ),
         pytest.param(
@@ -220,8 +220,20 @@ Arguments:
 Parameters:
     arg_1:
     """,
-            docstring.Docstring(args=("arg_1",)),
+            docstring.Docstring(args=("arg_1",), args_sections=("Parameters",)),
             id="args alternate Parameters",
+        ),
+        pytest.param(
+            """short description
+
+Args:
+    arg_1:
+
+Parameters:
+    arg_2:
+    """,
+            docstring.Docstring(args=("arg_1",), args_sections=("Args", "Parameters")),
+            id="args multiple sections",
         ),
         pytest.param(
             """short description
@@ -357,7 +369,12 @@ Raises:
     exc_1:
     """,
             docstring.Docstring(
-                attrs=("attr_1",), args=("arg_1",), returns=True, yields=True, raises=("exc_1",)
+                args=("arg_1",),
+                args_sections=("Args",),
+                attrs=("attr_1",),
+                returns=True,
+                yields=True,
+                raises=("exc_1",),
             ),
             id="all defined",
         ),
