@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import ast
-from typing import NamedTuple, Iterator
+from typing import NamedTuple, Iterator, Iterable
 
 import astpretty
 
@@ -18,7 +18,13 @@ DOCSTR_MISSING_FUNC_MSG = (
     f"{DOCSTR_MISSING_FUNC_CODE} docstring should be defined for a function{MORE_INFO_BASE}"
     f"{DOCSTR_MISSING_FUNC_CODE.lower()}"
 )
-ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}002"
+ARGS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}002"
+ARGS_SECTION_NOT_IN_DOCSTR_MSG = (
+    f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function with arguments "
+    "should have the arguments section in the docstring"
+    f"{MORE_INFO_BASE}{ARGS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
+)
+ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}003"
 ARG_NOT_IN_DOCSTR_MSG = (
     f"{ARG_NOT_IN_DOCSTR_CODE} %s{MORE_INFO_BASE}{ARG_NOT_IN_DOCSTR_CODE.lower()}"
 )
@@ -35,6 +41,38 @@ class Problem(NamedTuple):
     lineno: int
     col_offset: int
     msg: str
+
+
+def _check_args(
+    docstr_info: docstring.Docstring,
+    args: Iterable[ast.arg],
+    docstr_lineno: int,
+    docstr_col_offset: int,
+) -> Iterator[Problem]:
+    """Check that all function arguments are described in the docstring.
+
+    Args:
+        docstr_info: Information about the docstring, including all the arguments described.
+        args: The arguments of the function.
+        docstr_lineno: The line number the docstring starts on.
+        docstr_col_offset: The column offset to the start of the docstring.
+
+    Yields:
+        All the problems with the arguments.
+    """
+    if args and docstr_info.args is None:
+        yield Problem(docstr_lineno, docstr_col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
+    elif args and docstr_info.args is not None:
+        docstr_args = set(docstr_info.args)
+        yield from (
+            Problem(
+                arg.lineno,
+                arg.col_offset,
+                ARG_NOT_IN_DOCSTR_MSG % f"{arg.arg} should be described in the docstring",
+            )
+            for arg in args
+            if arg.arg not in docstr_args
+        )
 
 
 class Visitor(ast.NodeVisitor):
@@ -68,7 +106,8 @@ class Visitor(ast.NodeVisitor):
                     lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_FUNC_MSG
                 )
             )
-        elif (
+
+        if (
             node.body
             and isinstance(node.body[0], ast.Expr)
             and isinstance(node.body[0].value, ast.Constant)
@@ -77,15 +116,13 @@ class Visitor(ast.NodeVisitor):
             docstr_info = docstring.parse(value=node.body[0].value.value)
 
             # Check args
-            docstr_args = set(docstr_info.args) if docstr_info.args else {}
             self.problems.extend(
-                Problem(
-                    arg.lineno,
-                    arg.col_offset,
-                    ARG_NOT_IN_DOCSTR_MSG % f"{arg.arg} should be described in the docstring",
+                _check_args(
+                    docstr_info=docstr_info,
+                    args=node.args.args,
+                    docstr_lineno=node.body[0].value.lineno,
+                    docstr_col_offset=node.body[0].value.col_offset,
                 )
-                for arg in node.args.args
-                if arg.arg not in docstr_args
             )
 
             astpretty.pprint(node)

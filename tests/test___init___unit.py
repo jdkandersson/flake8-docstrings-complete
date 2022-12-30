@@ -6,7 +6,12 @@ import ast
 
 import pytest
 
-from flake8_docstrings_complete import Plugin, DOCSTR_MISSING_FUNC_MSG, ARG_NOT_IN_DOCSTR_MSG
+from flake8_docstrings_complete import (
+    Plugin,
+    DOCSTR_MISSING_FUNC_MSG,
+    ARG_NOT_IN_DOCSTR_MSG,
+    ARGS_SECTION_NOT_IN_DOCSTR_MSG,
+)
 
 
 def _result(code: str, filename: str = "test_.py") -> tuple[str, ...]:
@@ -53,6 +58,25 @@ def function_1():
             '''
 def function_1(arg_1):
     """Docstring 1."""
+''',
+            (f"3:4 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",),
+            id="function has single arg docstring no args section",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1."""
+''',
+            (f"3:4 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",),
+            id="function has multiple arg docstring no args section",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+    """
 ''',
             (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1 should be described in the docstring'}",),
             id="function has single arg docstring no arg",
