@@ -39,10 +39,12 @@ def test_help():
 
 def create_code_file(code: str, filename: str, base_path: Path) -> Path:
     """Create the code file with the given code.
+
     Args:
         code: The code to write to the file.
         filename: The name of the file to create.
         base_path: The path to create the file within
+
     Returns:
         The path to the code file.
     """

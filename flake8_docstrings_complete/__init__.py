@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+from pathlib import Path
 import re
 from typing import NamedTuple, Iterator
 
@@ -228,7 +229,7 @@ class Plugin:
             filename: The name of the file being processed.
         """
         self._tree = tree
-        self._filename = filename
+        self._filename = Path(filename).name
 
     # No coverage since this only occurs from the command line
     @staticmethod

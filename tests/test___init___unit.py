@@ -19,8 +19,11 @@ from flake8_docstrings_complete import (
 
 def _result(code: str, filename: str = "source.py") -> tuple[str, ...]:
     """Generate linting results.
+
     Args:
         code: The code to check.
+        filename: The name of the file the code is in.
+
     Returns:
         The linting result.
     """
@@ -562,6 +565,15 @@ def test_():
             "test_.py",
             (),
             id="test file test function",
+        ),
+        pytest.param(
+            """
+def test_():
+    pass
+""",
+            "tests/test_.py",
+            (),
+            id="test file test function in directory",
         ),
     ],
 )

@@ -145,9 +145,9 @@ def test__get_sections(
     expected_sections: tuple[()] | tuple[docstring._Section, ...],
 ):
     """
-    arrange: given lines of a docstring
-    act: when _get_sections is called with the lines
-    assert: then the expected sections are returned.
+    given: lines of a docstring
+    when: _get_sections is called with the lines
+    then: the expected sections are returned.
     """
     assert isinstance(lines, tuple)
     assert isinstance(expected_sections, tuple)
@@ -382,9 +382,9 @@ Raises:
 )
 def test_parse(value: str, expected_docstring: docstring.Docstring):
     """
-    arrange: given docstring value
-    act: when parse is called with the docstring
-    assert: then the expected docstring information is returned.
+    given: docstring value
+    when: parse is called with the docstring
+    then: the expected docstring information is returned.
     """
     returned_docstring = docstring.parse(value=value)
 

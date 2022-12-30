@@ -5,3 +5,4 @@ extend-ignore = E203,W503
 per-file-ignores =
     tests/*:D205,D400
     flake8_docstrings_complete/*:N802
+test-docs-pattern = given/when/then
