@@ -204,11 +204,17 @@ def _check_returns(
         All the problems with the returns section.
     """
     return_nodes_with_value = list(node for node in return_nodes if node.value is not None)
+
+    # Check for return statements with value and no returns section in docstring
     if return_nodes_with_value and not docstr_info.returns:
         yield from (
             Problem(node.lineno, node.col_offset, RETURN_NOT_IN_DOCSTR_MSG)
             for node in return_nodes_with_value
         )
+
+    # Check for returns section in docstring in function that does not return a value
+    if not return_nodes_with_value and docstr_info.returns:
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, RETURN_IN_DOCSTR_MSG)
 
 
 class VisitorWithinFunction(ast.NodeVisitor):

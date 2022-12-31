@@ -14,6 +14,7 @@ from flake8_docstrings_complete import (
     DOCSTR_MISSING_FUNC_MSG,
     MULT_ARGS_SECTION_IN_DOCSTR_MSG,
     RETURN_NOT_IN_DOCSTR_MSG,
+    RETURN_IN_DOCSTR_MSG,
     Plugin,
 )
 
@@ -401,6 +402,29 @@ def function_1(arg_1, arg_2):
         ''',
             (f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}", f"3:4 {ARG_IN_DOCSTR_MSG % 'arg_3'}"),
             id="function multiple arg docstring multiple args last different",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring.
+
+    Returns:
+    """
+''',
+            (f"3:4 {RETURN_IN_DOCSTR_MSG}",),
+            id="function no return returns in docstring",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring.
+
+    Returns:
+    """
+    return
+''',
+            (f"3:4 {RETURN_IN_DOCSTR_MSG}",),
+            id="function return no value returns in docstring",
         ),
         pytest.param(
             '''
