@@ -7,7 +7,7 @@ import ast
 import enum
 import re
 from pathlib import Path
-from typing import Iterator, NamedTuple
+from typing import Iterator, NamedTuple, Iterable
 
 from flake8.options.manager import OptionManager
 
@@ -127,24 +127,30 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
         yield args.kwarg
 
 
-def _check_args(docstr_node: ast.Constant, args: ast.arguments) -> Iterator[Problem]:
+def _check_args(
+    docstr_info: docstring.Docstring, docstr_node: ast.Constant, args: ast.arguments
+) -> Iterator[Problem]:
     """Check that all function arguments are described in the docstring.
 
-    Assume that docstr_node is a str constant.
+    Check the function/ method has at most one args section.
+    Check that all arguments of the function/ method are documented except certain arguments (like
+    self).
+    Check that a function/ method without arguments does not have an args section.
 
     Args:
+        docstr_info: Information about the docstring.
         docstr_node: The docstring node.
         args: The arguments of the function.
 
     Yields:
         All the problems with the arguments.
     """
-    assert isinstance(docstr_node.value, str)
-    docstr_info = docstring.parse(value=docstr_node.value)
     all_args = list(_iter_args(args))
 
+    # Check that args section is in docstring if function/ method has arguments
     if all_args and docstr_info.args is None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
+    # Check that args section is not in docstring if function/ method has no arguments
     if not all_args and docstr_info.args is not None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
     elif all_args and docstr_info.args is not None:
@@ -173,6 +179,27 @@ def _check_args(docstr_node: ast.Constant, args: ast.arguments) -> Iterator[Prob
         )
 
 
+def _check_returns(
+    docstr_info: docstring.Docstring, docstr_node: ast.Constant, return_nodes: Iterable[ast.Return]
+) -> Iterator[Problem]:
+    """Check function/ method returns section.
+
+    Args:
+        docstr_info: Information about the docstring.
+        docstr_node: The docstring node.
+        return_nodes: The return nodes of the function.
+
+    Yields:
+        All the problems with the returns section.
+    """
+    return_nodes_with_value = list(node for node in return_nodes if node.value is not None)
+    if return_nodes_with_value and not docstr_info.returns:
+        yield from (
+            Problem(node.lineno, node.col_offset, RETURN_NOT_IN_DOCSTR_MSG)
+            for node in return_nodes_with_value
+        )
+
+
 class VisitorWithinFunction(ast.NodeVisitor):
     """Visits AST nodes within a functions but not nested functions or classes.
 
@@ -181,10 +208,12 @@ class VisitorWithinFunction(ast.NodeVisitor):
     """
 
     return_nodes: list[ast.Return]
+    _visited_once: bool
 
     def __init__(self) -> None:
         """Construct."""
         self.return_nodes = []
+        self._visited_once = False
 
     # The function must be called the same as the name of the node
     def visit_Return(self, node: ast.Return) -> None:  # pylint: disable=invalid-name
@@ -198,12 +227,21 @@ class VisitorWithinFunction(ast.NodeVisitor):
         # Ensure recursion continues
         self.generic_visit(node)
 
+    def visit_once(self, node: ast.AST) -> None:
+        """Visit the node once and then skip.
+
+        Args:
+            node: The node being visited.
+        """
+        if not self._visited_once:
+            self._visited_once = True
+            self.generic_visit(node=node)
+
     # Ensure that nested functions and classes are not iterated over
-    # pylint: disable=unnecessary-lambda-assignment
     # The functions must be called the same as the name of the node
-    visit_FunctionDef = lambda _self, _node: True  # noqa: N815
-    visit_AsyncFunctionDef = lambda _self, _node: True  # noqa: N815
-    visit_ClassDef = lambda _self, _node: True  # noqa: N815
+    visit_FunctionDef = visit_once  # noqa: N815
+    visit_AsyncFunctionDef = visit_once  # noqa: N815
+    visit_ClassDef = visit_once  # noqa: N815
 
 
 class Visitor(ast.NodeVisitor):
@@ -298,7 +336,22 @@ class Visitor(ast.NodeVisitor):
                 and isinstance(node.body[0].value.value, str)
             ):
                 # Check args
-                self.problems.extend(_check_args(docstr_node=node.body[0].value, args=node.args))
+                docstr_info = docstring.parse(value=node.body[0].value.value)
+                docstr_node = node.body[0].value
+                self.problems.extend(
+                    _check_args(docstr_info=docstr_info, docstr_node=docstr_node, args=node.args)
+                )
+
+                # Check returns
+                visitor_within_function = VisitorWithinFunction()
+                visitor_within_function.visit(node=node)
+                self.problems.extend(
+                    _check_returns(
+                        docstr_info=docstr_info,
+                        docstr_node=docstr_node,
+                        return_nodes=visitor_within_function.return_nodes,
+                    )
+                )
 
         # Ensure recursion continues
         self.generic_visit(node)
@@ -429,7 +482,7 @@ class Plugin:
             test_function_pattern=self._test_function_pattern,
             fixture_decorator_pattern=self._fixture_decorator_pattern,
         )
-        visitor.visit(self._tree)
+        visitor.visit(node=self._tree)
         yield from (
             (problem.lineno, problem.col_offset, problem.msg, type(self))
             for problem in visitor.problems
