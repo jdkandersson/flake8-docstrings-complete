@@ -103,8 +103,10 @@ A few rules have been defined to allow for selective suppression:
   docstring which are not arguments of the function/ method.
 - `DCO007`: function/ method that returns a value does not have the returns
   section in the docstring.
-- `DCO007`: function/ method that does not return a value has the returns
+- `DCO008`: function/ method that does not return a value has the returns
   section in the docstring.
+- `DCO009`: function/ method that returns a value and the docstring has
+  multiple returns sections.
 
 ### Fix DCO001
 
@@ -473,6 +475,47 @@ class FooClass:
     def foo(self):
         """Take foo action."""
         pass
+```
+
+### Fix DCO009
+
+This linting rule is triggered by a function/ method that returns a value and a
+docstring that has multiple returns sections. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Returns:
+        bar.
+
+    Returns:
+        bar.
+    """
+    return "bar"
+
+def foo():
+    """Perform foo action.
+
+    Returns:
+        bar.
+
+    Return:
+        bar.
+    """
+    return "bar"
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Returns:
+            bar.
+
+        Returns:
+            bar.
+        """
+        return "bar"
 ```
 
 ## Docstring Examples

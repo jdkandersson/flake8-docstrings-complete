@@ -9,6 +9,9 @@
 #### Function/ Method Arguments
 
 - Lint check that ensures all function/ method arguments are documented
+- Lint check that ensures docstring doesn't describe arguments the function/
+  method doesn't have
+- Lint check that ensures there is only one args section in the docstring
 - Support `*args` and `**kwargs`
 - Support positional only arguments
 - Support keyword only arguments
@@ -21,8 +24,9 @@
 
 - Lint check that ensures all functions/ methods that return a value have the
   returns section in the docstring
-- Lint check that ensures a functin that does not return a value does not have
+- Lint check that ensures a function that does not return a value does not have
   the returns section
+- Lint check that ensures there is only one returns section in the docstring
 
 [//]: # "Release links"
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0

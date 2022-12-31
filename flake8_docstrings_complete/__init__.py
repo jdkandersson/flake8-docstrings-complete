@@ -60,6 +60,12 @@ RETURN_IN_DOCSTR_MSG = (
     f"{RETURN_IN_DOCSTR_CODE} function/ method that does not return a value should not have the "
     f"returns section in the docstring{MORE_INFO_BASE}{RETURN_IN_DOCSTR_CODE.lower()}"
 )
+MULT_RETURNS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}009"
+MULT_RETURNS_SECTION_IN_DOCSTR_MSG = (
+    f"{MULT_RETURNS_SECTION_IN_DOCSTR_CODE} a docstring should only contain a single returns "
+    "section, found %s"
+    f"{MORE_INFO_BASE}{MULT_RETURNS_SECTION_IN_DOCSTR_CODE.lower()}"
+)
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
