@@ -423,6 +423,26 @@ def function_1():
         ),
         pytest.param(
             '''
+def function_1():
+    """Docstring."""
+    return 11
+    return
+''',
+            (f"3:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            id="function multiple return first value returns not in docstring",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring."""
+    return
+    return 12
+''',
+            (f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            id="function multiple return second value returns not in docstring",
+        ),
+        pytest.param(
+            '''
 async def function_1():
     """Docstring 1."""
 ''',
@@ -618,6 +638,16 @@ class Class_1:
 ''',
             (),
             id="method single arg docstring single arg classmethod",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+    """
+    return
+''',
+            (),
+            id="function return no value docstring no returns section",
         ),
         pytest.param(
             '''
