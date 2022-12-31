@@ -13,6 +13,7 @@ from flake8_docstrings_complete import (
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
     DOCSTR_MISSING_FUNC_MSG,
     MULT_ARGS_SECTION_IN_DOCSTR_MSG,
+    RETURN_NOT_IN_DOCSTR_MSG,
     Plugin,
 )
 
@@ -43,6 +44,17 @@ def function_1():
 """,
             (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
             id="function docstring missing return",
+        ),
+        pytest.param(
+            """
+def function_1():
+    return
+
+def function_2():
+    return
+""",
+            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}", f"5:0 {DOCSTR_MISSING_FUNC_MSG}"),
+            id="multiple functions docstring missing return",
         ),
         pytest.param(
             """
@@ -359,11 +371,74 @@ def function_1(arg_1, arg_2):
         ),
         pytest.param(
             '''
+def function_1():
+    """Docstring."""
+    return 1
+''',
+            (f"3:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            id="function single return value returns not in docstring",
+        ),
+        pytest.param(
+            '''
+async def function_1():
+    """Docstring."""
+    return 1
+''',
+            (f"3:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            id="async function single return value returns not in docstring",
+        ),
+        pytest.param(
+            '''
+class FooClass:
+    """Docstring."""
+    def function_1(self):
+        """Docstring."""
+        return 1
+''',
+            (f"5:8 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            id="method single return value returns not in docstring",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring."""
+    if True:
+        return 1
+''',
+            (f"3:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            id="function single nested return value returns not in docstring",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring."""
+    return 11
+    return 12
+''',
+            (
+                f"3:4 {RETURN_NOT_IN_DOCSTR_MSG}",
+                f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",
+            ),
+            id="function multiple return value returns not in docstring",
+        ),
+        pytest.param(
+            '''
 async def function_1():
     """Docstring 1."""
 ''',
             (),
             id="function docstring",
+        ),
+        pytest.param(
+            '''
+async def function_1():
+    """Docstring 1."""
+
+async def function_2():
+    """Docstring 2."""
+''',
+            (),
+            id="multiple functions docstring",
         ),
         pytest.param(
             '''
@@ -544,9 +619,79 @@ class Class_1:
             (),
             id="method single arg docstring single arg classmethod",
         ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Returns:
+    """
+    return 1
+''',
+            (),
+            id="function return value docstring returns section",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1."""
+    def function_2():
+        """Docstring 2."""
+        return 1
+''',
+            (),
+            id="function return value in nested function docstring no returns section",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1."""
+    async def function_2():
+        """Docstring 2."""
+        return 1
+''',
+            (),
+            id="function return value in nested async function docstring no returns section",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1."""
+    class Class1:
+        return 1
+''',
+            (),
+            id="function return value in class docstring no returns section",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Returns:
+    """
+    return 1
+    return 2
+''',
+            (),
+            id="function multiple return values docstring returns section",
+        ),
+        pytest.param(
+            '''
+class Class_1:
+    def function_1(self):
+        """Docstring 1.
+
+        Returns:
+        """
+        return 1
+''',
+            (),
+            id="method return value docstring returns section",
+        ),
     ],
 )
-def test_plugin_invalid(code: str, expected_result: tuple[str, ...]):
+def test_plugin(code: str, expected_result: tuple[str, ...]):
     """
     given: code
     when: linting is run on the code
