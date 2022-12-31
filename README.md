@@ -101,6 +101,8 @@ A few rules have been defined to allow for selective suppression:
   docstring.
 - `DCO006`: function/ method has one or more arguments described in the
   docstring which are not arguments of the function/ method.
+- `DCO007`: function/ method that returns a value does not have the returns
+  section in the docstring.
 
 ### Fix DCO001
 
@@ -112,7 +114,6 @@ def foo():
     pass
 
 class FooClass:
-
     def foo(self):
         pass
 ```
@@ -124,7 +125,6 @@ def foo():
     """Perform foo action."""
 
 class FooClass:
-
     def foo(self):
         """Perform foo action."""
 ```
@@ -139,7 +139,6 @@ def foo(bar):
     """Perform foo action."""
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action."""
 ```
@@ -169,7 +168,6 @@ def foo(bar):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action.
 
@@ -206,7 +204,6 @@ def foo():
     """
 
 class FooClass:
-
     def foo(self):
         """Perform foo action.
 
@@ -222,7 +219,6 @@ def foo():
     """Perform foo action."""
 
 class FooClass:
-
     def foo(self):
         """Perform foo action."""
 ```
@@ -257,7 +253,6 @@ def foo(bar):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action.
 
@@ -294,7 +289,6 @@ def foo(bar):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action.
 
@@ -321,7 +315,6 @@ def foo(bar, baz):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action."""
 ```
@@ -345,7 +338,6 @@ def foo(bar, baz):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action.
 
@@ -370,7 +362,6 @@ def foo(bar):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action.
 
@@ -391,13 +382,56 @@ def foo(bar):
     """
 
 class FooClass:
-
     def foo(self, bar):
         """Perform foo action.
 
         Args:
             bar: the value to perform the foo action on.
         """
+```
+
+### Fix DCO007
+
+This linting rule is triggered by a function/ method that has at least one
+return statement with a value and does not have a returns section in the
+docstring. For example:
+
+```Python
+def foo():
+    """Return bar."""
+    return "bar"
+
+class FooClass:
+    def foo(self):
+        """Return bar."""
+        return "bar"
+```
+
+This examples can be fixed by:
+
+```Python
+def foo():
+    """Return bar.
+
+    Return:
+        bar.
+    """
+def foo():
+    """Return bar.
+
+    Returns:
+        bar.
+    """
+    return "bar"
+
+class FooClass:
+    def foo(self):
+        """Return bar.
+
+        Returns:
+            bar.
+        """
+        return "bar"
 ```
 
 ## Docstring Examples

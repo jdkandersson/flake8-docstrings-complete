@@ -50,6 +50,11 @@ ARG_IN_DOCSTR_MSG = (
     f'{ARG_IN_DOCSTR_CODE} "%s" argument should not be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
+RETURN_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}007"
+RETURN_NOT_IN_DOCSTR_MSG = (
+    f"{RETURN_NOT_IN_DOCSTR_CODE} function/ method that returns a value should have the returns "
+    f"section in the docstring{MORE_INFO_BASE}{RETURN_NOT_IN_DOCSTR_CODE.lower()}"
+)
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
