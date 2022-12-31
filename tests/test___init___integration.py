@@ -15,7 +15,13 @@ from flake8_docstrings_complete import (
     DOCSTR_MISSING_FUNC_CODE,
     MULT_ARGS_SECTION_IN_DOCSTR_CODE,
     TEST_FILENAME_PATTERN_ARG_NAME,
+    TEST_FILENAME_PATTERN_DEFAULT,
     TEST_FUNCTION_PATTERN_ARG_NAME,
+    TEST_FUNCTION_PATTERN_DEFAULT,
+    FIXTURE_FILENAME_PATTERN_ARG_NAME,
+    FIXTURE_FILENAME_PATTERN_DEFAULT,
+    FIXTURE_DECORATOR_PATTERN_ARG_NAME,
+    FIXTURE_DECORATOR_PATTERN_DEFAULT,
 )
 
 
@@ -34,7 +40,13 @@ def test_help():
 
         assert "flake8-docstrings-complete" in stdout
         assert TEST_FILENAME_PATTERN_ARG_NAME in stdout
+        assert TEST_FILENAME_PATTERN_DEFAULT in stdout
         assert TEST_FUNCTION_PATTERN_ARG_NAME in stdout
+        assert TEST_FUNCTION_PATTERN_DEFAULT in stdout
+        assert FIXTURE_FILENAME_PATTERN_ARG_NAME in stdout
+        assert FIXTURE_FILENAME_PATTERN_DEFAULT in stdout
+        assert FIXTURE_DECORATOR_PATTERN_ARG_NAME in stdout
+        assert FIXTURE_DECORATOR_PATTERN_DEFAULT in stdout
 
 
 def create_code_file(code: str, filename: str, base_path: Path) -> Path:
@@ -95,8 +107,28 @@ def _test(arg_1):
     """
 ''',
             "_test.py",
-            f"{TEST_FILENAME_PATTERN_ARG_NAME} .*_test.py {TEST_FUNCTION_PATTERN_ARG_NAME} _test",
-            id="custom filename and function pattern",
+            (
+                f"{TEST_FILENAME_PATTERN_ARG_NAME} .*_test\\.py "
+                f"{TEST_FUNCTION_PATTERN_ARG_NAME} _test"
+            ),
+            id="custom test filename and function pattern",
+        ),
+        pytest.param(
+            '''
+def custom():
+    """Docstring."""
+
+
+@custom
+def fixture(arg_1):
+    """Docstring."""
+''',
+            "fixture.py",
+            (
+                f"{FIXTURE_FILENAME_PATTERN_ARG_NAME} fixture\\.py "
+                f"{FIXTURE_DECORATOR_PATTERN_ARG_NAME} custom"
+            ),
+            id="custom fixture filename and function pattern",
         ),
         pytest.param(
             f"""

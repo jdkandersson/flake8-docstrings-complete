@@ -58,7 +58,7 @@ FIXTURE_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-fixture-filename-patt
 FIXTURE_FILENAME_PATTERN_DEFAULT = r"conftest\.py"
 FIXTURE_DECORATOR_PATTERN_ARG_NAME = "--docstrings-complete-fixture-decorator-pattern"
 FIXTURE_DECORATOR_PATTERN_DEFAULT = r"(^|\.)fixture$"
-SKIPPED_ARGS = {"self", "cls"}
+SKIP_ARGS = {"self", "cls"}
 
 
 # Helper function for option management, tested in integration tests
@@ -113,8 +113,8 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
     Yields:
         All the arguments.
     """
-    yield from (arg for arg in args.args if arg.arg not in SKIPPED_ARGS)
-    yield from (arg for arg in args.posonlyargs if arg.arg not in SKIPPED_ARGS)
+    yield from (arg for arg in args.args if arg.arg not in SKIP_ARGS)
+    yield from (arg for arg in args.posonlyargs if arg.arg not in SKIP_ARGS)
     yield from (arg for arg in args.kwonlyargs)
     if args.vararg:
         yield args.vararg
@@ -336,8 +336,26 @@ class Plugin:
             default=TEST_FUNCTION_PATTERN_DEFAULT,
             parse_from_config=True,
             help=(
-                "The pattern test functions to exclude in test files. "
+                "The pattern for the name of test functions to exclude in test files. "
                 f"(Default: {TEST_FUNCTION_PATTERN_DEFAULT})"
+            ),
+        )
+        option_manager.add_option(
+            FIXTURE_FILENAME_PATTERN_ARG_NAME,
+            default=FIXTURE_FILENAME_PATTERN_DEFAULT,
+            parse_from_config=True,
+            help=(
+                "The pattern to identify fixture files. "
+                f"(Default: {FIXTURE_FILENAME_PATTERN_DEFAULT})"
+            ),
+        )
+        option_manager.add_option(
+            FIXTURE_DECORATOR_PATTERN_ARG_NAME,
+            default=FIXTURE_DECORATOR_PATTERN_DEFAULT,
+            parse_from_config=True,
+            help=(
+                "The pattern for the decorator name to exclude fixture functions. "
+                f"(Default: {FIXTURE_DECORATOR_PATTERN_DEFAULT})"
             ),
         )
 
@@ -355,6 +373,14 @@ class Plugin:
         cls._test_function_pattern = (
             getattr(options, _cli_arg_name_to_attr(TEST_FUNCTION_PATTERN_ARG_NAME), None)
             or TEST_FUNCTION_PATTERN_DEFAULT
+        )
+        cls._fixture_filename_pattern = (
+            getattr(options, _cli_arg_name_to_attr(FIXTURE_FILENAME_PATTERN_ARG_NAME), None)
+            or FIXTURE_FILENAME_PATTERN_DEFAULT
+        )
+        cls._fixture_decorator_pattern = (
+            getattr(options, _cli_arg_name_to_attr(FIXTURE_DECORATOR_PATTERN_ARG_NAME), None)
+            or FIXTURE_DECORATOR_PATTERN_DEFAULT
         )
 
     def run(self) -> Iterator[tuple[int, int, str, type["Plugin"]]]:
