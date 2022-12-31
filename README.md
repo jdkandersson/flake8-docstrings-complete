@@ -13,7 +13,8 @@ pip install flake8 flake8-docstrings-complete
 flake8 source.py
 ```
 
-On the following code:
+On the following code where the `foo` function has the `baz` argument which is
+missing from the `Args` section in the docstring:
 
 ```Python
 # source.py
@@ -32,7 +33,7 @@ flake8 test_source.py
 source.py:2:14: DCO005 "baz" argument should be described in the docstring, more information: https://github.com/jdkandersson/flake8-docstrings-complete#fix-dco005
 ```
 
-This can be resolved by changing the code to:
+This can be resolved by adding the `baz` argument to the `Args` section:
 
 ```Python
 # test_source.py
@@ -64,6 +65,7 @@ def foo(bar, baz):
    attributes section.
 9. If an attributes section is in the class docstring, the attributes section
    contains no attributes the class doesn't have.
+10. Any of the sections being checked are not present multiple times.
 
 Note:
 
