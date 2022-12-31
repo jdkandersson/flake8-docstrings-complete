@@ -195,7 +195,33 @@ class Visitor(ast.NodeVisitor):
         self._test_function_pattern = test_function_pattern
         self._fixture_decorator_pattern = fixture_decorator_pattern
 
-    def skip_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+    def _is_fixture_decorator(self, node: ast.expr) -> bool:
+        """Determine whether an expression is a fixture decorator
+
+        Args:
+            node: The node to check.
+
+        Returns:
+            Whether the node is a decorator fixture.
+        """
+        # Handle variable
+        fixture_name: str | None = None
+        if isinstance(node, ast.Name):
+            fixture_name = node.id
+        if isinstance(node, ast.Attribute):
+            fixture_name = node.attr
+        if fixture_name is not None:
+            return (
+                re.search(self._fixture_decorator_pattern, fixture_name, re.IGNORECASE) is not None
+            )
+
+        # Handle call
+        if isinstance(node, ast.Call):
+            return self._is_fixture_decorator(node=node.func)
+
+        return False
+
+    def _skip_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check whether to skip a function.
 
         Args:
@@ -207,20 +233,11 @@ class Visitor(ast.NodeVisitor):
         if self._file_type == FileType.DEFAULT:
             return False
 
-        if self._file_type == FileType.TEST and not re.match(
-            self._test_function_pattern, node.name
-        ):
-            return False
+        if self._file_type == FileType.TEST and re.match(self._test_function_pattern, node.name):
+            return True
 
-        if self._file_type == FileType.FIXTURE:
-            import astpretty
-
-            astpretty.pprint(node)
-            return any(
-                isinstance(decorator, ast.Name)
-                and re.search(self._fixture_decorator_pattern, decorator.id, re.IGNORECASE)
-                for decorator in node.decorator_list
-            )
+        if self._file_type in {FileType.TEST, FileType.FIXTURE}:
+            return any(self._is_fixture_decorator(decorator) for decorator in node.decorator_list)
 
         return True
 
@@ -230,7 +247,7 @@ class Visitor(ast.NodeVisitor):
         Args:
             node: The function definition to check.
         """
-        if not self.skip_function(node=node):
+        if not self._skip_function(node=node):
             if (
                 not node.body
                 or not isinstance(node.body[0], ast.Expr)

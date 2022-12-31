@@ -610,7 +610,7 @@ def foo():
     pass
 """,
             "source.py",
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"3:0 {DOCSTR_MISSING_FUNC_MSG}",),
             id="source file fixture function",
         ),
         pytest.param(
@@ -642,6 +642,28 @@ def foo():
             "conftest.py",
             (),
             id="fixture file fixture function capitalised",
+        ),
+        pytest.param(
+            """
+@fixture
+@decorator
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function multiple decorators first",
+        ),
+        pytest.param(
+            """
+@decorator
+@fixture
+def foo():
+    pass
+""",
+            "conftest.py",
+            (),
+            id="fixture file fixture function multiple decorators second",
         ),
         pytest.param(
             """

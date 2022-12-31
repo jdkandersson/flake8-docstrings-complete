@@ -14,6 +14,7 @@
 - Support keyword only arguments
 - Support ignoring `self` and `cls` arguments
 - Support for skipping test functions in test files
+- Support for skipping test fixtures in test and fixture files
 - Support async functions
 
 [//]: # "Release links"
