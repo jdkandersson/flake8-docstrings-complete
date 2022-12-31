@@ -107,6 +107,8 @@ A few rules have been defined to allow for selective suppression:
   section in the docstring.
 - `DCO009`: function/ method that returns a value and the docstring has
   multiple returns sections.
+- `DCO010`: function/ method that yields a value does not have the yields
+  section in the docstring.
 
 ### Fix DCO001
 
@@ -147,7 +149,7 @@ class FooClass:
         """Perform foo action."""
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo(bar):
@@ -216,7 +218,7 @@ class FooClass:
         """
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo():
@@ -268,7 +270,7 @@ class FooClass:
         """
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo(bar):
@@ -323,7 +325,7 @@ class FooClass:
         """Perform foo action."""
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo(bar):
@@ -375,7 +377,7 @@ class FooClass:
         """
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo(bar):
@@ -411,7 +413,7 @@ class FooClass:
         return "bar"
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo():
@@ -420,6 +422,7 @@ def foo():
     Return:
         bar.
     """
+    return "bar"
 
 def foo():
     """Return bar.
@@ -464,7 +467,7 @@ class FooClass:
         pass
 ```
 
-This examples can be fixed by:
+These examples can be fixed by:
 
 ```Python
 def foo():
@@ -553,6 +556,51 @@ class Foo:
             bar: the value to perform the foo actions on.
         """
         self.bar = bar
+```
+
+### Fix DCO010
+
+This linting rule is triggered by a function/ method that has at least one
+yield statement with a value and does not have a yields section in the
+docstring. For example:
+
+```Python
+def foo():
+    """Yield bar."""
+    yield "bar"
+
+class FooClass:
+    def foo(self):
+        """Yield bar."""
+        yield "bar"
+```
+
+These examples can be fixed by:
+
+```Python
+def foo():
+    """Yield bar.
+
+    Yield:
+        bar.
+    """
+
+def foo():
+    """Yield bar.
+
+    Yields:
+        bar.
+    """
+    yield "bar"
+
+class FooClass:
+    def foo(self):
+        """Yield bar.
+
+        Yields:
+            bar.
+        """
+        yield "bar"
 ```
 
 ## Sections

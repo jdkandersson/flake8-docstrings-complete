@@ -13,8 +13,8 @@ from flake8_docstrings_complete import (
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
     DOCSTR_MISSING_FUNC_MSG,
     MULT_ARGS_SECTION_IN_DOCSTR_MSG,
-    RETURN_NOT_IN_DOCSTR_MSG,
-    RETURN_IN_DOCSTR_MSG,
+    RETURNS_SECTION_NOT_IN_DOCSTR_MSG,
+    RETURNS_SECTION_IN_DOCSTR_MSG,
     MULT_RETURNS_SECTION_IN_DOCSTR_MSG,
     Plugin,
 )
@@ -412,7 +412,7 @@ def function_1():
     Returns:
     """
 ''',
-            (f"3:4 {RETURN_IN_DOCSTR_MSG}",),
+            (f"3:4 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
             id="function no return returns in docstring",
         ),
         pytest.param(
@@ -424,7 +424,7 @@ class Class1:
         Returns:
         """
 ''',
-            (f"4:8 {RETURN_IN_DOCSTR_MSG}",),
+            (f"4:8 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
             id="method no return returns in docstring",
         ),
         pytest.param(
@@ -436,7 +436,7 @@ def function_1():
     """
     return
 ''',
-            (f"3:4 {RETURN_IN_DOCSTR_MSG}",),
+            (f"3:4 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
             id="function return no value returns in docstring",
         ),
         pytest.param(
@@ -474,7 +474,7 @@ def function_1():
     """Docstring."""
     return 1
 ''',
-            (f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="function single return value returns not in docstring",
         ),
         pytest.param(
@@ -483,7 +483,7 @@ def function_1():
     """Docstring."""
     return 0
 ''',
-            (f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="function single falsy return value returns not in docstring",
         ),
         pytest.param(
@@ -492,7 +492,7 @@ def function_1():
     """Docstring."""
     return None
 ''',
-            (f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="function single None return value returns not in docstring",
         ),
         pytest.param(
@@ -501,7 +501,7 @@ async def function_1():
     """Docstring."""
     return 1
 ''',
-            (f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="async function single return value returns not in docstring",
         ),
         pytest.param(
@@ -512,7 +512,7 @@ class FooClass:
         """Docstring."""
         return 1
 ''',
-            (f"6:8 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"6:8 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="method single return value returns not in docstring",
         ),
         pytest.param(
@@ -522,7 +522,7 @@ def function_1():
     if True:
         return 1
 ''',
-            (f"5:8 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"5:8 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="function single nested return value returns not in docstring",
         ),
         pytest.param(
@@ -533,8 +533,8 @@ def function_1():
     return 12
 ''',
             (
-                f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",
-                f"5:4 {RETURN_NOT_IN_DOCSTR_MSG}",
+                f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"5:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",
             ),
             id="function multiple return value returns not in docstring",
         ),
@@ -545,7 +545,7 @@ def function_1():
     return 11
     return
 ''',
-            (f"4:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="function multiple return first value returns not in docstring",
         ),
         pytest.param(
@@ -555,7 +555,7 @@ def function_1():
     return
     return 12
 ''',
-            (f"5:4 {RETURN_NOT_IN_DOCSTR_MSG}",),
+            (f"5:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="function multiple return second value returns not in docstring",
         ),
         pytest.param(

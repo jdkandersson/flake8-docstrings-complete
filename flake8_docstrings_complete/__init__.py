@@ -50,15 +50,16 @@ ARG_IN_DOCSTR_MSG = (
     f'{ARG_IN_DOCSTR_CODE} "%s" argument should not be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
-RETURN_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}007"
-RETURN_NOT_IN_DOCSTR_MSG = (
-    f"{RETURN_NOT_IN_DOCSTR_CODE} function/ method that returns a value should have the returns "
-    f"section in the docstring{MORE_INFO_BASE}{RETURN_NOT_IN_DOCSTR_CODE.lower()}"
+RETURNS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}007"
+RETURNS_SECTION_NOT_IN_DOCSTR_MSG = (
+    f"{RETURNS_SECTION_NOT_IN_DOCSTR_CODE} function/ method that returns a value should have the "
+    f"returns section in the docstring{MORE_INFO_BASE}{RETURNS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
-RETURN_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}008"
-RETURN_IN_DOCSTR_MSG = (
-    f"{RETURN_IN_DOCSTR_CODE} function/ method that does not return a value should not have the "
-    f"returns section in the docstring{MORE_INFO_BASE}{RETURN_IN_DOCSTR_CODE.lower()}"
+RETURNS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}008"
+RETURNS_SECTION_IN_DOCSTR_MSG = (
+    f"{RETURNS_SECTION_IN_DOCSTR_CODE} function/ method that does not return a value should not "
+    f"have the returns section in the docstring"
+    f"{MORE_INFO_BASE}{RETURNS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
 MULT_RETURNS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}009"
 MULT_RETURNS_SECTION_IN_DOCSTR_MSG = (
@@ -66,6 +67,12 @@ MULT_RETURNS_SECTION_IN_DOCSTR_MSG = (
     "section, found %s"
     f"{MORE_INFO_BASE}{MULT_RETURNS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
+YIELDS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}010"
+YIELDS_SECTION_NOT_IN_DOCSTR_MSG = (
+    f"{YIELDS_SECTION_NOT_IN_DOCSTR_CODE} function/ method that yields a value should have the "
+    f"yields section in the docstring{MORE_INFO_BASE}{YIELDS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
+)
+
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
@@ -74,6 +81,7 @@ FIXTURE_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-fixture-filename-patt
 FIXTURE_FILENAME_PATTERN_DEFAULT = r"conftest\.py"
 FIXTURE_DECORATOR_PATTERN_ARG_NAME = "--docstrings-complete-fixture-decorator-pattern"
 FIXTURE_DECORATOR_PATTERN_DEFAULT = r"(^|\.)fixture$"
+
 SKIP_ARGS = {"self", "cls"}
 UNUSED_ARGS_PREFIX = "_"
 
@@ -228,7 +236,7 @@ def _check_returns(
 
     # Check for returns section in docstring in function that does not return a value
     if not return_nodes_with_value and docstr_info.returns:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, RETURN_IN_DOCSTR_MSG)
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, RETURNS_SECTION_IN_DOCSTR_MSG)
 
 
 class VisitorWithinFunction(ast.NodeVisitor):

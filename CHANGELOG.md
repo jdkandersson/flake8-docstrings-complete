@@ -28,5 +28,13 @@
   the returns section
 - Lint check that ensures there is only one returns section in the docstring
 
+#### Function/ Method Yield Value
+
+- Lint check that ensures all functions/ methods that yield a value have the
+  yields section in the docstring
+- Lint check that ensures a function that does not yield a value does not have
+  the yields section
+- Lint check that ensures there is only one yields section in the docstring
+
 [//]: # "Release links"
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0
