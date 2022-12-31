@@ -16,8 +16,13 @@
 - Support for skipping test functions in test files
 - Support for skipping test fixtures in test and fixture files
 - Support async functions
+
+#### Function/ Method Return Value
+
 - Lint check that ensures all functions/ methods that return a value have the
   returns section in the docstring
+- Lint check that ensures a functin that does not return a value does not have
+  the returns section
 
 [//]: # "Release links"
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0
