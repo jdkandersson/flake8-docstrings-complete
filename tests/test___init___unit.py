@@ -605,6 +605,16 @@ def foo():
         ),
         pytest.param(
             """
+@(1 + 1)
+def foo():
+    pass
+""",
+            "conftest.py",
+            (f"3:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            id="fixture file not fixture decorator",
+        ),
+        pytest.param(
+            """
 @fixture
 def foo():
     pass

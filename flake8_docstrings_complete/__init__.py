@@ -230,16 +230,14 @@ class Visitor(ast.NodeVisitor):
         Returns:
             Whether to skip the function.
         """
-        if self._file_type == FileType.DEFAULT:
-            return False
-
         if self._file_type == FileType.TEST and re.match(self._test_function_pattern, node.name):
             return True
 
         if self._file_type in {FileType.TEST, FileType.FIXTURE}:
             return any(self._is_fixture_decorator(decorator) for decorator in node.decorator_list)
 
-        return True
+        assert self._file_type == FileType.DEFAULT
+        return False
 
     def visit_any_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         """Check a function definition node.
