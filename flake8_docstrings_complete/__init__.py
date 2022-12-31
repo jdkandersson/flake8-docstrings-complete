@@ -148,7 +148,6 @@ def _check_args(
     """
     all_args = list(_iter_args(args))
     all_used_args = list(arg for arg in all_args if not arg.arg.startswith(UNUSED_ARGS_PREFIX))
-    # all_unused_args = list(arg for arg in all_args if arg.arg.startswith(UNUSED_ARGS_PREFIX))
 
     # Check that args section is in docstring if function/ method has used arguments
     if all_used_args and docstr_info.args is None:
