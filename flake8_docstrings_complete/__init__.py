@@ -42,12 +42,12 @@ MULT_ARGS_SECTION_IN_DOCSTR_MSG = (
 )
 ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}005"
 ARG_NOT_IN_DOCSTR_MSG = (
-    f"{ARG_NOT_IN_DOCSTR_CODE} %s should be described in the docstring{MORE_INFO_BASE}"
+    f'{ARG_NOT_IN_DOCSTR_CODE} "%s" argument should be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_NOT_IN_DOCSTR_CODE.lower()}"
 )
 ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}006"
 ARG_IN_DOCSTR_MSG = (
-    f"{ARG_IN_DOCSTR_CODE} %s should not be described in the docstring{MORE_INFO_BASE}"
+    f'{ARG_IN_DOCSTR_CODE} "%s" argument should not be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"

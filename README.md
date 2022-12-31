@@ -3,6 +3,48 @@
 Linter that checks docstrings of functions, methods and classes. It should be
 used in conjuction with `pydocstyle` (or `flake8-docstrings`) as the linter
 assumes that the docstrings already pass `pydocstyle` checks.
+
+## Getting Started
+
+```shell
+python -m venv venv
+source ./venv/bin/activate
+pip install flake8 flake8-docstrings-complete
+flake8 source.py
+```
+
+On the following code:
+
+```Python
+# source.py
+def foo(bar, baz):
+    """Peform foo action on bar.
+
+    Args:
+        bar: The value to perform the foo action on.
+    """
+```
+
+This will produce warnings such as:
+
+```shell
+flake8 test_source.py
+source.py:2:14: DCO005 "baz" argument should be described in the docstring, more information: https://github.com/jdkandersson/flake8-docstrings-complete#fix-dco005
+```
+
+This can be resolved by changing the code to:
+
+```Python
+# test_source.py
+def foo(bar, baz):
+    """Peform foo action on bar.
+
+    Args:
+        bar: The value to perform the foo action on.
+        baz: The modifier to the foo action.
+    """
+```
+
 `flake8-docstrings-complete` adds the following checks to complement
 `pydocstyle`:
 
