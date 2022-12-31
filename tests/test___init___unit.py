@@ -134,6 +134,17 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
+def function_1(_arg_1):
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"3:4 {ARGS_SECTION_IN_DOCSTR_MSG}",),
+            id="function has single unused arg docstring no arg",
+        ),
+        pytest.param(
+            '''
 async def function_1(arg_1):
     """Docstring 1.
 
@@ -268,6 +279,28 @@ def function_1(arg_1, arg_2):
         ''',
             (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}", f"2:22 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}"),
             id="function multiple args docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(_arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+    """
+        ''',
+            (f"2:23 {ARG_NOT_IN_DOCSTR_MSG % 'arg_2'}",),
+            id="function multiple args first unused docstring no arg",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, _arg_2):
+    """Docstring 1.
+
+    Args:
+    """
+        ''',
+            (f"2:15 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            id="function multiple args second unused docstring no arg",
         ),
         pytest.param(
             '''
@@ -500,6 +533,26 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
+def function_1(_arg_1):
+    """Docstring 1.
+
+    Args:
+        _arg_1:
+    """
+''',
+            (),
+            id="function single unused arg docstring single arg",
+        ),
+        pytest.param(
+            '''
+def function_1(_arg_1):
+    """Docstring 1."""
+''',
+            (),
+            id="function single unused arg docstring no args",
+        ),
+        pytest.param(
+            '''
 def function_1(*args):
     """Docstring 1.
 
@@ -547,6 +600,30 @@ def function_1(arg_1, arg_2):
 ''',
             (),
             id="function multiple arg docstring multiple arg",
+        ),
+        pytest.param(
+            '''
+def function_1(_arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_2:
+    """
+''',
+            (),
+            id="function multiple arg first unused docstring single arg",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, _arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+    """
+''',
+            (),
+            id="function multiple arg first unused docstring single arg",
         ),
         pytest.param(
             """

@@ -64,6 +64,7 @@ FIXTURE_FILENAME_PATTERN_DEFAULT = r"conftest\.py"
 FIXTURE_DECORATOR_PATTERN_ARG_NAME = "--docstrings-complete-fixture-decorator-pattern"
 FIXTURE_DECORATOR_PATTERN_DEFAULT = r"(^|\.)fixture$"
 SKIP_ARGS = {"self", "cls"}
+UNUSED_ARGS_PREFIX = "_"
 
 
 # Helper function for option management, tested in integration tests
@@ -146,9 +147,11 @@ def _check_args(
         All the problems with the arguments.
     """
     all_args = list(_iter_args(args))
+    all_used_args = list(arg for arg in all_args if not arg.arg.startswith(UNUSED_ARGS_PREFIX))
+    # all_unused_args = list(arg for arg in all_args if arg.arg.startswith(UNUSED_ARGS_PREFIX))
 
-    # Check that args section is in docstring if function/ method has arguments
-    if all_args and docstr_info.args is None:
+    # Check that args section is in docstring if function/ method has used arguments
+    if all_used_args and docstr_info.args is None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
     # Check that args section is not in docstring if function/ method has no arguments
     if not all_args and docstr_info.args is not None:
@@ -167,7 +170,7 @@ def _check_args(
         # Check for function arguments that are not in the docstring
         yield from (
             Problem(arg.lineno, arg.col_offset, ARG_NOT_IN_DOCSTR_MSG % arg.arg)
-            for arg in all_args
+            for arg in all_used_args
             if arg.arg not in docstr_args
         )
 
@@ -177,6 +180,10 @@ def _check_args(
             Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
             for arg in sorted(docstr_args - func_args)
         )
+
+        # Check for empty args section
+        if not all_used_args and len(docstr_info.args) == 0:
+            yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
 
 
 def _check_returns(
