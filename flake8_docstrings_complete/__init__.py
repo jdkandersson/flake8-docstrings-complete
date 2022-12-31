@@ -218,6 +218,14 @@ def _check_returns(
             for node in return_nodes_with_value
         )
 
+    # Check for multiple returns sections
+    if return_nodes_with_value and len(docstr_info.returns_sections) > 1:
+        yield Problem(
+            docstr_node.lineno,
+            docstr_node.col_offset,
+            MULT_RETURNS_SECTION_IN_DOCSTR_MSG % ",".join(docstr_info.returns_sections),
+        )
+
     # Check for returns section in docstring in function that does not return a value
     if not return_nodes_with_value and docstr_info.returns:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, RETURN_IN_DOCSTR_MSG)

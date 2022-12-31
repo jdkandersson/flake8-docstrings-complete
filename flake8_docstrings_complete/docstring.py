@@ -30,7 +30,8 @@ class Docstring(NamedTuple):
         args_sections: All the arguments sections.
         attrs: The attributes described in the docstring. None if the docstring doesn't have the
             attrs section.
-        yields: Whether the docstring has the returns section.
+        returns: Whether the docstring has the returns section.
+        returns_sections: All the returns sections.
         yields: Whether the docstring has the yields section.
         raises: The exceptions described in the docstring. None if the docstring doesn't have the
             raises section.
@@ -40,6 +41,7 @@ class Docstring(NamedTuple):
     args_sections: tuple[str, ...] = ()
     attrs: tuple[str, ...] | None = None
     returns: bool = False
+    returns_sections: tuple[str, ...] = ()
     yields: bool = False
     raises: tuple[str, ...] | None = None
 
@@ -107,6 +109,22 @@ def _get_section_by_name(name: str, sections: Iterable[_Section]) -> _Section | 
     )
 
 
+def _get_all_section_names_by_name(name: str, sections: Iterable[_Section]) -> Iterator[str]:
+    """Get all the section names in a docstring by name.
+
+    Args:
+        name: The name of the section.
+        sections: The sections to retrieve from.
+
+    Yields:
+        The names of the sections that match the name.
+    """
+    sections = iter(sections)
+    yield from (
+        section.name for section in sections if section.name.lower() in _SECTION_NAMES[name]
+    )
+
+
 def parse(value: str) -> Docstring:
     """Parse a docstring.
 
@@ -124,11 +142,10 @@ def parse(value: str) -> Docstring:
 
     return Docstring(
         args=args_section.subs if args_section is not None else None,
-        args_sections=tuple(
-            section.name for section in sections if section.name.lower() in _SECTION_NAMES["args"]
-        ),
+        args_sections=tuple(_get_all_section_names_by_name(name="args", sections=sections)),
         attrs=attrs_section.subs if attrs_section is not None else None,
         returns=_get_section_by_name("returns", sections) is not None,
+        returns_sections=tuple(_get_all_section_names_by_name(name="returns", sections=sections)),
         yields=_get_section_by_name("yields", sections) is not None,
         raises=raises_section.subs if raises_section is not None else None,
     )

@@ -285,7 +285,7 @@ Attributes:
 
 Returns:
     """,
-            docstring.Docstring(returns=True),
+            docstring.Docstring(returns=True, returns_sections=("Returns",)),
             id="returns empty",
         ),
         pytest.param(
@@ -294,8 +294,36 @@ Returns:
 Returns:
     The return value.
     """,
-            docstring.Docstring(returns=True),
+            docstring.Docstring(returns=True, returns_sections=("Returns",)),
             id="returns single line",
+        ),
+        pytest.param(
+            """short description
+
+Return:
+    """,
+            docstring.Docstring(returns=True, returns_sections=("Return",)),
+            id="returns alternate",
+        ),
+        pytest.param(
+            """short description
+
+Returns:
+
+Returns:
+    """,
+            docstring.Docstring(returns=True, returns_sections=("Returns", "Returns")),
+            id="mutiple returns",
+        ),
+        pytest.param(
+            """short description
+
+Returns:
+
+Return:
+    """,
+            docstring.Docstring(returns=True, returns_sections=("Returns", "Return")),
+            id="mutiple returns alternate",
         ),
         pytest.param(
             """short description
@@ -373,6 +401,7 @@ Raises:
                 args_sections=("Args",),
                 attrs=("attr_1",),
                 returns=True,
+                returns_sections=("Returns",),
                 yields=True,
                 raises=("exc_1",),
             ),

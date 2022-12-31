@@ -24,6 +24,7 @@ from flake8_docstrings_complete import (
     FIXTURE_DECORATOR_PATTERN_DEFAULT,
     RETURN_NOT_IN_DOCSTR_CODE,
     RETURN_IN_DOCSTR_CODE,
+    MULT_RETURNS_SECTION_IN_DOCSTR_CODE,
 )
 
 
@@ -244,6 +245,23 @@ def foo():
             "source.py",
             "",
             id=f"{RETURN_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Returns:
+        A value.
+
+    Return:
+        A value.
+    """  # noqa: {MULT_RETURNS_SECTION_IN_DOCSTR_CODE}
+    return 1
+''',
+            "source.py",
+            "",
+            id=f"{MULT_RETURNS_SECTION_IN_DOCSTR_CODE} disabled",
         ),
     ],
 )

@@ -15,6 +15,7 @@ from flake8_docstrings_complete import (
     MULT_ARGS_SECTION_IN_DOCSTR_MSG,
     RETURN_NOT_IN_DOCSTR_MSG,
     RETURN_IN_DOCSTR_MSG,
+    MULT_RETURNS_SECTION_IN_DOCSTR_MSG,
     Plugin,
 )
 
@@ -416,6 +417,18 @@ def function_1():
         ),
         pytest.param(
             '''
+class Class1:
+    def function_1():
+        """Docstring.
+
+        Returns:
+        """
+''',
+            (f"4:8 {RETURN_IN_DOCSTR_MSG}",),
+            id="method no return returns in docstring",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring.
 
@@ -425,6 +438,35 @@ def function_1():
 ''',
             (f"3:4 {RETURN_IN_DOCSTR_MSG}",),
             id="function return no value returns in docstring",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring.
+
+    Returns:
+
+    Returns:
+    """
+    return 1
+''',
+            (f"3:4 {MULT_RETURNS_SECTION_IN_DOCSTR_MSG % 'Returns,Returns'}",),
+            id="function return multiple returns in docstring",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    def function_1():
+        """Docstring.
+
+        Returns:
+
+        Returns:
+        """
+        return 1
+''',
+            (f"4:8 {MULT_RETURNS_SECTION_IN_DOCSTR_MSG % 'Returns,Returns'}",),
+            id="method return multiple returns in docstring",
         ),
         pytest.param(
             '''
