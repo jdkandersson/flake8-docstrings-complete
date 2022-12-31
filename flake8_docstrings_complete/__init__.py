@@ -173,8 +173,41 @@ def _check_args(docstr_node: ast.Constant, args: ast.arguments) -> Iterator[Prob
         )
 
 
+class VisitorWithinFunction(ast.NodeVisitor):
+    """Visits AST nodes within a functions but not nested functions or classes.
+
+    Attrs:
+        return_nodes: All the return nodes encountered within the function.
+    """
+
+    return_nodes: list[ast.Return]
+
+    def __init__(self) -> None:
+        """Construct."""
+        self.return_nodes = []
+
+    # The function must be called the same as the name of the node
+    def visit_Return(self, node: ast.Return) -> None:  # pylint: disable=invalid-name
+        """Check a function definition node.
+
+        Args:
+            node: The function definition to check.
+        """
+        self.return_nodes.append(node)
+
+        # Ensure recursion continues
+        self.generic_visit(node)
+
+    # Ensure that nested functions and classes are not iterated over
+    # pylint: disable=unnecessary-lambda-assignment
+    # The functions must be called the same as the name of the node
+    visit_FunctionDef = lambda _self, _node: True  # noqa: N815
+    visit_AsyncFunctionDef = lambda _self, _node: True  # noqa: N815
+    visit_ClassDef = lambda _self, _node: True  # noqa: N815
+
+
 class Visitor(ast.NodeVisitor):
-    """Visits AST nodes and check docstrings of test functions.
+    """Visits AST nodes and check docstrings of functions.
 
     Attrs:
         problems: All the problems that were encountered.
@@ -250,12 +283,8 @@ class Visitor(ast.NodeVisitor):
             node: The function definition to check.
         """
         if not self._skip_function(node=node):
-            if (
-                not node.body
-                or not isinstance(node.body[0], ast.Expr)
-                or not isinstance(node.body[0].value, ast.Constant)
-                or not isinstance(node.body[0].value.value, str)
-            ):
+            # Check docstring is defined
+            if ast.get_docstring(node) is None:
                 self.problems.append(
                     Problem(
                         lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_FUNC_MSG
@@ -274,7 +303,7 @@ class Visitor(ast.NodeVisitor):
         # Ensure recursion continues
         self.generic_visit(node)
 
-    # The function must be called the same as the name of the node
+    # The functions must be called the same as the name of the node
     visit_FunctionDef = visit_any_function  # noqa: N815
     visit_AsyncFunctionDef = visit_any_function  # noqa: N815
 
