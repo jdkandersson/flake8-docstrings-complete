@@ -28,6 +28,11 @@ from flake8_docstrings_complete import (
     TEST_FUNCTION_PATTERN_DEFAULT,
     YIELDS_SECTION_IN_DOCSTR_CODE,
     YIELDS_SECTION_NOT_IN_DOCSTR_CODE,
+    RAISES_SECTION_NOT_IN_DOCSTR_CODE,
+    RAISES_SECTION_IN_DOCSTR_CODE,
+    MULT_RAISES_SECTIONS_IN_DOCSTR_CODE,
+    EXC_NOT_IN_DOCSTR_CODE,
+    EXC_IN_DOCSTR_CODE,
 )
 
 
@@ -305,6 +310,76 @@ def foo():
             "source.py",
             "",
             id=f"{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring."""  # noqa: {RAISES_SECTION_NOT_IN_DOCSTR_CODE}
+    raise Exc1
+''',
+            "source.py",
+            "",
+            id=f"{RAISES_SECTION_NOT_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Raises:
+        Exc1:.
+    """  # noqa: {RAISES_SECTION_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{RAISES_SECTION_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Raises:
+        Exc1:
+
+    Raise:
+        Exc1:
+    """  # noqa: {MULT_RAISES_SECTIONS_IN_DOCSTR_CODE}
+    raise Exc1
+''',
+            "source.py",
+            "",
+            id=f"{MULT_RAISES_SECTIONS_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Raises:
+        Exc1:.
+    """
+    raise Exc1
+    raise Exc2  # noqa: {EXC_NOT_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{EXC_NOT_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Raises:
+        Exc1:
+        Exc2:
+    """  # noqa: {EXC_IN_DOCSTR_CODE}
+    raise Exc1
+''',
+            "source.py",
+            "",
+            id=f"{EXC_IN_DOCSTR_CODE} disabled",
         ),
     ],
 )
