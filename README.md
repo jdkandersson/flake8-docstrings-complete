@@ -1124,3 +1124,8 @@ Section information is extracted using the following algorithm:
    and any characters within round brackets followed by a colon.
 3. The section ends if any line with zero or more whitespace characters is
    encountered or the end of the docstring is reached.
+
+## Future Ideas:
+
+- Check that argument, exceptions and attributes have non-empty description.
+- Check that arguments, exceptions and attributes have meaningful descriptions.
