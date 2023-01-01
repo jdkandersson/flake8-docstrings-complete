@@ -33,6 +33,7 @@ from flake8_docstrings_complete import (
     MULT_RAISES_SECTIONS_IN_DOCSTR_CODE,
     EXC_NOT_IN_DOCSTR_CODE,
     EXC_IN_DOCSTR_CODE,
+    RE_RAISE_NO_EXC_IN_DOCSTR_CODE,
 )
 
 
@@ -400,6 +401,19 @@ def foo():
             "source.py",
             "",
             id=f"{EXC_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Raises:
+    """  # noqa: {RE_RAISE_NO_EXC_IN_DOCSTR_CODE},D414
+    raise
+''',
+            "source.py",
+            "",
+            id=f"{RE_RAISE_NO_EXC_IN_DOCSTR_CODE} disabled",
         ),
     ],
 )

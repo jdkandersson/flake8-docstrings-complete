@@ -112,6 +112,12 @@ EXC_IN_DOCSTR_MSG = (
     f'{EXC_IN_DOCSTR_CODE} "%s" exception should not be described in the docstring{MORE_INFO_BASE}'
     f"{EXC_IN_DOCSTR_CODE.lower()}"
 )
+RE_RAISE_NO_EXC_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}018"
+RE_RAISE_NO_EXC_IN_DOCSTR_MSG = (
+    f"{RE_RAISE_NO_EXC_IN_DOCSTR_CODE} a function/ method that re-raises exceptions should "
+    "describe at least one exception in the raises section of the docstring"
+    f"{MORE_INFO_BASE}{RE_RAISE_NO_EXC_IN_DOCSTR_CODE.lower()}"
+)
 
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
@@ -380,6 +386,7 @@ def _check_raises(
     """
     all_excs = list(_get_exc_value(node) for node in raise_nodes)
     has_raise_no_value = any(exc is None for exc in all_excs)
+    all_raise_no_value = all(exc is None for exc in all_excs)
 
     # Check that raises section is in docstring if function/ method raises exceptions
     if all_excs and docstr_info.raises is None:
@@ -387,6 +394,11 @@ def _check_raises(
     # Check that raises section is not in docstring if function/ method raises no exceptions
     if not all_excs and docstr_info.raises is not None:
         yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_IN_DOCSTR_MSG)
+    # Check for empty raises section
+    if (all_excs and all_raise_no_value) and (
+        docstr_info.raises is None or len(docstr_info.raises) == 0
+    ):
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, RE_RAISE_NO_EXC_IN_DOCSTR_MSG)
     elif all_excs and docstr_info.raises is not None:
         docstr_raises = set(docstr_info.raises)
 
@@ -413,10 +425,6 @@ def _check_raises(
                 Problem(docstr_node.lineno, docstr_node.col_offset, EXC_IN_DOCSTR_MSG % exc)
                 for exc in sorted(docstr_raises - func_exc)
             )
-
-        # Check for empty raises section
-        if has_raise_no_value and len(docstr_info.raises) == 0:
-            yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_IN_DOCSTR_MSG)
 
 
 class VisitorWithinFunction(ast.NodeVisitor):

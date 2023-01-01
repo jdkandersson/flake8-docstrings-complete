@@ -123,6 +123,8 @@ A few rules have been defined to allow for selective suppression:
   more of the exceptions is not described in the docstring.
 - `DCO017`: function/ method has one or more exceptions described in the
   docstring which are not raised in the function/ method.
+- `DCO018`: function/ method that has a raise without an exception has an empty
+  raises section in the docstring.
 
 ### Fix DCO001
 
@@ -1020,6 +1022,78 @@ class FooClass:
             BarError: the value to perform the foo action on was wrong.
         """
         raise BarError
+```
+
+### Fix DCO017
+
+This linting rule is triggered by a function/ method that has a `raise`
+statement without an exception (typically re-raising exceptions) and the raises
+section is not included or is empty. For example:
+
+```Python
+def foo():
+    """Perform foo action."""
+    try:
+        bar()
+    except BarError:
+        raise
+
+def foo():
+    """Perform foo action.
+
+    Raises:
+    """
+    try:
+        bar()
+    except BarError:
+        raise
+
+class FooClass:
+    def foo(self):
+        """Perform foo action."""
+        try:
+            bar()
+        except BarError:
+            raise
+```
+
+These examples can be fixed by describing at least one exception in the raises
+section:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    try:
+        bar()
+    except BarError:
+        raise
+
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    try:
+        bar()
+    except BarError:
+        raise
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        try:
+            bar()
+        except BarError:
+            raise
 ```
 
 ## Docstring Examples

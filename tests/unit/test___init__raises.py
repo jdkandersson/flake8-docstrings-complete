@@ -10,6 +10,7 @@ from flake8_docstrings_complete import (
     RAISES_SECTION_IN_DOCSTR_MSG,
     RAISES_SECTION_NOT_IN_DOCSTR_MSG,
     MULT_RAISES_SECTIONS_IN_DOCSTR_MSG,
+    RE_RAISE_NO_EXC_IN_DOCSTR_MSG,
 )
 
 from . import result
@@ -81,6 +82,19 @@ def function_1():
 ''',
             (f"7:10 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
             id="function raises single exc docstring no exc",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+    """
+    raise Exc1
+    raise
+''',
+            (f"7:10 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
+            id="function raises single exc and single no exc docstring no exc",
         ),
         pytest.param(
             '''
@@ -321,8 +335,24 @@ def function_1():
     """Docstring 1."""
     raise
 ''',
-            (f"3:4 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",),
+            (
+                f"3:4 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"3:4 {RE_RAISE_NO_EXC_IN_DOCSTR_MSG}",
+            ),
             id="function single raise no exc docstring no raises exc",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    def function_1(self):
+        """Docstring 1."""
+        raise
+''',
+            (
+                f"4:8 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"4:8 {RE_RAISE_NO_EXC_IN_DOCSTR_MSG}",
+            ),
+            id="method raise no exc docstring no raises",
         ),
         pytest.param(
             '''
@@ -333,8 +363,8 @@ def function_1():
     """
     raise
 ''',
-            (f"3:4 {RAISES_SECTION_IN_DOCSTR_MSG}",),
-            id="function no raise docstring raises exc",
+            (f"3:4 {RE_RAISE_NO_EXC_IN_DOCSTR_MSG}",),
+            id="function raise no exc docstring raises empty",
         ),
         pytest.param(
             '''
