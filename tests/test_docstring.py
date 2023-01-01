@@ -313,7 +313,7 @@ Returns:
 Returns:
     """,
             docstring.Docstring(returns=True, returns_sections=("Returns", "Returns")),
-            id="mutiple returns",
+            id="multiple returns",
         ),
         pytest.param(
             """short description
@@ -323,7 +323,7 @@ Returns:
 Return:
     """,
             docstring.Docstring(returns=True, returns_sections=("Returns", "Return")),
-            id="mutiple returns alternate",
+            id="multiple returns alternate",
         ),
         pytest.param(
             """short description
@@ -358,7 +358,7 @@ Yields:
 Yields:
     """,
             docstring.Docstring(yields=True, yields_sections=("Yields", "Yields")),
-            id="mutiple yields",
+            id="multiple yields",
         ),
         pytest.param(
             """short description
@@ -368,7 +368,7 @@ Yields:
 Yield:
     """,
             docstring.Docstring(yields=True, yields_sections=("Yields", "Yield")),
-            id="mutiple yields alternate",
+            id="multiple yields alternate",
         ),
         pytest.param(
             """short description

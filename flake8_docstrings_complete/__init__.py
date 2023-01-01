@@ -7,7 +7,7 @@ import ast
 import enum
 import re
 from pathlib import Path
-from typing import Iterator, NamedTuple, Iterable
+from typing import Iterable, Iterator, NamedTuple
 
 from flake8.options.manager import OptionManager
 
@@ -386,7 +386,7 @@ class Visitor(ast.NodeVisitor):
         self._fixture_decorator_pattern = fixture_decorator_pattern
 
     def _is_fixture_decorator(self, node: ast.expr) -> bool:
-        """Determine whether an expression is a fixture decorator
+        """Determine whether an expression is a fixture decorator.
 
         Args:
             node: The node to check.
@@ -573,6 +573,7 @@ class Plugin:
     @classmethod
     def parse_options(cls, options: argparse.Namespace) -> None:  # pragma: nocover
         """Record the value of the options.
+
         Args:
             options: The options passed to flake8.
         """

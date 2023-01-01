@@ -1,6 +1,6 @@
 """Unit tests for plugin."""
 
-# Lines are from many patameters for tests
+# Lines are from many parameters for tests
 # pylint:disable=too-many-lines
 
 from __future__ import annotations
@@ -16,12 +16,12 @@ from flake8_docstrings_complete import (
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
     DOCSTR_MISSING_FUNC_MSG,
     MULT_ARGS_SECTION_IN_DOCSTR_MSG,
-    RETURNS_SECTION_NOT_IN_DOCSTR_MSG,
-    RETURNS_SECTION_IN_DOCSTR_MSG,
     MULT_RETURNS_SECTION_IN_DOCSTR_MSG,
-    YIELDS_SECTION_NOT_IN_DOCSTR_MSG,
-    YIELDS_SECTION_IN_DOCSTR_MSG,
     MULT_YIELDS_SECTION_IN_DOCSTR_MSG,
+    RETURNS_SECTION_IN_DOCSTR_MSG,
+    RETURNS_SECTION_NOT_IN_DOCSTR_MSG,
+    YIELDS_SECTION_IN_DOCSTR_MSG,
+    YIELDS_SECTION_NOT_IN_DOCSTR_MSG,
     Plugin,
 )
 
@@ -490,7 +490,7 @@ def function_1():
     return 0
 ''',
             (f"4:4 {RETURNS_SECTION_NOT_IN_DOCSTR_MSG}",),
-            id="function single falsy return value returns not in docstring",
+            id="function single falsely return value returns not in docstring",
         ),
         pytest.param(
             '''
@@ -589,7 +589,7 @@ def function_1():
     yield 0
 ''',
             (f"4:4 {YIELDS_SECTION_NOT_IN_DOCSTR_MSG}",),
-            id="function single falsy yield value yields not in docstring",
+            id="function single falsely yield value yields not in docstring",
         ),
         pytest.param(
             '''

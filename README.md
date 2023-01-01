@@ -1,7 +1,7 @@
 # flake8-docstrings-complete
 
 Linter that checks docstrings of functions, methods and classes. It should be
-used in conjuction with `pydocstyle` (or `flake8-docstrings`) as the linter
+used in conjunction with `pydocstyle` (or `flake8-docstrings`) as the linter
 assumes that the docstrings already pass `pydocstyle` checks.
 
 ## Getting Started
@@ -19,7 +19,7 @@ missing from the `Args` section in the docstring:
 ```Python
 # source.py
 def foo(bar, baz):
-    """Peform foo action on bar.
+    """Perform foo action on bar.
 
     Args:
         bar: The value to perform the foo action on.
@@ -38,7 +38,7 @@ This can be resolved by adding the `baz` argument to the `Args` section:
 ```Python
 # test_source.py
 def foo(bar, baz):
-    """Peform foo action on bar.
+    """Perform foo action on bar.
 
     Args:
         bar: The value to perform the foo action on.
@@ -757,7 +757,7 @@ def foo(bar):
         All the foo actions that have been performed.
 
     Raises:
-        FooError: an error occured whilst performing the foo action.
+        FooError: an error occurred whilst performing the foo action.
     """
 
 class Foo:
