@@ -42,6 +42,7 @@
 - Lint check that ensures docstring doesn't describe exceptions the function/
   method doesn't raise
 - Lint check that ensures there is only one raises section in the docstring
+- Lint check that ensures the raises section describes at least one exception.
 
 [//]: # "Release links"
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0
