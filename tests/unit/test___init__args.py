@@ -1,8 +1,5 @@
 """Unit tests for args checks in the plugin."""
 
-# Lines are from many parameters for tests
-# pylint:disable=too-many-lines
-
 from __future__ import annotations
 
 import pytest
