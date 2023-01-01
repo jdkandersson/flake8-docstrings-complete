@@ -330,23 +330,6 @@ Return:
 
 Yields:
     """,
-            docstring.Docstring(yields=True),
-            id="yields empty",
-        ),
-        pytest.param(
-            """short description
-
-Yields:
-    The return value.
-    """,
-            docstring.Docstring(yields=True),
-            id="yields single line",
-        ),
-        pytest.param(
-            """short description
-
-Yields:
-    """,
             docstring.Docstring(yields=True, yields_sections=("Yields",)),
             id="yields empty",
         ),
@@ -354,7 +337,7 @@ Yields:
             """short description
 
 Yields:
-    The yield value.
+    The return value.
     """,
             docstring.Docstring(yields=True, yields_sections=("Yields",)),
             id="yields single line",

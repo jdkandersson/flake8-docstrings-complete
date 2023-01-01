@@ -467,6 +467,15 @@ class Visitor(ast.NodeVisitor):
                     )
                 )
 
+                # Check yields
+                self.problems.extend(
+                    _check_yields(
+                        docstr_info=docstr_info,
+                        docstr_node=docstr_node,
+                        yield_nodes=visitor_within_function.yield_nodes,
+                    )
+                )
+
         # Ensure recursion continues
         self.generic_visit(node)
 
