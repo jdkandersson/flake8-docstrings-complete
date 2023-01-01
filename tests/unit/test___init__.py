@@ -5,8 +5,6 @@
 
 from __future__ import annotations
 
-import ast
-
 import pytest
 
 from flake8_docstrings_complete import (
@@ -22,23 +20,9 @@ from flake8_docstrings_complete import (
     RETURNS_SECTION_NOT_IN_DOCSTR_MSG,
     YIELDS_SECTION_IN_DOCSTR_MSG,
     YIELDS_SECTION_NOT_IN_DOCSTR_MSG,
-    Plugin,
 )
 
-
-def _result(code: str, filename: str = "source.py") -> tuple[str, ...]:
-    """Generate linting results.
-
-    Args:
-        code: The code to check.
-        filename: The name of the file the code is in.
-
-    Returns:
-        The linting result.
-    """
-    tree = ast.parse(code)
-    plugin = Plugin(tree, filename)
-    return tuple(f"{line}:{col} {msg}" for line, col, msg, _ in plugin.run())
+from . import result
 
 
 @pytest.mark.parametrize(
@@ -1206,7 +1190,7 @@ def test_plugin(code: str, expected_result: tuple[str, ...]):
     when: linting is run on the code
     then: the expected result is returned
     """
-    assert _result(code) == expected_result
+    assert result.get(code) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -1387,4 +1371,4 @@ def test_plugin_filename(code: str, filename: str, expected_result: tuple[str, .
     when: linting is run on the code
     then: the expected result is returned
     """
-    assert _result(code, filename) == expected_result
+    assert result.get(code, filename) == expected_result
