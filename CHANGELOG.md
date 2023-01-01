@@ -36,5 +36,12 @@
   the yields section
 - Lint check that ensures there is only one yields section in the docstring
 
+#### Function/ Method Exception Handling
+
+- Lint check that ensures all function/ method exceptions are documented
+- Lint check that ensures docstring doesn't describe exceptions the function/
+  method doesn't raise
+- Lint check that ensures there is only one raises section in the docstring
+
 [//]: # "Release links"
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0

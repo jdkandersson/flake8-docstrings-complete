@@ -113,6 +113,16 @@ A few rules have been defined to allow for selective suppression:
   section in the docstring.
 - `DCO012`: function/ method that yields a value and the docstring has
   multiple yields sections.
+- `DCO013`: function/ method raises one or more exceptions and the docstring
+  does not have a raises section.
+- `DCO014`: function/ method that raises no exceptions and the docstring has a
+  raises section.
+- `DCO015`: function/ method that raises one or more exceptions and the
+  docstring has multiple raises sections.
+- `DCO016`: function/ method that raises one or more exceptions where one or
+  more of the exceptions is not described in the docstring.
+- `DCO017`: function/ method has one or more exceptions described in the
+  docstring which are not raised in the function/ method.
 
 ### Fix DCO001
 
@@ -128,7 +138,7 @@ class FooClass:
         pass
 ```
 
-This example can be fixed by:
+This example can be fixed by adding a docstring:
 
 ```Python
 def foo():
@@ -142,7 +152,8 @@ class FooClass:
 ### Fix DCO002
 
 This linting rule is triggered by a function/ method that has one or more
-arguments and a docstring that does not have an arguments section. For example:
+arguments with a docstring that does not have an arguments section. For
+example:
 
 ```Python
 def foo(bar):
@@ -153,7 +164,8 @@ class FooClass:
         """Perform foo action."""
 ```
 
-These examples can be fixed by:
+These examples can be fixed by adding the arguments section and describing all
+arguments in the arguments section:
 
 ```Python
 def foo(bar):
@@ -188,7 +200,7 @@ class FooClass:
 
 ### Fix DCO003
 
-This linting rule is triggered by a function/ method that has no arguments and
+This linting rule is triggered by a function/ method that has no arguments with
 a docstring that has an arguments section. For example:
 
 ```Python
@@ -222,7 +234,7 @@ class FooClass:
         """
 ```
 
-These examples can be fixed by:
+These examples can be fixed by removing the arguments section:
 
 ```Python
 def foo():
@@ -274,7 +286,7 @@ class FooClass:
         """
 ```
 
-These examples can be fixed by:
+These examples can be fixed by removing the additional arguments sections:
 
 ```Python
 def foo(bar):
@@ -315,7 +327,10 @@ docstring. For example:
 
 ```Python
 def foo(bar):
-    """Perform foo action."""
+    """Perform foo action.
+
+    Args:
+    """
 
 def foo(bar, baz):
     """Perform foo action.
@@ -326,10 +341,14 @@ def foo(bar, baz):
 
 class FooClass:
     def foo(self, bar):
-        """Perform foo action."""
+        """Perform foo action.
+
+        Args:
+        """
 ```
 
-These examples can be fixed by:
+These examples can be fixed by adding the missing arguments to the arguments
+section:
 
 ```Python
 def foo(bar):
@@ -381,7 +400,8 @@ class FooClass:
         """
 ```
 
-These examples can be fixed by:
+These examples can be fixed by removing the arguments the function doesn't have
+from the docstring:
 
 ```Python
 def foo(bar):
@@ -417,7 +437,7 @@ class FooClass:
         return "bar"
 ```
 
-These examples can be fixed by:
+These examples can be fixed by adding the returns section:
 
 ```Python
 def foo():
@@ -471,7 +491,7 @@ class FooClass:
         pass
 ```
 
-These examples can be fixed by:
+These examples can be fixed by removing the returns section:
 
 ```Python
 def foo():
@@ -525,7 +545,7 @@ class FooClass:
         return "bar"
 ```
 
-These examples can be fixed by:
+These examples can be fixed by removing the additional returns sections:
 
 ```Python
 def foo():
@@ -575,7 +595,7 @@ class FooClass:
         yield "bar"
 ```
 
-These examples can be fixed by:
+These examples can be fixed by adding the yields section:
 
 ```Python
 def foo():
@@ -702,7 +722,7 @@ class FooClass:
         yield "bar"
 ```
 
-These examples can be fixed by:
+These examples can be fixed by removing the additional yields sections:
 
 ```Python
 def foo():
@@ -737,6 +757,269 @@ class FooClass:
             bar.
         """
         yield "bar"
+```
+
+### Fix DCO013
+
+This linting rule is triggered by a function/ method that raises one or more
+exceptions and a docstring that does not have a raises section. For example:
+
+```Python
+def foo():
+    """Perform foo action."""
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action."""
+        raise BarError
+```
+
+These examples can be fixed by adding the raises section and describing all
+raised exceptions in it:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+def foo():
+    """Perform foo action.
+
+    Raise:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+### Fix DCO014
+
+This linting rule is triggered by a function/ method that raises no exceptions
+with a docstring that has a raises section. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+
+def foo():
+    """Perform foo action.
+
+    Raise:
+        BarError: the value to perform the foo action on was wrong.
+    """
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+```
+
+These examples can be fixed by removing the raises section:
+
+```Python
+def foo():
+    """Perform foo action."""
+
+class FooClass:
+    def foo(self):
+        """Perform foo action."""
+```
+
+### Fix DCO015
+
+This linting rule is triggered by a function/ method that raises one or more
+exceptions with a docstring that has multiple raises sections. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+
+    Raise:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+These examples can be fixed by removing the additional raises sections:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+def foo():
+    """Perform foo action.
+
+    Raise:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+### Fix DCO016
+
+This linting rule is triggered by a function/ method that raises one or more
+exceptions where one or more of those exceptions is not described in the
+docstring. For example:
+
+```Python
+def foo():
+    """Perform foo action."""
+    raise BarError
+
+def foo(bar, baz):
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+    raise BazError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action."""
+        raise BarError
+```
+
+These examples can be fixed by describing the additional exceptions in the
+docstring:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+def foo(bar, baz):
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+        BazError: the alternate value to perform the foo action on was wrong.
+    """
+    raise BarError
+    raise BazError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+### Fix DCO017
+
+This linting rule is triggered by a function/ method that raises one or more
+exceptions and a docstring that describes one or more exceptions where on or
+more of the described exceptions are not raised by the function. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+        BazError: the alternate value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+            BazError: the alternate value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+These examples can be fixed by removing the exception that is not raised from
+the docstring:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
 ```
 
 ## Docstring Examples
