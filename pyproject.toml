@@ -73,6 +73,9 @@ module = "tests.*"
 disallow_untyped_defs = false
 
 [tool.pylint.messages_control]
+enable = [
+    "useless-suppression"
+]
 disable = [
     "wrong-import-position"
 ]
