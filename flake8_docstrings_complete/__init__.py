@@ -72,6 +72,18 @@ YIELDS_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{YIELDS_SECTION_NOT_IN_DOCSTR_CODE} function/ method that yields a value should have the "
     f"yields section in the docstring{MORE_INFO_BASE}{YIELDS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
+YIELDS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}011"
+YIELDS_SECTION_IN_DOCSTR_MSG = (
+    f"{YIELDS_SECTION_IN_DOCSTR_CODE} function/ method that does not yield a value should not "
+    f"have the yields section in the docstring"
+    f"{MORE_INFO_BASE}{YIELDS_SECTION_IN_DOCSTR_CODE.lower()}"
+)
+MULT_YIELDS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}012"
+MULT_YIELDS_SECTION_IN_DOCSTR_MSG = (
+    f"{MULT_YIELDS_SECTION_IN_DOCSTR_CODE} a docstring should only contain a single yields "
+    "section, found %s"
+    f"{MORE_INFO_BASE}{MULT_YIELDS_SECTION_IN_DOCSTR_CODE.lower()}"
+)
 
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
@@ -222,7 +234,7 @@ def _check_returns(
     # Check for return statements with value and no returns section in docstring
     if return_nodes_with_value and not docstr_info.returns:
         yield from (
-            Problem(node.lineno, node.col_offset, RETURN_NOT_IN_DOCSTR_MSG)
+            Problem(node.lineno, node.col_offset, RETURNS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in return_nodes_with_value
         )
 
@@ -239,6 +251,43 @@ def _check_returns(
         yield Problem(docstr_node.lineno, docstr_node.col_offset, RETURNS_SECTION_IN_DOCSTR_MSG)
 
 
+def _check_yields(
+    docstr_info: docstring.Docstring,
+    docstr_node: ast.Constant,
+    yield_nodes: Iterable[ast.Yield | ast.YieldFrom],
+) -> Iterator[Problem]:
+    """Check function/ method yields section.
+
+    Args:
+        docstr_info: Information about the docstring.
+        docstr_node: The docstring node.
+        yield_nodes: The yield and yield from nodes of the function.
+
+    Yields:
+        All the problems with the yields section.
+    """
+    yield_nodes_with_value = list(node for node in yield_nodes if node.value is not None)
+
+    # Check for yield statements with value and no yields section in docstring
+    if yield_nodes_with_value and not docstr_info.yields:
+        yield from (
+            Problem(node.lineno, node.col_offset, YIELDS_SECTION_NOT_IN_DOCSTR_MSG)
+            for node in yield_nodes_with_value
+        )
+
+    # Check for multiple yields sections
+    if yield_nodes_with_value and len(docstr_info.yields_sections) > 1:
+        yield Problem(
+            docstr_node.lineno,
+            docstr_node.col_offset,
+            MULT_YIELDS_SECTION_IN_DOCSTR_MSG % ",".join(docstr_info.yields_sections),
+        )
+
+    # Check for yields section in docstring in function that does not yield a value
+    if not yield_nodes_with_value and docstr_info.yields:
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, YIELDS_SECTION_IN_DOCSTR_MSG)
+
+
 class VisitorWithinFunction(ast.NodeVisitor):
     """Visits AST nodes within a functions but not nested functions or classes.
 
@@ -247,21 +296,47 @@ class VisitorWithinFunction(ast.NodeVisitor):
     """
 
     return_nodes: list[ast.Return]
+    yield_nodes: list[ast.Yield | ast.YieldFrom]
     _visited_once: bool
 
     def __init__(self) -> None:
         """Construct."""
         self.return_nodes = []
+        self.yield_nodes = []
         self._visited_once = False
 
     # The function must be called the same as the name of the node
     def visit_Return(self, node: ast.Return) -> None:  # pylint: disable=invalid-name
-        """Check a function definition node.
+        """Record return node.
 
         Args:
-            node: The function definition to check.
+            node: The return node to record.
         """
         self.return_nodes.append(node)
+
+        # Ensure recursion continues
+        self.generic_visit(node)
+
+    # The function must be called the same as the name of the node
+    def visit_Yield(self, node: ast.Yield) -> None:  # pylint: disable=invalid-name
+        """Record yield node.
+
+        Args:
+            node: The yield node to record.
+        """
+        self.yield_nodes.append(node)
+
+        # Ensure recursion continues
+        self.generic_visit(node)
+
+    # The function must be called the same as the name of the node
+    def visit_YieldFrom(self, node: ast.YieldFrom) -> None:  # pylint: disable=invalid-name
+        """Record yield from node.
+
+        Args:
+            node: The yield from node to record.
+        """
+        self.yield_nodes.append(node)
 
         # Ensure recursion continues
         self.generic_visit(node)

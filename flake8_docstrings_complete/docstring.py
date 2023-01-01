@@ -33,6 +33,7 @@ class Docstring(NamedTuple):
         returns: Whether the docstring has the returns section.
         returns_sections: All the returns sections.
         yields: Whether the docstring has the yields section.
+        yields_sections: All the yields sections.
         raises: The exceptions described in the docstring. None if the docstring doesn't have the
             raises section.
     """
@@ -43,6 +44,7 @@ class Docstring(NamedTuple):
     returns: bool = False
     returns_sections: tuple[str, ...] = ()
     yields: bool = False
+    yields_sections: tuple[str, ...] = ()
     raises: tuple[str, ...] | None = None
 
 
@@ -147,5 +149,6 @@ def parse(value: str) -> Docstring:
         returns=_get_section_by_name("returns", sections) is not None,
         returns_sections=tuple(_get_all_section_names_by_name(name="returns", sections=sections)),
         yields=_get_section_by_name("yields", sections) is not None,
+        yields_sections=tuple(_get_all_section_names_by_name(name="yields", sections=sections)),
         raises=raises_section.subs if raises_section is not None else None,
     )

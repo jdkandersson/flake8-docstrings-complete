@@ -345,6 +345,51 @@ Yields:
         pytest.param(
             """short description
 
+Yields:
+    """,
+            docstring.Docstring(yields=True, yields_sections=("Yields",)),
+            id="yields empty",
+        ),
+        pytest.param(
+            """short description
+
+Yields:
+    The yield value.
+    """,
+            docstring.Docstring(yields=True, yields_sections=("Yields",)),
+            id="yields single line",
+        ),
+        pytest.param(
+            """short description
+
+Yield:
+    """,
+            docstring.Docstring(yields=True, yields_sections=("Yield",)),
+            id="yields alternate",
+        ),
+        pytest.param(
+            """short description
+
+Yields:
+
+Yields:
+    """,
+            docstring.Docstring(yields=True, yields_sections=("Yields", "Yields")),
+            id="mutiple yields",
+        ),
+        pytest.param(
+            """short description
+
+Yields:
+
+Yield:
+    """,
+            docstring.Docstring(yields=True, yields_sections=("Yields", "Yield")),
+            id="mutiple yields alternate",
+        ),
+        pytest.param(
+            """short description
+
 Raises:
     """,
             docstring.Docstring(raises=()),
@@ -403,6 +448,7 @@ Raises:
                 returns=True,
                 returns_sections=("Returns",),
                 yields=True,
+                yields_sections=("Yields",),
                 raises=("exc_1",),
             ),
             id="all defined",

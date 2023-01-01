@@ -25,6 +25,9 @@ from flake8_docstrings_complete import (
     RETURNS_SECTION_NOT_IN_DOCSTR_CODE,
     RETURNS_SECTION_IN_DOCSTR_CODE,
     MULT_RETURNS_SECTION_IN_DOCSTR_CODE,
+    YIELDS_SECTION_NOT_IN_DOCSTR_CODE,
+    YIELDS_SECTION_IN_DOCSTR_CODE,
+    MULT_YIELDS_SECTION_IN_DOCSTR_CODE,
 )
 
 
@@ -262,6 +265,46 @@ def foo():
             "source.py",
             "",
             id=f"{MULT_RETURNS_SECTION_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring."""
+    yield 1  # noqa: {YIELDS_SECTION_NOT_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{YIELDS_SECTION_NOT_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Yields:
+        A value.
+    """  # noqa: {YIELDS_SECTION_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{YIELDS_SECTION_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo():
+    """Docstring.
+
+    Yields:
+        A value.
+
+    Yield:
+        A value.
+    """  # noqa: {MULT_YIELDS_SECTION_IN_DOCSTR_CODE}
+    yield 1
+''',
+            "source.py",
+            "",
+            id=f"{MULT_YIELDS_SECTION_IN_DOCSTR_CODE} disabled",
         ),
     ],
 )

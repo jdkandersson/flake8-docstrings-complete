@@ -109,6 +109,10 @@ A few rules have been defined to allow for selective suppression:
   multiple returns sections.
 - `DCO010`: function/ method that yields a value does not have the yields
   section in the docstring.
+- `DCO011`: function/ method that does not yield a value has the yields
+  section in the docstring.
+- `DCO012`: function/ method that yields a value and the docstring has
+  multiple yields sections.
 
 ### Fix DCO001
 
@@ -482,8 +486,8 @@ class FooClass:
 
 ### Fix DCO009
 
-This linting rule is triggered by a function/ method that returns a value and a
-docstring that has multiple returns sections. For example:
+This linting rule is triggered by a function/ method that returns a value and
+has a docstring that has multiple returns sections. For example:
 
 ```Python
 def foo():
@@ -519,6 +523,220 @@ class FooClass:
             bar.
         """
         return "bar"
+```
+
+These examples can be fixed by:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Returns:
+        bar.
+    """
+    return "bar"
+
+def foo():
+    """Perform foo action.
+
+    Returns:
+        bar.
+    """
+    return "bar"
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Returns:
+            bar.
+        """
+        return "bar"
+```
+
+### Fix DCO010
+
+This linting rule is triggered by a function/ method that has at least one
+yield statement with a value or a yield from statement and does not have a
+yields section in the docstring. For example:
+
+```Python
+def foo():
+    """Yield bar."""
+    yield "bar"
+
+def foo():
+    """Yield bar."""
+    yield from ("bar",)
+
+class FooClass:
+    def foo(self):
+        """Yield bar."""
+        yield "bar"
+```
+
+These examples can be fixed by:
+
+```Python
+def foo():
+    """Yield bar.
+
+    Yield:
+        bar.
+    """
+    yield "bar"
+
+def foo():
+    """Yield bar.
+
+    Yields:
+        bar.
+    """
+    yield "bar"
+
+def foo():
+    """Yield bar.
+
+    Yields:
+        bar.
+    """
+    yield from ("bar",)
+
+class FooClass:
+    def foo(self):
+        """Yield bar.
+
+        Yields:
+            bar.
+        """
+        yield "bar"
+```
+
+### Fix DCO011
+
+This linting rule is triggered by a function/ method that has no yield
+statement with a value nor a yield from statement and has a yields section
+in the docstring. For example:
+
+```Python
+def foo():
+    """Yield bar.
+
+    Yields:
+        bar.
+    """
+    pass
+
+class FooClass:
+    def foo(self):
+        """Yield bar.
+
+        Yields:
+            bar.
+        """
+        pass
+```
+
+These examples can be fixed by:
+
+```Python
+def foo():
+    """Take foo action."""
+    pass
+
+class FooClass:
+    def foo(self):
+        """Take foo action."""
+        pass
+```
+
+### Fix DCO012
+
+This linting rule is triggered by a function/ method that yields a value and
+has a docstring that has multiple yields sections. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Yields:
+        bar.
+
+    Yields:
+        bar.
+    """
+    yield "bar"
+
+def foo():
+    """Perform foo action.
+
+    Yields:
+        bar.
+
+    Yields:
+        bar.
+    """
+    yield from ("bar",)
+
+def foo():
+    """Perform foo action.
+
+    Yields:
+        bar.
+
+    Yield:
+        bar.
+    """
+    yield "bar"
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Yields:
+            bar.
+
+        Yields:
+            bar.
+        """
+        yield "bar"
+```
+
+These examples can be fixed by:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Yields:
+        bar.
+    """
+    yield "bar"
+
+def foo():
+    """Perform foo action.
+
+    Yields:
+        bar.
+    """
+    yield from ("bar",)
+
+def foo():
+    """Perform foo action.
+
+    Yields:
+        bar.
+    """
+    yield "bar"
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Yields:
+            bar.
+        """
+        yield "bar"
 ```
 
 ## Docstring Examples
