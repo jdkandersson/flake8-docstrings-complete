@@ -313,9 +313,13 @@ def foo():
         ),
         pytest.param(
             f'''
+class Exc1Error(Exception):
+    """Docstring."""
+
+
 def foo():
     """Docstring."""  # noqa: {RAISES_SECTION_NOT_IN_DOCSTR_CODE}
-    raise Exc1
+    raise Exc1Error
 ''',
             "source.py",
             "",
@@ -336,16 +340,20 @@ def foo():
         ),
         pytest.param(
             f'''
+class Exc1Error(Exception):
+    """Docstring."""
+
+
 def foo():
     """Docstring.
 
     Raises:
-        Exc1:
+        Exc1Error:
 
     Raise:
-        Exc1:
+        Exc1Error:
     """  # noqa: {MULT_RAISES_SECTIONS_IN_DOCSTR_CODE}
-    raise Exc1
+    raise Exc1Error
 ''',
             "source.py",
             "",
@@ -353,14 +361,22 @@ def foo():
         ),
         pytest.param(
             f'''
+class Exc1Error(Exception):
+    """Docstring."""
+
+
+class Exc2Error(Exception):
+    """Docstring."""
+
+
 def foo():
     """Docstring.
 
     Raises:
-        Exc1:.
+        Exc1Error:.
     """
-    raise Exc1
-    raise Exc2  # noqa: {EXC_NOT_IN_DOCSTR_CODE}
+    raise Exc1Error
+    raise Exc2Error  # noqa: {EXC_NOT_IN_DOCSTR_CODE}
 ''',
             "source.py",
             "",
@@ -368,14 +384,18 @@ def foo():
         ),
         pytest.param(
             f'''
+class Exc1Error(Exception):
+    """Docstring."""
+
+
 def foo():
     """Docstring.
 
     Raises:
-        Exc1:
-        Exc2:
+        Exc1Error:
+        Exc2Error:
     """  # noqa: {EXC_IN_DOCSTR_CODE}
-    raise Exc1
+    raise Exc1Error
 ''',
             "source.py",
             "",

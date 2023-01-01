@@ -375,8 +375,36 @@ Yield:
 
 Raises:
     """,
-            docstring.Docstring(raises=()),
+            docstring.Docstring(raises=(), raises_sections=("Raises",)),
             id="raises empty",
+        ),
+        pytest.param(
+            """short description
+
+Raises:
+
+Raises:
+    """,
+            docstring.Docstring(raises=(), raises_sections=("Raises", "Raises")),
+            id="raises empty multiple",
+        ),
+        pytest.param(
+            """short description
+
+Raises:
+
+Raise:
+    """,
+            docstring.Docstring(raises=(), raises_sections=("Raises", "Raise")),
+            id="raises empty multiple alternate",
+        ),
+        pytest.param(
+            """short description
+
+Raises:
+    """,
+            docstring.Docstring(raises=(), raises_sections=("Raises",)),
+            id="raises empty multiple",
         ),
         pytest.param(
             """short description
@@ -384,7 +412,7 @@ Raises:
 Raises:
     exc_1:
     """,
-            docstring.Docstring(raises=("exc_1",)),
+            docstring.Docstring(raises=("exc_1",), raises_sections=("Raises",)),
             id="raises single",
         ),
         pytest.param(
@@ -394,7 +422,7 @@ Raises:
     exc_1:
     exc_2:
     """,
-            docstring.Docstring(raises=("exc_1", "exc_2")),
+            docstring.Docstring(raises=("exc_1", "exc_2"), raises_sections=("Raises",)),
             id="raises multiple",
         ),
         pytest.param(
@@ -403,7 +431,7 @@ Raises:
 raises:
     exc_1:
     """,
-            docstring.Docstring(raises=("exc_1",)),
+            docstring.Docstring(raises=("exc_1",), raises_sections=("raises",)),
             id="raises lower case",
         ),
         pytest.param(
@@ -433,6 +461,7 @@ Raises:
                 yields=True,
                 yields_sections=("Yields",),
                 raises=("exc_1",),
+                raises_sections=("Raises",),
             ),
             id="all defined",
         ),

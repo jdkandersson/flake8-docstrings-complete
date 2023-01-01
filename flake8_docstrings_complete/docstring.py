@@ -36,6 +36,7 @@ class Docstring(NamedTuple):
         yields_sections: All the yields sections.
         raises: The exceptions described in the docstring. None if the docstring doesn't have the
             raises section.
+        raises_sections: All the raises sections.
     """
 
     args: tuple[str, ...] | None = None
@@ -46,6 +47,7 @@ class Docstring(NamedTuple):
     yields: bool = False
     yields_sections: tuple[str, ...] = ()
     raises: tuple[str, ...] | None = None
+    raises_sections: tuple[str, ...] = ()
 
 
 _SECTION_NAMES = {
@@ -53,9 +55,7 @@ _SECTION_NAMES = {
     "attrs": {"attributes", "attrs"},
     "returns": {"return", "returns"},
     "yields": {"yield", "yields"},
-    "raises": {
-        "raises",
-    },
+    "raises": {"raises", "raise"},
 }
 _WHITESPACE_REGEX = r"\s*"
 _SECTION_START_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
@@ -151,4 +151,5 @@ def parse(value: str) -> Docstring:
         yields=_get_section_by_name("yields", sections) is not None,
         yields_sections=tuple(_get_all_section_names_by_name(name="yields", sections=sections)),
         raises=raises_section.subs if raises_section is not None else None,
+        raises_sections=tuple(_get_all_section_names_by_name(name="raises", sections=sections)),
     )

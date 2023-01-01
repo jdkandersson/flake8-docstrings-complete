@@ -190,7 +190,7 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
 def _check_args(
     docstr_info: docstring.Docstring, docstr_node: ast.Constant, args: ast.arguments
 ) -> Iterator[Problem]:
-    """Check that all function arguments are described in the docstring.
+    """Check that all function/ method arguments are described in the docstring.
 
     Check the function/ method has at most one args section.
     Check that all arguments of the function/ method are documented except certain arguments (like
@@ -316,6 +316,109 @@ def _check_yields(
         yield Problem(docstr_node.lineno, docstr_node.col_offset, YIELDS_SECTION_IN_DOCSTR_MSG)
 
 
+class Node(NamedTuple):
+    """Information about a node.
+
+    Attrs:
+        name: Short description of the node.
+        lineno: The line number the node is on.
+        col_offset: The column of the node.
+    """
+
+    name: str
+    lineno: int
+    col_offset: int
+
+
+def _get_exc_value(node: ast.Raise) -> Node | None:
+    """Get the exception value from raise.
+
+    Args:
+        node: The raise node.
+
+    Returns:
+        The exception value.
+    """
+    if isinstance(node.exc, ast.Name):
+        return Node(name=node.exc.id, lineno=node.exc.lineno, col_offset=node.exc.col_offset)
+    if isinstance(node.exc, ast.Attribute):
+        return Node(name=node.exc.attr, lineno=node.exc.lineno, col_offset=node.exc.col_offset)
+    if isinstance(node.exc, ast.Call):
+        if isinstance(node.exc.func, ast.Name):
+            return Node(
+                name=node.exc.func.id,
+                lineno=node.exc.func.lineno,
+                col_offset=node.exc.func.col_offset,
+            )
+        if isinstance(node.exc.func, ast.Attribute):
+            return Node(
+                name=node.exc.func.attr,
+                lineno=node.exc.func.lineno,
+                col_offset=node.exc.func.col_offset,
+            )
+
+    return None
+
+
+def _check_raises(
+    docstr_info: docstring.Docstring, docstr_node: ast.Constant, raise_nodes: Iterable[ast.Raise]
+) -> Iterator[Problem]:
+    """Check that all raised exceptions arguments are described in the docstring.
+
+    Check the function/ method has at most one raises section.
+    Check that all raised exceptions of the function/ method are documented.
+    Check that a function/ method that doesn't raise exceptions does not have a raises section.
+    Ignore raise without a value.
+
+    Args:
+        docstr_info: Information about the docstring.
+        docstr_node: The docstring node.
+        raise_nodes: The raise nodes.
+
+    Yields:
+        All the problems with exceptions.
+    """
+    all_excs = list(_get_exc_value(node) for node in raise_nodes)
+    has_raise_no_value = any(exc is None for exc in all_excs)
+
+    # Check that raises section is in docstring if function/ method raises exceptions
+    if all_excs and docstr_info.raises is None:
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_NOT_IN_DOCSTR_MSG)
+    # Check that raises section is not in docstring if function/ method raises no exceptions
+    if not all_excs and docstr_info.raises is not None:
+        yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_IN_DOCSTR_MSG)
+    elif all_excs and docstr_info.raises is not None:
+        docstr_raises = set(docstr_info.raises)
+
+        # Check for multiple raises sections
+        if len(docstr_info.raises_sections) > 1:
+            yield Problem(
+                docstr_node.lineno,
+                docstr_node.col_offset,
+                MULT_RAISES_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.raises_sections),
+            )
+
+        # Check for exceptions that are not raised
+        yield from (
+            Problem(exc.lineno, exc.col_offset, EXC_NOT_IN_DOCSTR_MSG % exc.name)
+            for exc in all_excs
+            if exc and exc.name not in docstr_raises
+        )
+
+        # Check for exceptions in the docstring that are not raised unless function has a raises
+        # without an exception
+        if not has_raise_no_value:
+            func_exc = set(exc.name for exc in all_excs if exc is not None)
+            yield from (
+                Problem(docstr_node.lineno, docstr_node.col_offset, EXC_IN_DOCSTR_MSG % exc)
+                for exc in sorted(docstr_raises - func_exc)
+            )
+
+        # Check for empty raises section
+        if has_raise_no_value and len(docstr_info.raises) == 0:
+            yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_IN_DOCSTR_MSG)
+
+
 class VisitorWithinFunction(ast.NodeVisitor):
     """Visits AST nodes within a functions but not nested functions or classes.
 
@@ -325,12 +428,14 @@ class VisitorWithinFunction(ast.NodeVisitor):
 
     return_nodes: list[ast.Return]
     yield_nodes: list[ast.Yield | ast.YieldFrom]
+    raise_nodes: list[ast.Raise]
     _visited_once: bool
 
     def __init__(self) -> None:
         """Construct."""
         self.return_nodes = []
         self.yield_nodes = []
+        self.raise_nodes = []
         self._visited_once = False
 
     # The function must be called the same as the name of the node
@@ -365,6 +470,18 @@ class VisitorWithinFunction(ast.NodeVisitor):
             node: The yield from node to record.
         """
         self.yield_nodes.append(node)
+
+        # Ensure recursion continues
+        self.generic_visit(node)
+
+    # The function must be called the same as the name of the node
+    def visit_Raise(self, node: ast.Raise) -> None:  # pylint: disable=invalid-name
+        """Record raise node.
+
+        Args:
+            node: The raise node to record.
+        """
+        self.raise_nodes.append(node)
 
         # Ensure recursion continues
         self.generic_visit(node)
@@ -501,6 +618,15 @@ class Visitor(ast.NodeVisitor):
                         docstr_info=docstr_info,
                         docstr_node=docstr_node,
                         yield_nodes=visitor_within_function.yield_nodes,
+                    )
+                )
+
+                # Check raises
+                self.problems.extend(
+                    _check_raises(
+                        docstr_info=docstr_info,
+                        docstr_node=docstr_node,
+                        raise_nodes=visitor_within_function.raise_nodes,
                     )
                 )
 
