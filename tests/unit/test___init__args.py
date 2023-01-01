@@ -9,7 +9,7 @@ from flake8_docstrings_complete import (
     ARG_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_IN_DOCSTR_MSG,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
-    MULT_ARGS_SECTION_IN_DOCSTR_MSG,
+    MULT_ARGS_SECTIONS_IN_DOCSTR_MSG,
 )
 
 from . import result
@@ -49,7 +49,7 @@ def function_1(arg_1):
         arg_1:
     """
 ''',
-            (f"3:4 {MULT_ARGS_SECTION_IN_DOCSTR_MSG % 'Args,Args'}",),
+            (f"3:4 {MULT_ARGS_SECTIONS_IN_DOCSTR_MSG % 'Args,Args'}",),
             id="function has single args docstring multiple args sections same name",
         ),
         pytest.param(
@@ -64,7 +64,7 @@ def function_1(arg_1):
         arg_1:
     """
 ''',
-            (f"3:4 {MULT_ARGS_SECTION_IN_DOCSTR_MSG % 'Args,Arguments'}",),
+            (f"3:4 {MULT_ARGS_SECTIONS_IN_DOCSTR_MSG % 'Args,Arguments'}",),
             id="function has single args docstring multiple args sections different name",
         ),
         pytest.param(

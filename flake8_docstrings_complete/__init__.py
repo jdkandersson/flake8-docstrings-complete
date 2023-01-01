@@ -34,11 +34,11 @@ ARGS_SECTION_IN_DOCSTR_MSG = (
     "arguments section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
-MULT_ARGS_SECTION_IN_DOCSTR_MSG = (
-    f"{MULT_ARGS_SECTION_IN_DOCSTR_CODE} a docstring should only contain a single args section, "
+MULT_ARGS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
+MULT_ARGS_SECTIONS_IN_DOCSTR_MSG = (
+    f"{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single args section, "
     "found %s"
-    f"{MORE_INFO_BASE}{MULT_ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
+    f"{MORE_INFO_BASE}{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
 ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}005"
 ARG_NOT_IN_DOCSTR_MSG = (
@@ -61,11 +61,11 @@ RETURNS_SECTION_IN_DOCSTR_MSG = (
     f"have the returns section in the docstring"
     f"{MORE_INFO_BASE}{RETURNS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_RETURNS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}009"
-MULT_RETURNS_SECTION_IN_DOCSTR_MSG = (
-    f"{MULT_RETURNS_SECTION_IN_DOCSTR_CODE} a docstring should only contain a single returns "
+MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}009"
+MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG = (
+    f"{MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single returns "
     "section, found %s"
-    f"{MORE_INFO_BASE}{MULT_RETURNS_SECTION_IN_DOCSTR_CODE.lower()}"
+    f"{MORE_INFO_BASE}{MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
 YIELDS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}010"
 YIELDS_SECTION_NOT_IN_DOCSTR_MSG = (
@@ -78,11 +78,11 @@ YIELDS_SECTION_IN_DOCSTR_MSG = (
     f"have the yields section in the docstring"
     f"{MORE_INFO_BASE}{YIELDS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_YIELDS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}012"
-MULT_YIELDS_SECTION_IN_DOCSTR_MSG = (
-    f"{MULT_YIELDS_SECTION_IN_DOCSTR_CODE} a docstring should only contain a single yields "
+MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}012"
+MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG = (
+    f"{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single yields "
     "section, found %s"
-    f"{MORE_INFO_BASE}{MULT_YIELDS_SECTION_IN_DOCSTR_CODE.lower()}"
+    f"{MORE_INFO_BASE}{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
 
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
@@ -194,7 +194,7 @@ def _check_args(
             yield Problem(
                 docstr_node.lineno,
                 docstr_node.col_offset,
-                MULT_ARGS_SECTION_IN_DOCSTR_MSG % ",".join(docstr_info.args_sections),
+                MULT_ARGS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.args_sections),
             )
 
         # Check for function arguments that are not in the docstring
@@ -243,7 +243,7 @@ def _check_returns(
         yield Problem(
             docstr_node.lineno,
             docstr_node.col_offset,
-            MULT_RETURNS_SECTION_IN_DOCSTR_MSG % ",".join(docstr_info.returns_sections),
+            MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.returns_sections),
         )
 
     # Check for returns section in docstring in function that does not return a value
@@ -280,7 +280,7 @@ def _check_yields(
         yield Problem(
             docstr_node.lineno,
             docstr_node.col_offset,
-            MULT_YIELDS_SECTION_IN_DOCSTR_MSG % ",".join(docstr_info.yields_sections),
+            MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.yields_sections),
         )
 
     # Check for yields section in docstring in function that does not yield a value

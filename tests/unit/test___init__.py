@@ -6,8 +6,8 @@ import pytest
 
 from flake8_docstrings_complete import (
     DOCSTR_MISSING_FUNC_MSG,
-    MULT_RETURNS_SECTION_IN_DOCSTR_MSG,
-    MULT_YIELDS_SECTION_IN_DOCSTR_MSG,
+    MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG,
+    MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG,
     RETURNS_SECTION_IN_DOCSTR_MSG,
     RETURNS_SECTION_NOT_IN_DOCSTR_MSG,
     YIELDS_SECTION_IN_DOCSTR_MSG,
@@ -102,7 +102,7 @@ def function_1():
     """
     return 1
 ''',
-            (f"3:4 {MULT_RETURNS_SECTION_IN_DOCSTR_MSG % 'Returns,Returns'}",),
+            (f"3:4 {MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG % 'Returns,Returns'}",),
             id="function return multiple returns in docstring",
         ),
         pytest.param(
@@ -117,7 +117,7 @@ class Class1:
         """
         return 1
 ''',
-            (f"4:8 {MULT_RETURNS_SECTION_IN_DOCSTR_MSG % 'Returns,Returns'}",),
+            (f"4:8 {MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG % 'Returns,Returns'}",),
             id="method return multiple returns in docstring",
         ),
         pytest.param(
@@ -388,7 +388,7 @@ def function_1():
     """
     yield 1
 ''',
-            (f"3:4 {MULT_YIELDS_SECTION_IN_DOCSTR_MSG % 'Yields,Yields'}",),
+            (f"3:4 {MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % 'Yields,Yields'}",),
             id="function yield multiple yields in docstring",
         ),
         pytest.param(
@@ -402,7 +402,7 @@ def function_1():
     """
     yield from tuple()
 ''',
-            (f"3:4 {MULT_YIELDS_SECTION_IN_DOCSTR_MSG % 'Yields,Yields'}",),
+            (f"3:4 {MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % 'Yields,Yields'}",),
             id="function yield from multiple yields in docstring",
         ),
         pytest.param(
@@ -417,7 +417,7 @@ class Class1:
         """
         yield 1
 ''',
-            (f"4:8 {MULT_YIELDS_SECTION_IN_DOCSTR_MSG % 'Yields,Yields'}",),
+            (f"4:8 {MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % 'Yields,Yields'}",),
             id="method yield multiple yields in docstring",
         ),
         pytest.param(

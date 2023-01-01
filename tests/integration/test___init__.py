@@ -17,9 +17,9 @@ from flake8_docstrings_complete import (
     FIXTURE_DECORATOR_PATTERN_DEFAULT,
     FIXTURE_FILENAME_PATTERN_ARG_NAME,
     FIXTURE_FILENAME_PATTERN_DEFAULT,
-    MULT_ARGS_SECTION_IN_DOCSTR_CODE,
-    MULT_RETURNS_SECTION_IN_DOCSTR_CODE,
-    MULT_YIELDS_SECTION_IN_DOCSTR_CODE,
+    MULT_ARGS_SECTIONS_IN_DOCSTR_CODE,
+    MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE,
+    MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE,
     RETURNS_SECTION_IN_DOCSTR_CODE,
     RETURNS_SECTION_NOT_IN_DOCSTR_CODE,
     TEST_FILENAME_PATTERN_ARG_NAME,
@@ -177,11 +177,11 @@ def foo(arg_1):
 
     Parameters:
         arg_1:
-    """  # noqa: {MULT_ARGS_SECTION_IN_DOCSTR_CODE}
+    """  # noqa: {MULT_ARGS_SECTIONS_IN_DOCSTR_CODE}
 ''',
             "source.py",
             "",
-            id=f"{MULT_ARGS_SECTION_IN_DOCSTR_CODE} disabled",
+            id=f"{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE} disabled",
         ),
         pytest.param(
             f'''
@@ -259,12 +259,12 @@ def foo():
 
     Return:
         A value.
-    """  # noqa: {MULT_RETURNS_SECTION_IN_DOCSTR_CODE}
+    """  # noqa: {MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE}
     return 1
 ''',
             "source.py",
             "",
-            id=f"{MULT_RETURNS_SECTION_IN_DOCSTR_CODE} disabled",
+            id=f"{MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE} disabled",
         ),
         pytest.param(
             f'''
@@ -299,12 +299,12 @@ def foo():
 
     Yield:
         A value.
-    """  # noqa: {MULT_YIELDS_SECTION_IN_DOCSTR_CODE}
+    """  # noqa: {MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE}
     yield 1
 ''',
             "source.py",
             "",
-            id=f"{MULT_YIELDS_SECTION_IN_DOCSTR_CODE} disabled",
+            id=f"{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE} disabled",
         ),
     ],
 )
