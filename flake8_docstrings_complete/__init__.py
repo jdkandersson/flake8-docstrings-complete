@@ -84,6 +84,34 @@ MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG = (
     "section, found %s"
     f"{MORE_INFO_BASE}{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
+RAISES_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}013"
+RAISES_SECTION_NOT_IN_DOCSTR_MSG = (
+    f"{RAISES_SECTION_NOT_IN_DOCSTR_CODE} a function/ method that raises an exception should have "
+    "the raises section in the docstring"
+    f"{MORE_INFO_BASE}{RAISES_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
+)
+RAISES_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}014"
+RAISES_SECTION_IN_DOCSTR_MSG = (
+    f"{RAISES_SECTION_IN_DOCSTR_CODE} a function/ method that does not raise an exception should "
+    "not have the raises section in the docstring"
+    f"{MORE_INFO_BASE}{RAISES_SECTION_IN_DOCSTR_CODE.lower()}"
+)
+MULT_RAISES_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}015"
+MULT_RAISES_SECTIONS_IN_DOCSTR_MSG = (
+    f"{MULT_RAISES_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single raises "
+    "section, found %s"
+    f"{MORE_INFO_BASE}{MULT_RAISES_SECTIONS_IN_DOCSTR_CODE.lower()}"
+)
+EXC_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}016"
+EXC_NOT_IN_DOCSTR_MSG = (
+    f'{EXC_NOT_IN_DOCSTR_CODE} "%s" exception should be described in the docstring{MORE_INFO_BASE}'
+    f"{EXC_NOT_IN_DOCSTR_CODE.lower()}"
+)
+EXC_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}017"
+EXC_IN_DOCSTR_MSG = (
+    f'{EXC_IN_DOCSTR_CODE} "%s" exception should not be described in the docstring{MORE_INFO_BASE}'
+    f"{EXC_IN_DOCSTR_CODE.lower()}"
+)
 
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
