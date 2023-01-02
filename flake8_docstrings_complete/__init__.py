@@ -477,7 +477,7 @@ def _iter_class_attrs(
     """Get the node of the variable being assigned at the class level if the target is a Name.
 
     Args:
-        node: The assign node.
+        nodes: The assign nodes.
 
     Yields:
         All the nodes of name targets of the assignment expressions.
@@ -525,7 +525,7 @@ def _iter_method_attrs(
     """Get the node of the class or instance variable being assigned in methods.
 
     Args:
-        node: The assign node.
+        nodes: The assign nodes.
 
     Yields:
         All the nodes of name targets of the assignment expressions in methods.
@@ -537,13 +537,6 @@ def _iter_method_attrs(
             target_node = _get_method_target_node(node.target)
             if target_node is not None:
                 yield target_node
-        else:
-            import astpretty
-
-            astpretty.pprint(node)
-
-    return
-    yield
 
 
 def _check_attrs(
@@ -691,16 +684,17 @@ class VisitorWithinFunction(ast.NodeVisitor):
 
     # Ensure that nested functions and classes are not iterated over
     # The functions must be called the same as the name of the node
-    visit_FunctionDef = visit_once  # noqa: N815
-    visit_AsyncFunctionDef = visit_once  # noqa: N815
-    visit_ClassDef = visit_once  # noqa: N815
+    visit_FunctionDef = visit_once  # noqa: N815,DCO063
+    visit_AsyncFunctionDef = visit_once  # noqa: N815,DCO063
+    visit_ClassDef = visit_once  # noqa: N815,DCO063
 
 
 class VisitorWithinClass(ast.NodeVisitor):
     """Visits AST nodes within a class but not nested class and functions nested within functions.
 
     Attrs:
-        assign_nodes: All the return nodes encountered within the class.
+        class_assign_nodes: All the return nodes encountered within the class.
+        method_assign_nodes: All the return nodes encountered within the class methods.
     """
 
     class_assign_nodes: list[ast.Assign | ast.AnnAssign | ast.AugAssign]
@@ -752,13 +746,13 @@ class VisitorWithinClass(ast.NodeVisitor):
 
     # The functions must be called the same as the name of the node
     # Visit assign nodes
-    visit_Assign = visit_assign  # noqa: N815
-    visit_AnnAssign = visit_assign  # noqa: N815
-    visit_AugAssign = visit_assign  # noqa: N815
+    visit_Assign = visit_assign  # noqa: N815,DCO063
+    visit_AnnAssign = visit_assign  # noqa: N815,DCO063
+    visit_AugAssign = visit_assign  # noqa: N815,DCO063
     # Ensure that nested functions and classes are not iterated over
-    visit_FunctionDef = visit_top_level  # noqa: N815
-    visit_AsyncFunctionDef = visit_top_level  # noqa: N815
-    visit_ClassDef = visit_once  # noqa: N815
+    visit_FunctionDef = visit_top_level  # noqa: N815,DCO063
+    visit_AsyncFunctionDef = visit_top_level  # noqa: N815,DCO063
+    visit_ClassDef = visit_once  # noqa: N815,DCO063
 
 
 class Visitor(ast.NodeVisitor):
@@ -890,8 +884,8 @@ class Visitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     # The functions must be called the same as the name of the node
-    visit_FunctionDef = visit_any_function  # noqa: N815
-    visit_AsyncFunctionDef = visit_any_function  # noqa: N815
+    visit_FunctionDef = visit_any_function  # noqa: N815,DCO063
+    visit_AsyncFunctionDef = visit_any_function  # noqa: N815,DCO063
 
     # The function must be called the same as the name of the node
     def visit_ClassDef(self, node: ast.ClassDef) -> None:  # pylint: disable=invalid-name
@@ -932,7 +926,6 @@ class Plugin:
 
     Attrs:
         name: The name of the plugin.
-        version: The version of the plugin.
     """
 
     name = __name__
