@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pytest
 
-from flake8_docstrings_complete import (
+from flake8_docstrings_complete.attrs import (
     ATTR_IN_DOCSTR_MSG,
     ATTR_NOT_IN_DOCSTR_MSG,
     ATTRS_SECTION_IN_DOCSTR_MSG,
     ATTRS_SECTION_NOT_IN_DOCSTR_MSG,
-    DOCSTR_MISSING_MSG,
     MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG,
 )
+from flake8_docstrings_complete import DOCSTR_MISSING_MSG
 
 from . import result
 

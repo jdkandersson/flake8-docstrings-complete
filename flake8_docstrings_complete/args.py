@@ -1,4 +1,4 @@
-"""The arguments section checks.."""
+"""The arguments section checks."""
 
 from __future__ import annotations
 
@@ -6,11 +6,8 @@ import ast
 from typing import Iterator
 
 from . import docstring, types_
+from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 
-ERROR_CODE_PREFIX = "DCO"
-MORE_INFO_BASE = (
-    ", more information: https://github.com/jdkandersson/flake8-docstrings-complete#fix-"
-)
 DOCSTR_MISSING_CODE = f"{ERROR_CODE_PREFIX}010"
 DOCSTR_MISSING_MSG = (
     f"{DOCSTR_MISSING_CODE} docstring should be defined for a function/ method/ class"
@@ -81,7 +78,7 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
         yield args.kwarg
 
 
-def check_args(
+def check(
     docstr_info: docstring.Docstring, docstr_node: ast.Constant, args: ast.arguments
 ) -> Iterator[types_.Problem]:
     """Check that all function/ method arguments are described in the docstring.
