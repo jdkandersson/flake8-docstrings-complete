@@ -1469,51 +1469,6 @@ class Foo:
         self.bar = bar
 ```
 
-### Fix DCO010
-
-This linting rule is triggered by a function/ method that has at least one
-yield statement with a value and does not have a yields section in the
-docstring. For example:
-
-```Python
-def foo():
-    """Yield bar."""
-    yield "bar"
-
-class FooClass:
-    def foo(self):
-        """Yield bar."""
-        yield "bar"
-```
-
-These examples can be fixed by:
-
-```Python
-def foo():
-    """Yield bar.
-
-    Yield:
-        bar.
-    """
-
-def foo():
-    """Yield bar.
-
-    Yields:
-        bar.
-    """
-    yield "bar"
-
-class FooClass:
-    def foo(self):
-        """Yield bar.
-
-        Yields:
-            bar.
-        """
-        yield "bar"
-```
-
 ## Sections
 
 There are several alternative names for each of the sections which are captured
