@@ -239,7 +239,7 @@ class VisitorWithinFunction(ast.NodeVisitor):
 
 
 class Visitor(ast.NodeVisitor):
-    """Visits AST nodes and check docstrings of functions.
+    """Visits AST nodes and check docstrings of functions and classes.
 
     Attrs:
         problems: All the problems that were encountered.
