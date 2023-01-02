@@ -5,7 +5,6 @@ from __future__ import annotations
 import ast
 from typing import Iterable, Iterator
 
-
 from . import docstring, types_
 from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 

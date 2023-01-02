@@ -6,7 +6,6 @@ import ast
 from itertools import chain
 from typing import Iterable, Iterator
 
-
 from . import docstring, types_
 from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 
@@ -35,15 +34,6 @@ ATTR_IN_DOCSTR_MSG = (
     f'{ATTR_IN_DOCSTR_CODE} "%s" attribute should not be described in the docstring'
     f"{MORE_INFO_BASE}{ATTR_IN_DOCSTR_CODE.lower()}"
 )
-
-TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
-TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
-TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
-TEST_FUNCTION_PATTERN_DEFAULT = r"test_.*"
-FIXTURE_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-fixture-filename-pattern"
-FIXTURE_FILENAME_PATTERN_DEFAULT = r"conftest\.py"
-FIXTURE_DECORATOR_PATTERN_ARG_NAME = "--docstrings-complete-fixture-decorator-pattern"
-FIXTURE_DECORATOR_PATTERN_DEFAULT = r"(^|\.)fixture$"
 
 CLASS_SELF_CLS = {"self", "cls"}
 PRIVATE_ATTR_PREFIX = "_"

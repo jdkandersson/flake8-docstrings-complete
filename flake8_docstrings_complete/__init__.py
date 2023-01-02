@@ -10,7 +10,7 @@ from typing import Iterable, Iterator
 
 from flake8.options.manager import OptionManager
 
-from . import docstring, types_, args, attrs, raises
+from . import args, attrs, docstring, raises, types_
 from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 
 DOCSTR_MISSING_CODE = f"{ERROR_CODE_PREFIX}010"
