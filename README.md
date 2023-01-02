@@ -9,12 +9,13 @@ assumes that the docstrings already pass `pydocstyle` checks.
 ```shell
 python -m venv venv
 source ./venv/bin/activate
-pip install flake8 flake8-docstrings-complete
+pip install flake8 flake8-docstrings flake8-docstrings-complete
 flake8 source.py
 ```
 
-On the following code where the `foo` function has the `baz` argument which is
-missing from the `Args` section in the docstring:
+On the following code where the `foo` function has the `bar` and `baz`
+arguments where the `baz` argument is missing from the `Args` section in the
+docstring:
 
 ```Python
 # source.py
@@ -30,13 +31,13 @@ This will produce warnings such as:
 
 ```shell
 flake8 test_source.py
-source.py:2:14: DCO005 "baz" argument should be described in the docstring, more information: https://github.com/jdkandersson/flake8-docstrings-complete#fix-dco005
+source.py:2:14: DCO023 "baz" argument should be described in the docstring, more information: https://github.com/jdkandersson/flake8-docstrings-complete#fix-dco023
 ```
 
 This can be resolved by adding the `baz` argument to the `Args` section:
 
 ```Python
-# test_source.py
+# source.py
 def foo(bar, baz):
     """Perform foo action on bar.
 
@@ -72,6 +73,9 @@ Note:
 - `self` and `cls` are not counted as arguments.
 - `test_.*` methods are skipped in `test_.*\.py` files (function and file names
   are configurable).
+- functions with a `@fixture` et al dectorator in `conftest.py` and
+  `test_.*\.py` files are skipped (function and fixture file names are
+  configurable)
 
 ## Configuration
 
