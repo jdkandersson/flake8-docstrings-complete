@@ -17,106 +17,131 @@ ERROR_CODE_PREFIX = "DCO"
 MORE_INFO_BASE = (
     ", more information: https://github.com/jdkandersson/flake8-docstrings-complete#fix-"
 )
-DOCSTR_MISSING_FUNC_CODE = f"{ERROR_CODE_PREFIX}001"
-DOCSTR_MISSING_FUNC_MSG = (
-    f"{DOCSTR_MISSING_FUNC_CODE} docstring should be defined for a function/ method"
-    f"{MORE_INFO_BASE}{DOCSTR_MISSING_FUNC_CODE.lower()}"
+DOCSTR_MISSING_CODE = f"{ERROR_CODE_PREFIX}010"
+DOCSTR_MISSING_MSG = (
+    f"{DOCSTR_MISSING_CODE} docstring should be defined for a function/ method"
+    f"{MORE_INFO_BASE}{DOCSTR_MISSING_CODE.lower()}"
 )
-ARGS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}002"
+ARGS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}020"
 ARGS_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function/ method with arguments should have the "
     "arguments section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
-ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}003"
+ARGS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}021"
 ARGS_SECTION_IN_DOCSTR_MSG = (
     f"{ARGS_SECTION_IN_DOCSTR_CODE} a function/ method without arguments should not have the "
     "arguments section in the docstring"
     f"{MORE_INFO_BASE}{ARGS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_ARGS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}004"
+MULT_ARGS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}022"
 MULT_ARGS_SECTIONS_IN_DOCSTR_MSG = (
     f"{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single args section, "
     "found %s"
     f"{MORE_INFO_BASE}{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
-ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}005"
+ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}023"
 ARG_NOT_IN_DOCSTR_MSG = (
     f'{ARG_NOT_IN_DOCSTR_CODE} "%s" argument should be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_NOT_IN_DOCSTR_CODE.lower()}"
 )
-ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}006"
+ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}024"
 ARG_IN_DOCSTR_MSG = (
     f'{ARG_IN_DOCSTR_CODE} "%s" argument should not be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
-RETURNS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}007"
+RETURNS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}030"
 RETURNS_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{RETURNS_SECTION_NOT_IN_DOCSTR_CODE} function/ method that returns a value should have the "
     f"returns section in the docstring{MORE_INFO_BASE}{RETURNS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
-RETURNS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}008"
+RETURNS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}031"
 RETURNS_SECTION_IN_DOCSTR_MSG = (
     f"{RETURNS_SECTION_IN_DOCSTR_CODE} function/ method that does not return a value should not "
     f"have the returns section in the docstring"
     f"{MORE_INFO_BASE}{RETURNS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}009"
+MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}032"
 MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG = (
     f"{MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single returns "
     "section, found %s"
     f"{MORE_INFO_BASE}{MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
-YIELDS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}010"
+YIELDS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}040"
 YIELDS_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{YIELDS_SECTION_NOT_IN_DOCSTR_CODE} function/ method that yields a value should have the "
     f"yields section in the docstring{MORE_INFO_BASE}{YIELDS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
-YIELDS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}011"
+YIELDS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}041"
 YIELDS_SECTION_IN_DOCSTR_MSG = (
     f"{YIELDS_SECTION_IN_DOCSTR_CODE} function/ method that does not yield a value should not "
     f"have the yields section in the docstring"
     f"{MORE_INFO_BASE}{YIELDS_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}012"
+MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}042"
 MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG = (
     f"{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single yields "
     "section, found %s"
     f"{MORE_INFO_BASE}{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
-RAISES_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}013"
+RAISES_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}050"
 RAISES_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{RAISES_SECTION_NOT_IN_DOCSTR_CODE} a function/ method that raises an exception should have "
     "the raises section in the docstring"
     f"{MORE_INFO_BASE}{RAISES_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
 )
-RAISES_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}014"
+RAISES_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}051"
 RAISES_SECTION_IN_DOCSTR_MSG = (
     f"{RAISES_SECTION_IN_DOCSTR_CODE} a function/ method that does not raise an exception should "
     "not have the raises section in the docstring"
     f"{MORE_INFO_BASE}{RAISES_SECTION_IN_DOCSTR_CODE.lower()}"
 )
-MULT_RAISES_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}015"
+MULT_RAISES_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}052"
 MULT_RAISES_SECTIONS_IN_DOCSTR_MSG = (
     f"{MULT_RAISES_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single raises "
     "section, found %s"
     f"{MORE_INFO_BASE}{MULT_RAISES_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
-EXC_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}016"
+EXC_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}053"
 EXC_NOT_IN_DOCSTR_MSG = (
     f'{EXC_NOT_IN_DOCSTR_CODE} "%s" exception should be described in the docstring{MORE_INFO_BASE}'
     f"{EXC_NOT_IN_DOCSTR_CODE.lower()}"
 )
-EXC_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}017"
+EXC_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}054"
 EXC_IN_DOCSTR_MSG = (
     f'{EXC_IN_DOCSTR_CODE} "%s" exception should not be described in the docstring{MORE_INFO_BASE}'
     f"{EXC_IN_DOCSTR_CODE.lower()}"
 )
-RE_RAISE_NO_EXC_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}018"
+RE_RAISE_NO_EXC_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}055"
 RE_RAISE_NO_EXC_IN_DOCSTR_MSG = (
     f"{RE_RAISE_NO_EXC_IN_DOCSTR_CODE} a function/ method that re-raises exceptions should "
     "describe at least one exception in the raises section of the docstring"
     f"{MORE_INFO_BASE}{RE_RAISE_NO_EXC_IN_DOCSTR_CODE.lower()}"
+)
+ATTRS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}060"
+ATTRS_SECTION_NOT_IN_DOCSTR_MSG = (
+    f"{ATTRS_SECTION_NOT_IN_DOCSTR_CODE} a class with attributes should have the attributes "
+    f"section in the docstring{MORE_INFO_BASE}{ATTRS_SECTION_NOT_IN_DOCSTR_CODE.lower()}"
+)
+ATTRS_SECTION_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}061"
+ATTRS_SECTION_IN_DOCSTR_MSG = (
+    f"{ATTRS_SECTION_IN_DOCSTR_CODE} a function/ method without attributes should not have the "
+    f"attributes section in the docstring{MORE_INFO_BASE}{ATTRS_SECTION_IN_DOCSTR_CODE.lower()}"
+)
+MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}062"
+MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG = (
+    f"{MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single attributes "
+    f"section, found %s{MORE_INFO_BASE}{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE.lower()}"
+)
+ATTR_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}063"
+ATTR_NOT_IN_DOCSTR_MSG = (
+    f'{ATTR_NOT_IN_DOCSTR_CODE} "%s" attribute should be described in the docstring'
+    f"{MORE_INFO_BASE}{ATTR_NOT_IN_DOCSTR_CODE.lower()}"
+)
+ATTR_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}064"
+ATTR_IN_DOCSTR_MSG = (
+    f'{ATTR_IN_DOCSTR_CODE} "%s" attribute should not be described in the docstring'
+    f"{MORE_INFO_BASE}{ATTR_IN_DOCSTR_CODE.lower()}"
 )
 
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
@@ -591,9 +616,7 @@ class Visitor(ast.NodeVisitor):
             # Check docstring is defined
             if ast.get_docstring(node) is None:
                 self.problems.append(
-                    Problem(
-                        lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_FUNC_MSG
-                    )
+                    Problem(lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_MSG)
                 )
 
             if (

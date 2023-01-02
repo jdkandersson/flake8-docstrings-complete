@@ -12,7 +12,7 @@ from flake8_docstrings_complete import (
     ARGS_SECTION_IN_DOCSTR_CODE,
     ARGS_SECTION_NOT_IN_DOCSTR_CODE,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
-    DOCSTR_MISSING_FUNC_CODE,
+    DOCSTR_MISSING_CODE,
     FIXTURE_DECORATOR_PATTERN_ARG_NAME,
     FIXTURE_DECORATOR_PATTERN_DEFAULT,
     FIXTURE_FILENAME_PATTERN_ARG_NAME,
@@ -144,12 +144,12 @@ def fixture(arg_1):
         ),
         pytest.param(
             f"""
-def foo():  # noqa: {DOCSTR_MISSING_FUNC_CODE}
+def foo():  # noqa: {DOCSTR_MISSING_CODE}
     pass
 """,
             "source.py",
             "",
-            id=f"{DOCSTR_MISSING_FUNC_CODE} disabled",
+            id=f"{DOCSTR_MISSING_CODE} disabled",
         ),
         pytest.param(
             f'''

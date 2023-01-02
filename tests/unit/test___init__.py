@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from flake8_docstrings_complete import (
-    DOCSTR_MISSING_FUNC_MSG,
+    DOCSTR_MISSING_MSG,
     MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG,
     MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG,
     RETURNS_SECTION_IN_DOCSTR_MSG,
@@ -26,7 +26,7 @@ from . import result
 def function_1():
     return
 """,
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="function docstring missing return",
         ),
         pytest.param(
@@ -37,7 +37,7 @@ def function_1():
 def function_2():
     return
 """,
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}", f"5:0 {DOCSTR_MISSING_FUNC_MSG}"),
+            (f"2:0 {DOCSTR_MISSING_MSG}", f"5:0 {DOCSTR_MISSING_MSG}"),
             id="multiple functions docstring missing return",
         ),
         pytest.param(
@@ -45,7 +45,7 @@ def function_2():
 def function_1():
     pass
 """,
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="function docstring missing expression not constant",
         ),
         pytest.param(
@@ -53,7 +53,7 @@ def function_1():
 def function_1():
     1
 """,
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="function docstring missing expression constnant not string",
         ),
         pytest.param(
@@ -453,7 +453,7 @@ class Class_1:
     def function_1(self):
         return
 """,
-            (f"3:4 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"3:4 {DOCSTR_MISSING_MSG}",),
             id="method docstring missing return",
         ),
         pytest.param(
@@ -658,7 +658,7 @@ def test_():
     pass
 """,
             "source.py",
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="not test file",
         ),
         pytest.param(
@@ -667,7 +667,7 @@ def foo():
     pass
 """,
             "test_.py",
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="test file not test function",
         ),
         pytest.param(
@@ -694,7 +694,7 @@ def foo():
     pass
 """,
             "conftest.py",
-            (f"2:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="normal file not fixture function",
         ),
         pytest.param(
@@ -704,7 +704,7 @@ def foo():
     pass
 """,
             "conftest.py",
-            (f"3:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"3:0 {DOCSTR_MISSING_MSG}",),
             id="fixture file not fixture decorator",
         ),
         pytest.param(
@@ -714,7 +714,7 @@ def foo():
     pass
 """,
             "source.py",
-            (f"3:0 {DOCSTR_MISSING_FUNC_MSG}",),
+            (f"3:0 {DOCSTR_MISSING_MSG}",),
             id="source file fixture function",
         ),
         pytest.param(
