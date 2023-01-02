@@ -125,7 +125,7 @@ class Class1:
     Attrs:
     """
     def __init__(self):
-        """Docstring 2."
+        """Docstring 2."""
 
     attr_1 = "value 1"
 ''',
@@ -140,7 +140,7 @@ class Class1:
     Attrs:
     """
     def __init__(self):
-        """Docstring 2."
+        """Docstring 2."""
         attr_1 = "value 1"
 ''',
             (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
@@ -154,7 +154,7 @@ class Class1:
     Attrs:
     """
     def method_1(self):
-        """Docstring 2."
+        """Docstring 2."""
         self.attr_1 = "value 1"
 ''',
             (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
@@ -168,7 +168,7 @@ class Class1:
     Attrs:
     """
     async def method_1(self):
-        """Docstring 2."
+        """Docstring 2."""
         self.attr_1 = "value 1"
 ''',
             (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
@@ -183,7 +183,7 @@ class Class1:
     """
     @classmethod
     def method_1(cls):
-        """Docstring 2."
+        """Docstring 2."""
         cls.attr_1 = "value 1"
 ''',
             (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
@@ -420,7 +420,6 @@ class Class1:
 class Class1:
     """Docstring 1."""
     _attr_1 = "value 1"
-    """
 ''',
             (),
             id="class single private attr docstring single attr",
@@ -432,7 +431,6 @@ class Class1:
     def __init__(self):
         """Docstring 2."""
         var_1 = "value 1"
-    """
 ''',
             (),
             id="class single var init docstring single attr",
@@ -444,7 +442,6 @@ class Class1:
     def method_1(self):
         """Docstring 2."""
         var_1 = "value 1"
-    """
 ''',
             (),
             id="class single var method docstring single attr",
@@ -457,7 +454,6 @@ class Class1:
     def method_1(cls):
         """Docstring 2."""
         var_1 = "value 1"
-    """
 ''',
             (),
             id="class single var classmethod docstring single attr",
@@ -519,17 +515,6 @@ class Class1:
 ''',
             (),
             id="nested class single attr docstring no attrs",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1."""
-    def method_1(self):
-        """Docstring 2."""
-        lambda self: self.attr_1 = "value 1"
-''',
-            (),
-            id="class single attr method lambda docstring no attrs",
         ),
         pytest.param(
             '''

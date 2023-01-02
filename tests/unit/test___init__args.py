@@ -386,7 +386,7 @@ def function_1(*_args):
     """Docstring 1.
 
     Args:
-        *_args:
+        _args:
     """
 ''',
             (),
@@ -406,7 +406,7 @@ def function_1(**_kwargs):
     """Docstring 1.
 
     Args:
-        **_kwargs:
+        _kwargs:
     """
 ''',
             (),
