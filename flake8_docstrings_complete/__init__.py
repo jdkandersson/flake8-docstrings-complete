@@ -4,15 +4,14 @@ from __future__ import annotations
 
 import argparse
 import ast
-import enum
 import re
 from itertools import chain
 from pathlib import Path
-from typing import Iterable, Iterator, NamedTuple
+from typing import Iterable, Iterator
 
 from flake8.options.manager import OptionManager
 
-from . import docstring
+from . import docstring, types_
 
 ERROR_CODE_PREFIX = "DCO"
 MORE_INFO_BASE = (
@@ -170,34 +169,6 @@ def _cli_arg_name_to_attr(cli_arg_name: str) -> str:
     return cli_arg_name.lstrip("-").replace("-", "_")  # pragma: nocover
 
 
-class Problem(NamedTuple):
-    """Represents a problem within the code.
-
-    Attrs:
-        lineno: The line number the problem occurred on
-        col_offset: The column the problem occurred on
-        msg: The message explaining the problem
-    """
-
-    lineno: int
-    col_offset: int
-    msg: str
-
-
-class FileType(str, enum.Enum):
-    """The type of file being processed.
-
-    Attrs:
-        TEST: A file with tests.
-        FIXTURE: A file with fixtures.
-        DEFAULT: All other files.
-    """
-
-    TEST = "test"
-    FIXTURE = "fixture"
-    DEFAULT = "default"
-
-
 def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
     """Iterate over all arguments.
 
@@ -220,7 +191,7 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
 
 def _check_args(
     docstr_info: docstring.Docstring, docstr_node: ast.Constant, args: ast.arguments
-) -> Iterator[Problem]:
+) -> Iterator[types_.Problem]:
     """Check that all function/ method arguments are described in the docstring.
 
     Check the function/ method has at most one args section.
@@ -241,16 +212,20 @@ def _check_args(
 
     # Check that args section is in docstring if function/ method has used arguments
     if all_used_args and docstr_info.args is None:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG
+        )
     # Check that args section is not in docstring if function/ method has no arguments
     if not all_args and docstr_info.args is not None:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG
+        )
     elif all_args and docstr_info.args is not None:
         docstr_args = set(docstr_info.args)
 
         # Check for multiple args sections
         if len(docstr_info.args_sections) > 1:
-            yield Problem(
+            yield types_.Problem(
                 docstr_node.lineno,
                 docstr_node.col_offset,
                 MULT_ARGS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.args_sections),
@@ -258,7 +233,7 @@ def _check_args(
 
         # Check for function arguments that are not in the docstring
         yield from (
-            Problem(arg.lineno, arg.col_offset, ARG_NOT_IN_DOCSTR_MSG % arg.arg)
+            types_.Problem(arg.lineno, arg.col_offset, ARG_NOT_IN_DOCSTR_MSG % arg.arg)
             for arg in all_used_args
             if arg.arg not in docstr_args
         )
@@ -266,18 +241,20 @@ def _check_args(
         # Check for arguments in the docstring that are not function arguments
         func_args = set(arg.arg for arg in all_args)
         yield from (
-            Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
+            types_.Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
             for arg in sorted(docstr_args - func_args)
         )
 
         # Check for empty args section
         if not all_used_args and len(docstr_info.args) == 0:
-            yield Problem(docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG)
+            yield types_.Problem(
+                docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG
+            )
 
 
 def _check_returns(
     docstr_info: docstring.Docstring, docstr_node: ast.Constant, return_nodes: Iterable[ast.Return]
-) -> Iterator[Problem]:
+) -> Iterator[types_.Problem]:
     """Check function/ method returns section.
 
     Args:
@@ -293,13 +270,13 @@ def _check_returns(
     # Check for return statements with value and no returns section in docstring
     if return_nodes_with_value and not docstr_info.returns:
         yield from (
-            Problem(node.lineno, node.col_offset, RETURNS_SECTION_NOT_IN_DOCSTR_MSG)
+            types_.Problem(node.lineno, node.col_offset, RETURNS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in return_nodes_with_value
         )
 
     # Check for multiple returns sections
     if return_nodes_with_value and len(docstr_info.returns_sections) > 1:
-        yield Problem(
+        yield types_.Problem(
             docstr_node.lineno,
             docstr_node.col_offset,
             MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.returns_sections),
@@ -307,14 +284,16 @@ def _check_returns(
 
     # Check for returns section in docstring in function that does not return a value
     if not return_nodes_with_value and docstr_info.returns:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, RETURNS_SECTION_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, RETURNS_SECTION_IN_DOCSTR_MSG
+        )
 
 
 def _check_yields(
     docstr_info: docstring.Docstring,
     docstr_node: ast.Constant,
     yield_nodes: Iterable[ast.Yield | ast.YieldFrom],
-) -> Iterator[Problem]:
+) -> Iterator[types_.Problem]:
     """Check function/ method yields section.
 
     Args:
@@ -330,13 +309,13 @@ def _check_yields(
     # Check for yield statements with value and no yields section in docstring
     if yield_nodes_with_value and not docstr_info.yields:
         yield from (
-            Problem(node.lineno, node.col_offset, YIELDS_SECTION_NOT_IN_DOCSTR_MSG)
+            types_.Problem(node.lineno, node.col_offset, YIELDS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in yield_nodes_with_value
         )
 
     # Check for multiple yields sections
     if yield_nodes_with_value and len(docstr_info.yields_sections) > 1:
-        yield Problem(
+        yield types_.Problem(
             docstr_node.lineno,
             docstr_node.col_offset,
             MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.yields_sections),
@@ -344,24 +323,12 @@ def _check_yields(
 
     # Check for yields section in docstring in function that does not yield a value
     if not yield_nodes_with_value and docstr_info.yields:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, YIELDS_SECTION_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, YIELDS_SECTION_IN_DOCSTR_MSG
+        )
 
 
-class Node(NamedTuple):
-    """Information about a node.
-
-    Attrs:
-        name: Short description of the node.
-        lineno: The line number the node is on.
-        col_offset: The column of the node.
-    """
-
-    name: str
-    lineno: int
-    col_offset: int
-
-
-def _get_exc_node(node: ast.Raise) -> Node | None:
+def _get_exc_node(node: ast.Raise) -> types_.Node | None:
     """Get the exception value from raise.
 
     Args:
@@ -371,18 +338,22 @@ def _get_exc_node(node: ast.Raise) -> Node | None:
         The exception node.
     """
     if isinstance(node.exc, ast.Name):
-        return Node(name=node.exc.id, lineno=node.exc.lineno, col_offset=node.exc.col_offset)
+        return types_.Node(
+            name=node.exc.id, lineno=node.exc.lineno, col_offset=node.exc.col_offset
+        )
     if isinstance(node.exc, ast.Attribute):
-        return Node(name=node.exc.attr, lineno=node.exc.lineno, col_offset=node.exc.col_offset)
+        return types_.Node(
+            name=node.exc.attr, lineno=node.exc.lineno, col_offset=node.exc.col_offset
+        )
     if isinstance(node.exc, ast.Call):
         if isinstance(node.exc.func, ast.Name):
-            return Node(
+            return types_.Node(
                 name=node.exc.func.id,
                 lineno=node.exc.func.lineno,
                 col_offset=node.exc.func.col_offset,
             )
         if isinstance(node.exc.func, ast.Attribute):
-            return Node(
+            return types_.Node(
                 name=node.exc.func.attr,
                 lineno=node.exc.func.lineno,
                 col_offset=node.exc.func.col_offset,
@@ -393,7 +364,7 @@ def _get_exc_node(node: ast.Raise) -> Node | None:
 
 def _check_raises(
     docstr_info: docstring.Docstring, docstr_node: ast.Constant, raise_nodes: Iterable[ast.Raise]
-) -> Iterator[Problem]:
+) -> Iterator[types_.Problem]:
     """Check that all raised exceptions arguments are described in the docstring.
 
     Check the function/ method has at most one raises section.
@@ -415,21 +386,27 @@ def _check_raises(
 
     # Check that raises section is in docstring if function/ method raises exceptions
     if all_excs and docstr_info.raises is None:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_NOT_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_NOT_IN_DOCSTR_MSG
+        )
     # Check that raises section is not in docstring if function/ method raises no exceptions
     if not all_excs and docstr_info.raises is not None:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_IN_DOCSTR_MSG
+        )
     # Check for empty raises section
     if (all_excs and all_raise_no_value) and (
         docstr_info.raises is None or len(docstr_info.raises) == 0
     ):
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, RE_RAISE_NO_EXC_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, RE_RAISE_NO_EXC_IN_DOCSTR_MSG
+        )
     elif all_excs and docstr_info.raises is not None:
         docstr_raises = set(docstr_info.raises)
 
         # Check for multiple raises sections
         if len(docstr_info.raises_sections) > 1:
-            yield Problem(
+            yield types_.Problem(
                 docstr_node.lineno,
                 docstr_node.col_offset,
                 MULT_RAISES_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.raises_sections),
@@ -437,7 +414,7 @@ def _check_raises(
 
         # Check for exceptions that are not raised
         yield from (
-            Problem(exc.lineno, exc.col_offset, EXC_NOT_IN_DOCSTR_MSG % exc.name)
+            types_.Problem(exc.lineno, exc.col_offset, EXC_NOT_IN_DOCSTR_MSG % exc.name)
             for exc in all_excs
             if exc and exc.name not in docstr_raises
         )
@@ -447,7 +424,7 @@ def _check_raises(
         if not has_raise_no_value:
             func_exc = set(exc.name for exc in all_excs if exc is not None)
             yield from (
-                Problem(docstr_node.lineno, docstr_node.col_offset, EXC_IN_DOCSTR_MSG % exc)
+                types_.Problem(docstr_node.lineno, docstr_node.col_offset, EXC_IN_DOCSTR_MSG % exc)
                 for exc in sorted(docstr_raises - func_exc)
             )
 
@@ -475,7 +452,7 @@ def _get_class_target_name(target: ast.expr) -> ast.Name | None:
 
 def _iter_class_attrs(
     nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
-) -> Iterator[Node]:
+) -> Iterator[types_.Node]:
     """Get the node of the variable being assigned at the class level if the target is a Name.
 
     Args:
@@ -490,21 +467,21 @@ def _iter_class_attrs(
                 None, (_get_class_target_name(target) for target in node.targets)
             )
             yield from (
-                Node(lineno=name.lineno, col_offset=name.col_offset, name=name.id)
+                types_.Node(lineno=name.lineno, col_offset=name.col_offset, name=name.id)
                 for name in target_names
             )
         else:
             target_name = _get_class_target_name(target=node.target)
             # No valid syntax reaches else
             if target_name is not None:  # pragma: nobranch
-                yield Node(
+                yield types_.Node(
                     lineno=target_name.lineno,
                     col_offset=target_name.col_offset,
                     name=target_name.id,
                 )
 
 
-def _get_method_target_node(target: ast.expr) -> Node | None:
+def _get_method_target_node(target: ast.expr) -> types_.Node | None:
     """Get the node of the target for an assignment in a method.
 
     Args:
@@ -515,7 +492,9 @@ def _get_method_target_node(target: ast.expr) -> Node | None:
     """
     if isinstance(target, ast.Attribute):
         if isinstance(target.value, ast.Name) and target.value.id in CLASS_SELF_CLS:
-            return Node(lineno=target.lineno, col_offset=target.col_offset, name=target.attr)
+            return types_.Node(
+                lineno=target.lineno, col_offset=target.col_offset, name=target.attr
+            )
         # No valid syntax reaches else
         if isinstance(target.value, ast.Attribute):  # pragma: nobranch
             return _get_method_target_node(target=target.value)
@@ -525,7 +504,7 @@ def _get_method_target_node(target: ast.expr) -> Node | None:
 
 def _iter_method_attrs(
     nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
-) -> Iterator[Node]:
+) -> Iterator[types_.Node]:
     """Get the node of the class or instance variable being assigned in methods.
 
     Args:
@@ -549,7 +528,7 @@ def _check_attrs(
     docstr_node: ast.Constant,
     class_assign_nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
     method_assign_nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
-) -> Iterator[Problem]:
+) -> Iterator[types_.Problem]:
     """Check that all class attributes are described in the docstring.
 
     Check the class has at most one attrs section.
@@ -574,16 +553,20 @@ def _check_attrs(
 
     # Check that attrs section is in docstring if function/ method has public attributes
     if all_public_targets and docstr_info.attrs is None:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_NOT_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_NOT_IN_DOCSTR_MSG
+        )
     # Check that attrs section is not in docstring if class has no attributes
     if not all_targets and docstr_info.attrs is not None:
-        yield Problem(docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_IN_DOCSTR_MSG)
+        yield types_.Problem(
+            docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_IN_DOCSTR_MSG
+        )
     elif all_targets and docstr_info.attrs is not None:
         docstr_attrs = set(docstr_info.attrs)
 
         # Check for multiple attrs sections
         if len(docstr_info.attrs_sections) > 1:
-            yield Problem(
+            yield types_.Problem(
                 docstr_node.lineno,
                 docstr_node.col_offset,
                 MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG % ",".join(docstr_info.attrs_sections),
@@ -591,7 +574,7 @@ def _check_attrs(
 
         # Check for class attributes that are not in the docstring
         yield from (
-            Problem(target.lineno, target.col_offset, ATTR_NOT_IN_DOCSTR_MSG % target.name)
+            types_.Problem(target.lineno, target.col_offset, ATTR_NOT_IN_DOCSTR_MSG % target.name)
             for target in all_public_targets
             if target.name not in docstr_attrs
         )
@@ -599,13 +582,15 @@ def _check_attrs(
         # Check for attributes in the docstring that are not class attributes
         class_attrs = set(target.name for target in all_targets)
         yield from (
-            Problem(docstr_node.lineno, docstr_node.col_offset, ATTR_IN_DOCSTR_MSG % attr)
+            types_.Problem(docstr_node.lineno, docstr_node.col_offset, ATTR_IN_DOCSTR_MSG % attr)
             for attr in sorted(docstr_attrs - class_attrs)
         )
 
         # Check for empty attrs section
         if not all_public_targets and len(docstr_info.attrs) == 0:
-            yield Problem(docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_IN_DOCSTR_MSG)
+            yield types_.Problem(
+                docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_IN_DOCSTR_MSG
+            )
 
 
 class VisitorWithinFunction(ast.NodeVisitor):
@@ -767,13 +752,16 @@ class Visitor(ast.NodeVisitor):
         problems: All the problems that were encountered.
     """
 
-    problems: list[Problem]
-    _file_type: FileType
+    problems: list[types_.Problem]
+    _file_type: types_.FileType
     _test_function_pattern: str
     _fixture_decorator_pattern: str
 
     def __init__(
-        self, file_type: FileType, test_function_pattern: str, fixture_decorator_pattern: str
+        self,
+        file_type: types_.FileType,
+        test_function_pattern: str,
+        fixture_decorator_pattern: str,
     ) -> None:
         """Construct.
 
@@ -822,10 +810,12 @@ class Visitor(ast.NodeVisitor):
         Returns:
             Whether to skip the function.
         """
-        if self._file_type == FileType.TEST and re.match(self._test_function_pattern, node.name):
+        if self._file_type == types_.FileType.TEST and re.match(
+            self._test_function_pattern, node.name
+        ):
             return True
 
-        if self._file_type in {FileType.TEST, FileType.FIXTURE}:
+        if self._file_type in {types_.FileType.TEST, types_.FileType.FIXTURE}:
             return any(self._is_fixture_decorator(decorator) for decorator in node.decorator_list)
 
         return False
@@ -840,7 +830,9 @@ class Visitor(ast.NodeVisitor):
             # Check docstring is defined
             if ast.get_docstring(node) is None:
                 self.problems.append(
-                    Problem(lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_MSG)
+                    types_.Problem(
+                        lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_MSG
+                    )
                 )
 
             if (
@@ -902,7 +894,9 @@ class Visitor(ast.NodeVisitor):
         # Check docstring is defined
         if ast.get_docstring(node) is None:
             self.problems.append(
-                Problem(lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_MSG)
+                types_.Problem(
+                    lineno=node.lineno, col_offset=node.col_offset, msg=DOCSTR_MISSING_MSG
+                )
             )
 
         if (
@@ -954,19 +948,19 @@ class Plugin:
         self._tree = tree
         self._filename = Path(filename).name
 
-    def _get_file_type(self) -> FileType:
+    def _get_file_type(self) -> types_.FileType:
         """Get the file type from a filename.
 
         Returns:
             The type of file.
         """
         if re.match(self._test_filename_pattern, self._filename) is not None:
-            return FileType.TEST
+            return types_.FileType.TEST
 
         if re.match(self._fixture_filename_pattern, self._filename) is not None:
-            return FileType.FIXTURE
+            return types_.FileType.FIXTURE
 
-        return FileType.DEFAULT
+        return types_.FileType.DEFAULT
 
     # No coverage since this only occurs from the command line
     @staticmethod
