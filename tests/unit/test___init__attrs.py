@@ -281,6 +281,42 @@ class Class1:
     """Docstring 1.
 
     Attrs:
+    """
+    attr_1: str = "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single typed attr docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    attr_1 += "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single augmented attr docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    attr_1: str += "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single typed augmented attr docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
         attr_2:
         attr_3:
     """
@@ -355,6 +391,45 @@ class Class1:
 ''',
             (),
             id="class single attr docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    attr_1: str = "value 1"
+''',
+            (),
+            id="class single attr typed docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    attr_1 += "value 1"
+''',
+            (),
+            id="class single attr augmented docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    attr_1: str += "value 1"
+''',
+            (),
+            id="class single attr typed augmented docstring single attr",
         ),
         pytest.param(
             '''
