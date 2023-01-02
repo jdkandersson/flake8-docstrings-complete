@@ -8,11 +8,6 @@ from typing import Iterator
 from . import docstring, types_
 from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 
-DOCSTR_MISSING_CODE = f"{ERROR_CODE_PREFIX}010"
-DOCSTR_MISSING_MSG = (
-    f"{DOCSTR_MISSING_CODE} docstring should be defined for a function/ method/ class"
-    f"{MORE_INFO_BASE}{DOCSTR_MISSING_CODE.lower()}"
-)
 ARGS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}020"
 ARGS_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{ARGS_SECTION_NOT_IN_DOCSTR_CODE} a function/ method with arguments should have the "
@@ -41,21 +36,8 @@ ARG_IN_DOCSTR_MSG = (
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
 
-CLASS_SELF_CLS = {"self", "cls"}
+SKIP_ARGS = {"self", "cls"}
 UNUSED_ARGS_PREFIX = "_"
-
-
-# Helper function for option management, tested in integration tests
-def _cli_arg_name_to_attr(cli_arg_name: str) -> str:
-    """Transform CLI argument name to the attribute name on the namespace.
-
-    Args:
-        cli_arg_name: The CLI argument name to transform.
-
-    Returns:
-        The namespace name for the argument.
-    """
-    return cli_arg_name.lstrip("-").replace("-", "_")  # pragma: nocover
 
 
 def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
@@ -69,8 +51,8 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
     Yields:
         All the arguments.
     """
-    yield from (arg for arg in args.args if arg.arg not in CLASS_SELF_CLS)
-    yield from (arg for arg in args.posonlyargs if arg.arg not in CLASS_SELF_CLS)
+    yield from (arg for arg in args.args if arg.arg not in SKIP_ARGS)
+    yield from (arg for arg in args.posonlyargs if arg.arg not in SKIP_ARGS)
     yield from (arg for arg in args.kwonlyargs)
     if args.vararg:
         yield args.vararg
