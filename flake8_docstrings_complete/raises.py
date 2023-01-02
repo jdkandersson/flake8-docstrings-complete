@@ -86,7 +86,6 @@ def check(
     Check the function/ method has at most one raises section.
     Check that all raised exceptions of the function/ method are documented.
     Check that a function/ method that doesn't raise exceptions does not have a raises section.
-    Ignore raise without a value.
 
     Args:
         docstr_info: Information about the docstring.
