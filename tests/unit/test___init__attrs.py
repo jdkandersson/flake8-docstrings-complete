@@ -505,6 +505,71 @@ class Class1:
             (),
             id="class multiple attr second private docstring single attr",
         ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    class Class2:
+        """Docstring 2.
+
+        Attrs:
+            attr_1:
+        """
+        attr_1 = "value 1"
+''',
+            (),
+            id="nested class single attr docstring no attrs",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        lambda self: self.attr_1 = "value 1"
+''',
+            (),
+            id="class single attr method lambda docstring no attrs",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        def nested_funciont_1(self):
+            """Docstring 3."""
+            self.attr_1 = "value 1"
+''',
+            (),
+            id="class single attr method nested method docstring no attrs",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        async def nested_funciont_1(self):
+            """Docstring 3."""
+            self.attr_1 = "value 1"
+''',
+            (),
+            id="class single attr method nested async method docstring no attrs",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        def nested_funciont_1(cls):
+            """Docstring 3."""
+            cls.attr_1 = "value 1"
+''',
+            (),
+            id="class single attr method nested classmethod docstring no attrs",
+        ),
     ],
 )
 def test_plugin(code: str, expected_result: tuple[str, ...]):
