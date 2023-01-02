@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-# Need access to protected functions for testing
-# pylint: disable=protected-access
-
 import pytest
 
 from flake8_docstrings_complete import docstring
+
+# Need access to protected functions for testing
+# pylint: disable=protected-access
 
 
 @pytest.mark.parametrize(

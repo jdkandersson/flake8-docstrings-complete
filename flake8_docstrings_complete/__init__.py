@@ -292,7 +292,8 @@ class Visitor(ast.NodeVisitor):
         if isinstance(node, ast.Call):
             return self._is_fixture_decorator(node=node.func)
 
-        return False
+        # No valid syntax can reach here
+        return False  # pragma: nocover
 
     def _skip_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check whether to skip a function.
