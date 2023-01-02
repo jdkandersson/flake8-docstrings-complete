@@ -90,7 +90,7 @@ The plugin adds the following configurations to `flake8`:
 
 A few rules have been defined to allow for selective suppression:
 
-- `DCO010`: docstring missing on a function/ method.
+- `DCO010`: docstring missing on a function/ method/ class.
 - `DCO020`: function/ method has one or more arguments and the docstring does
   not have an arguments section.
 - `DCO021`: function/ method with no arguments and the docstring has an
@@ -138,14 +138,20 @@ A few rules have been defined to allow for selective suppression:
 
 ### Fix DCO010
 
-This linting rule is triggered by a function/ method without a docstring. For
-example:
+This linting rule is triggered by a function/ method/ class without a
+docstring. For example:
 
 ```Python
 def foo():
     pass
 
 class FooClass:
+    def foo(self):
+        """Perform foo action."""
+        pass
+
+class FooClass:
+    """Perform foo action."""
     def foo(self):
         pass
 ```
@@ -157,6 +163,7 @@ def foo():
     """Perform foo action."""
 
 class FooClass:
+    """Perform foo action."""
     def foo(self):
         """Perform foo action."""
 ```
@@ -1527,4 +1534,5 @@ Section information is extracted using the following algorithm:
 ## Future Ideas:
 
 - Check that argument, exceptions and attributes have non-empty description.
+- Check that arguments, exceptions and attributes are only documented once.
 - Check that arguments, exceptions and attributes have meaningful descriptions.
