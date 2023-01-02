@@ -85,12 +85,15 @@ def _get_sections(lines: Iterable[str]) -> Iterator[_Section]:
 
     with contextlib.suppress(StopIteration):
         while True:
+            # Find the start of the next section
             section_name = next(
                 filter(None, (_SECTION_START_PATTERN.match(line) for line in lines))
             ).group(1)
+            # Get all the lines of the section
             section_lines = itertools.takewhile(
                 lambda line: _SECTION_END_PATTERN.match(line) is None, lines
             )
+            # Retrieve sub section from section lines
             sub_section_matches = (_SUB_SECTION_PATTERN.match(line) for line in section_lines)
             sub_sections = (match.group(1) for match in sub_section_matches if match is not None)
             yield _Section(name=section_name, subs=tuple(sub_sections))
