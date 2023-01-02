@@ -53,7 +53,7 @@ def foo(bar, baz):
 2. If a function/ method has arguments, that all function/ method arguments are
    in the argument section.
 3. If an arguments section is in the function/ method docstring, the argument
-   section contains no arguments the function doesn't have.
+   section contains no arguments the function/ method doesn't have.
 4. If a function/ method has a return statement with a value, the return value
    section is included.
 5. If a function/ method has a yield statement with a value, the yield value
@@ -125,6 +125,16 @@ A few rules have been defined to allow for selective suppression:
   docstring which are not raised in the function/ method.
 - `DCO055`: function/ method that has a raise without an exception has an empty
   raises section in the docstring.
+- `DCO060`: class has one or more public attributes and the docstring does not
+  have an attributes section.
+- `DCO061`: class with no attributes and the docstring has an attributes
+  section.
+- `DCO062`: class with one or more attributes and the docstring has multiple
+  attributes sections.
+- `DCO063`: class has one or more public attributes not described in the
+  docstring.
+- `DCO064`: class has one or more attributes described in the docstring which
+  are not attributes of the class.
 
 ### Fix DCO010
 
@@ -381,7 +391,8 @@ class FooClass:
 
 This linting rule is triggered by a function/ method that has one or more
 arguments and a docstring that describes one or more arguments where on or more
-of the described arguments are not arguments of the function. For example:
+of the described arguments are not arguments of the function/ method. For
+example:
 
 ```Python
 def foo(bar):
@@ -402,8 +413,8 @@ class FooClass:
         """
 ```
 
-These examples can be fixed by removing the arguments the function doesn't have
-from the docstring:
+These examples can be fixed by removing the arguments the function/ method
+doesn't have from the docstring:
 
 ```Python
 def foo(bar):
@@ -979,7 +990,8 @@ class FooClass:
 
 This linting rule is triggered by a function/ method that raises one or more
 exceptions and a docstring that describes one or more exceptions where on or
-more of the described exceptions are not raised by the function. For example:
+more of the described exceptions are not raised by the function/ method. For
+example:
 
 ```Python
 def foo():
@@ -1094,6 +1106,319 @@ class FooClass:
             bar()
         except BarError:
             raise
+```
+
+### Fix DCO060
+
+This linting rule is triggered by a class that has one or more public
+attributes with a docstring that does not have an attributes section. For
+example:
+
+```Python
+class FooClass:
+    """Perform foo action."""
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action."""
+
+    def __init__(self):
+        self.bar = "bar"
+
+class FooClass:
+    """Perform foo action."""
+
+    def bar(self):
+        self.baz = "baz"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+    baz = "baz"
+```
+
+These examples can be fixed by adding the attributes section and describing all
+attributes in the attributes section:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        self.bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        baz: The value to perform the foo action on.
+    """
+
+    def bar(self):
+        self.baz = "baz"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        baz: The alternate value to perform the foo action on.
+    """
+    bar = "bar"
+    baz = "baz"
+```
+
+### Fix DCO061
+
+This linting rule is triggered by a class that has no attributes with a
+docstring that has an attributes section. For example:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        bar: The value to perform the foo action on.
+    """
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+    """
+
+    def __init__(self):
+        self._bar = "bar"
+```
+
+These examples can be fixed by removing the attributes section:
+
+```Python
+class FooClass:
+    """Perform foo action."""
+
+class FooClass:
+    """Perform foo action."""
+
+    def __init__(self):
+        self._bar = "bar"
+```
+
+### Fix DCO062
+
+This linting rule is triggered by a class that has one or more attributes and
+a docstring that has multiple attributes sections. For example:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+
+    Attributes:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+```
+
+These examples can be fixed by removing the additional attributes sections:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+```
+
+### Fix DCO063
+
+This linting rule is triggered by a class that has one or more public
+attributes where one or more of those public attributes is not described in the
+docstring. For example:
+
+```Python
+class FooClass:
+    """Perform foo action."""
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+    """
+
+    def __init__(self):
+        self.bar = "bar"
+
+class FooClass:
+    """Perform foo action."""
+
+    def bar(self):
+        self.baz = "baz"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+    baz = "baz"
+```
+
+These examples can be fixed by adding the missing attributes to the attributes
+section:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        self.bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attributes:
+        baz: The value to perform the foo action on.
+    """
+
+    def bar(self):
+        self.baz = "baz"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        baz: The alternate value to perform the foo action on.
+    """
+    bar = "bar"
+    baz = "baz"
+```
+
+### Fix DCO064
+
+This linting rule is triggered by a class that has one or more attributes and a
+docstring that describes one or more attributes where on or more
+of the described attributes are not attributes of the class. For example:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        _bar: The value to perform the foo action on.
+    """
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        baz: The alternate value to perform the foo action on.
+    """
+    bar = "bar"
+```
+
+These examples can be fixed by removing the attributes the class doesn't have
+from the docstring:
+
+```Python
+class FooClass:
+    """Perform foo action."""
+
+class FooClass:
+    """Perform foo action."""
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+    bar = "bar"
 ```
 
 ## Docstring Examples

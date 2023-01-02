@@ -36,9 +36,8 @@ ARGS_SECTION_IN_DOCSTR_MSG = (
 )
 MULT_ARGS_SECTIONS_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}022"
 MULT_ARGS_SECTIONS_IN_DOCSTR_MSG = (
-    f"{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single args section, "
-    "found %s"
-    f"{MORE_INFO_BASE}{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE.lower()}"
+    f"{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE} a docstring should only contain a single arguments "
+    f"section, found %s{MORE_INFO_BASE}{MULT_ARGS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
 ARG_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}023"
 ARG_NOT_IN_DOCSTR_MSG = (
