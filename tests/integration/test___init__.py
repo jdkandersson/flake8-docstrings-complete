@@ -34,6 +34,11 @@ from flake8_docstrings_complete import (
     EXC_NOT_IN_DOCSTR_CODE,
     EXC_IN_DOCSTR_CODE,
     RE_RAISE_NO_EXC_IN_DOCSTR_CODE,
+    ATTRS_SECTION_NOT_IN_DOCSTR_CODE,
+    ATTRS_SECTION_IN_DOCSTR_CODE,
+    MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE,
+    ATTR_NOT_IN_DOCSTR_CODE,
+    ATTR_IN_DOCSTR_CODE,
 )
 
 
@@ -414,6 +419,95 @@ def foo():
             "source.py",
             "",
             id=f"{RE_RAISE_NO_EXC_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring."""  # noqa: {ATTRS_SECTION_NOT_IN_DOCSTR_CODE}
+
+    attr_1 = "value 1"
+''',
+            "source.py",
+            "",
+            id=f"{ATTRS_SECTION_NOT_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        Attributes.
+    """  # noqa: {ATTRS_SECTION_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{ATTRS_SECTION_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        attr_1:
+
+    Attributes:
+        attr_1:
+    """  # noqa: {MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE}
+
+    attr_1 = "value 1"
+''',
+            "source.py",
+            "",
+            id=f"{MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        Attributes.
+    """
+
+    attr_1 = "value 1"  # noqa: {ATTR_NOT_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{ATTR_NOT_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        attr_1:
+    """
+
+    attr_1 = "value 1"
+    attr_2 = "value 2"  # noqa: {ATTR_NOT_IN_DOCSTR_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{ATTR_NOT_IN_DOCSTR_CODE} disabled specific arg",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        attr_1:
+        attr_2:
+    """  # noqa: {ATTR_IN_DOCSTR_CODE}
+
+    attr_1 = "value 1"
+''',
+            "source.py",
+            "",
+            id=f"{ATTR_IN_DOCSTR_CODE} disabled",
         ),
     ],
 )
