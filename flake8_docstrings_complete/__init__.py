@@ -920,6 +920,9 @@ class Visitor(ast.NodeVisitor):
                 )
             )
 
+        # Ensure recursion continues
+        self.generic_visit(node)
+
 
 class Plugin:
     """Checks docstring include all expected descriptions.

@@ -70,13 +70,14 @@ def function_1():
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1():
         """Docstring.
 
         Returns:
         """
 ''',
-            (f"4:8 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
+            (f"5:8 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
             id="method no return returns in docstring",
         ),
         pytest.param(
@@ -108,6 +109,7 @@ def function_1():
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1():
         """Docstring.
 
@@ -117,7 +119,7 @@ class Class1:
         """
         return 1
 ''',
-            (f"4:8 {MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG % 'Returns,Returns'}",),
+            (f"5:8 {MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG % 'Returns,Returns'}",),
             id="method return multiple returns in docstring",
         ),
         pytest.param(
@@ -356,13 +358,14 @@ def function_1():
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1():
         """Docstring.
 
         Yields:
         """
 ''',
-            (f"4:8 {YIELDS_SECTION_IN_DOCSTR_MSG}",),
+            (f"5:8 {YIELDS_SECTION_IN_DOCSTR_MSG}",),
             id="method no yield yields in docstring",
         ),
         pytest.param(
@@ -408,6 +411,7 @@ def function_1():
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1():
         """Docstring.
 
@@ -417,7 +421,7 @@ class Class1:
         """
         yield 1
 ''',
-            (f"4:8 {MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % 'Yields,Yields'}",),
+            (f"5:8 {MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG % 'Yields,Yields'}",),
             id="method yield multiple yields in docstring",
         ),
         pytest.param(
@@ -448,12 +452,13 @@ def function_1():
             id="async function docstring",
         ),
         pytest.param(
-            """
-class Class_1:
+            '''
+class Class1:
+    """Docstring."""
     def function_1(self):
         return
-""",
-            (f"3:4 {DOCSTR_MISSING_MSG}",),
+''',
+            (f"4:4 {DOCSTR_MISSING_MSG}",),
             id="method docstring missing return",
         ),
         pytest.param(
@@ -510,6 +515,7 @@ def function_1():
 def function_1():
     """Docstring 1."""
     class Class1:
+        """Docstring."""
         return 1
 ''',
             (),
@@ -530,7 +536,8 @@ def function_1():
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1.
 
@@ -607,6 +614,7 @@ def function_1():
 def function_1():
     """Docstring 1."""
     class Class1:
+        """Docstring."""
         yield 1
 ''',
             (),
@@ -627,7 +635,8 @@ def function_1():
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1.
 
