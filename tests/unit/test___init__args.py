@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from flake8_docstrings_complete import (
+from flake8_docstrings_complete.args import (
     ARG_IN_DOCSTR_MSG,
     ARG_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_IN_DOCSTR_MSG,
