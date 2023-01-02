@@ -344,13 +344,14 @@ def function_1():
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1."""
         raise
 ''',
             (
-                f"4:8 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",
-                f"4:8 {RE_RAISE_NO_EXC_IN_DOCSTR_MSG}",
+                f"5:8 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"5:8 {RE_RAISE_NO_EXC_IN_DOCSTR_MSG}",
             ),
             id="method raise no exc docstring no raises",
         ),
@@ -503,28 +504,31 @@ def function_1():
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1."""
         raise Exc1
 ''',
-            (f"4:8 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",),
+            (f"5:8 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="method raises single exc docstring no raises section",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1.
 
         Raises:
         """
 ''',
-            (f"4:8 {RAISES_SECTION_IN_DOCSTR_MSG}",),
+            (f"5:8 {RAISES_SECTION_IN_DOCSTR_MSG}",),
             id="method raises no exc docstring raises section",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1.
 
@@ -532,12 +536,13 @@ class Class_1:
         """
         raise Exc1
 ''',
-            (f"8:14 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
+            (f"9:14 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
             id="method raises single exc docstring no exc",
         ),
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     @staticmethod
     def function_1():
         """Docstring 1.
@@ -546,12 +551,13 @@ class Class1:
         """
         raise Exc1
 ''',
-            (f"9:14 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
+            (f"10:14 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
             id="method raises single exc docstring no exc staticmethod",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @classmethod
     def function_1(cls):
         """Docstring 1.
@@ -560,12 +566,13 @@ class Class_1:
         """
         raise Exc1
 ''',
-            (f"9:14 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
+            (f"10:14 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
             id="method raises single exc docstring no exc classmethod",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1.
 
@@ -579,7 +586,8 @@ class Class_1:
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @staticmethod
     def function_1():
         """Docstring 1.
@@ -594,7 +602,8 @@ class Class_1:
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @classmethod
     def function_1(cls):
         """Docstring 1.
