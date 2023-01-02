@@ -30,6 +30,7 @@ class Docstring(NamedTuple):
         args_sections: All the arguments sections.
         attrs: The attributes described in the docstring. None if the docstring doesn't have the
             attrs section.
+        attrs_sections: All the attributes sections.
         returns: Whether the docstring has the returns section.
         returns_sections: All the returns sections.
         yields: Whether the docstring has the yields section.
@@ -42,6 +43,7 @@ class Docstring(NamedTuple):
     args: tuple[str, ...] | None = None
     args_sections: tuple[str, ...] = ()
     attrs: tuple[str, ...] | None = None
+    attrs_sections: tuple[str, ...] = ()
     returns: bool = False
     returns_sections: tuple[str, ...] = ()
     yields: bool = False
@@ -146,6 +148,7 @@ def parse(value: str) -> Docstring:
         args=args_section.subs if args_section is not None else None,
         args_sections=tuple(_get_all_section_names_by_name(name="args", sections=sections)),
         attrs=attrs_section.subs if attrs_section is not None else None,
+        attrs_sections=tuple(_get_all_section_names_by_name(name="attrs", sections=sections)),
         returns=_get_section_by_name("returns", sections) is not None,
         returns_sections=tuple(_get_all_section_names_by_name(name="returns", sections=sections)),
         yields=_get_section_by_name("yields", sections) is not None,

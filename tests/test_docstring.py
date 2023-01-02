@@ -240,8 +240,28 @@ Parameters:
 
 Attrs:
     """,
-            docstring.Docstring(attrs=()),
+            docstring.Docstring(attrs=(), attrs_sections=("Attrs",)),
             id="attrs empty",
+        ),
+        pytest.param(
+            """short description
+
+Attrs:
+
+Attributes:
+    """,
+            docstring.Docstring(attrs=(), attrs_sections=("Attrs", "Attributes")),
+            id="multiple attrs empty",
+        ),
+        pytest.param(
+            """short description
+
+Attrs:
+
+Attrs:
+    """,
+            docstring.Docstring(attrs=(), attrs_sections=("Attrs", "Attrs")),
+            id="multiple attrs alternate empty",
         ),
         pytest.param(
             """short description
@@ -249,7 +269,7 @@ Attrs:
 Attrs:
     attr_1:
     """,
-            docstring.Docstring(attrs=("attr_1",)),
+            docstring.Docstring(attrs=("attr_1",), attrs_sections=("Attrs",)),
             id="attrs single",
         ),
         pytest.param(
@@ -259,7 +279,7 @@ Attrs:
     attr_1:
     attr_2:
     """,
-            docstring.Docstring(attrs=("attr_1", "attr_2")),
+            docstring.Docstring(attrs=("attr_1", "attr_2"), attrs_sections=("Attrs",)),
             id="attrs multiple",
         ),
         pytest.param(
@@ -268,7 +288,7 @@ Attrs:
 attrs:
     attr_1:
     """,
-            docstring.Docstring(attrs=("attr_1",)),
+            docstring.Docstring(attrs=("attr_1",), attrs_sections=("attrs",)),
             id="attrs lower case",
         ),
         pytest.param(
@@ -277,7 +297,7 @@ attrs:
 Attributes:
     attr_1:
     """,
-            docstring.Docstring(attrs=("attr_1",)),
+            docstring.Docstring(attrs=("attr_1",), attrs_sections=("Attributes",)),
             id="attrs alternate Attributes",
         ),
         pytest.param(
@@ -456,6 +476,7 @@ Raises:
                 args=("arg_1",),
                 args_sections=("Args",),
                 attrs=("attr_1",),
+                attrs_sections=("Attrs",),
                 returns=True,
                 returns_sections=("Returns",),
                 yields=True,
