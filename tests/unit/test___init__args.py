@@ -87,7 +87,7 @@ def function_1(_arg_1):
     """
 ''',
             (f"3:4 {ARGS_SECTION_IN_DOCSTR_MSG}",),
-            id="function has single unused arg docstring no arg",
+            id="function has single unused arg docstring args",
         ),
         pytest.param(
             '''
@@ -379,6 +379,46 @@ def function_1(_arg_1):
 ''',
             (),
             id="function single unused arg docstring no args",
+        ),
+        pytest.param(
+            '''
+def function_1(*_args):
+    """Docstring 1.
+
+    Args:
+        *_args:
+    """
+''',
+            (),
+            id="function single unused *args docstring single arg",
+        ),
+        pytest.param(
+            '''
+def function_1(*_args):
+    """Docstring 1."""
+''',
+            (),
+            id="function single unused *args docstring no args",
+        ),
+        pytest.param(
+            '''
+def function_1(**_kwargs):
+    """Docstring 1.
+
+    Args:
+        **_kwargs:
+    """
+''',
+            (),
+            id="function single unused **kwargs docstring single arg",
+        ),
+        pytest.param(
+            '''
+def function_1(**_kwargs):
+    """Docstring 1."""
+''',
+            (),
+            id="function single unused **kwargs docstring no args",
         ),
         pytest.param(
             '''
