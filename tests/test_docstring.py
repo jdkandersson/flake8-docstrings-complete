@@ -1,5 +1,7 @@
 """Tests for docstring module."""
 
+from __future__ import annotations
+
 # Need access to protected functions for testing
 # pylint: disable=protected-access
 
