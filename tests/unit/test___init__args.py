@@ -125,13 +125,14 @@ def function_1(arg_1, arg_2, /):
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1(self, arg_1, /):
         """Docstring 1.
 
         Args:
         """
 ''',
-            (f"3:25 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            (f"4:25 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="method has single positional only arg docstring no arg",
         ),
         pytest.param(
@@ -159,13 +160,14 @@ def function_1(*, arg_1, arg_2):
         pytest.param(
             '''
 class Class1:
+    """Docstring."""
     def function_1(self, *, arg_1):
         """Docstring 1.
 
         Args:
         """
 ''',
-            (f"3:28 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            (f"4:28 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="method has single keyword only arg docstring no arg",
         ),
         pytest.param(
@@ -496,40 +498,44 @@ def function_1(arg_1, _arg_2):
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self, arg_1):
         """Docstring 1."""
 ''',
-            (f"4:8 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",),
+            (f"5:8 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",),
             id="method has single arg docstring no args section",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self):
         """Docstring 1.
 
         Args:
         """
 ''',
-            (f"4:8 {ARGS_SECTION_IN_DOCSTR_MSG}",),
+            (f"5:8 {ARGS_SECTION_IN_DOCSTR_MSG}",),
             id="method has no args docstring args section",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self, arg_1):
         """Docstring 1.
 
         Args:
         """
 ''',
-            (f"3:25 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            (f"4:25 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="method has single arg docstring no arg",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @staticmethod
     def function_1(arg_1):
         """Docstring 1.
@@ -537,12 +543,13 @@ class Class_1:
         Args:
         """
 ''',
-            (f"4:19 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            (f"5:19 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="method has single arg docstring no arg staticmethod",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @classmethod
     def function_1(cls, arg_1):
         """Docstring 1.
@@ -550,12 +557,13 @@ class Class_1:
         Args:
         """
 ''',
-            (f"4:24 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
+            (f"5:24 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="method has single arg docstring no arg classmethod",
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     def function_1(self, arg_1):
         """Docstring 1.
 
@@ -568,7 +576,8 @@ class Class_1:
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @staticmethod
     def function_1(arg_1):
         """Docstring 1.
@@ -582,7 +591,8 @@ class Class_1:
         ),
         pytest.param(
             '''
-class Class_1:
+class Class1:
+    """Docstring."""
     @classmethod
     def function_1(cls, arg_1):
         """Docstring 1.
