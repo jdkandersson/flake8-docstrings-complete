@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from flake8_docstrings_complete import (
+    DOCSTR_MISSING_MSG,
     ATTR_IN_DOCSTR_MSG,
     ATTR_NOT_IN_DOCSTR_MSG,
     ATTRS_SECTION_IN_DOCSTR_MSG,
@@ -18,6 +19,14 @@ from . import result
 @pytest.mark.parametrize(
     "code, expected_result",
     [
+        pytest.param(
+            """
+class Class1:
+    pass
+""",
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
+            id="class no docstring",
+        ),
         pytest.param(
             '''
 class Class1:
