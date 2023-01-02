@@ -40,6 +40,22 @@ class Class1:
             '''
 class Class1:
     """Docstring 1."""
+    attr_1 = "value 1"
+
+class Class2:
+    """Docstring 2."""
+    attr_2 = "value 2"
+''',
+            (
+                f"3:4 {ATTRS_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"7:4 {ATTRS_SECTION_NOT_IN_DOCSTR_MSG}",
+            ),
+            id="multiple class has single class attr docstring no attrs section",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
     def __init__(self):
         """Docstring 2."""
         self.attr_1 = "value 1"

@@ -62,9 +62,6 @@ FIXTURE_FILENAME_PATTERN_DEFAULT = r"conftest\.py"
 FIXTURE_DECORATOR_PATTERN_ARG_NAME = "--docstrings-complete-fixture-decorator-pattern"
 FIXTURE_DECORATOR_PATTERN_DEFAULT = r"(^|\.)fixture$"
 
-CLASS_SELF_CLS = {"self", "cls"}
-UNUSED_ARGS_PREFIX = "_"
-
 
 # Helper function for option management, tested in integration tests
 def _cli_arg_name_to_attr(cli_arg_name: str) -> str:

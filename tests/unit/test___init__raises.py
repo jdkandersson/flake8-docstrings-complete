@@ -31,6 +31,22 @@ def function_1():
         pytest.param(
             '''
 def function_1():
+    """Docstring 1."""
+    raise Exc1
+
+def function_2():
+    """Docstring 2."""
+    raise Exc2
+''',
+            (
+                f"3:4 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"7:4 {RAISES_SECTION_NOT_IN_DOCSTR_MSG}",
+            ),
+            id="multiple function raises single exc docstring no raises section",
+        ),
+        pytest.param(
+            '''
+def function_1():
     """Docstring 1.
 
     Raises:

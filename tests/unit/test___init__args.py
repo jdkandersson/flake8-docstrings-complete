@@ -28,6 +28,20 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
+def function_1(arg_1):
+    """Docstring 1."""
+
+def function_2(arg_2):
+    """Docstring 2."""
+''',
+            (
+                f"3:4 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",
+                f"6:4 {ARGS_SECTION_NOT_IN_DOCSTR_MSG}",
+            ),
+            id="multiple function has single arg docstring no args section",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring 1.
 
