@@ -126,7 +126,7 @@ def _iter_method_attrs(
     for node in nodes:
         if isinstance(node, ast.Assign):
             yield from filter(None, (_get_method_target_node(target) for target in node.targets))
-        if isinstance(node, (ast.AnnAssign | ast.AugAssign)):
+        else:
             target_node = _get_method_target_node(node.target)
             # No valid syntax reaches else
             if target_node is not None:  # pragma: nobranch
