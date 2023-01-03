@@ -15,8 +15,24 @@ from flake8_docstrings_complete import docstring
     [
         pytest.param((), (), id="empty"),
         pytest.param(("",), (), id="single not a section"),
-        pytest.param(("not a section",), (), id="single not a section no colon"),
-        pytest.param(("not a section:",), (), id="single not a section not after first word"),
+        pytest.param((" ",), (), id="single not a section whitespace"),
+        pytest.param(("\t",), (), id="single not a section alternate whitespace"),
+        pytest.param(
+            ("line 1",), (docstring._Section(None, ()),), id="single line section no name"
+        ),
+        pytest.param(
+            ("line 1", "line 2"), (docstring._Section(None, ()),), id="multi line section no name"
+        ),
+        pytest.param(
+            ("line 1", "name_1:"),
+            (docstring._Section(None, ("name_1",)),),
+            id="multi line section no name second like name",
+        ),
+        pytest.param(
+            ("line 1:",),
+            (docstring._Section(None, ()),),
+            id="single section no name colon after first word",
+        ),
         pytest.param(("name_1:",), (docstring._Section("name_1", ()),), id="single section"),
         pytest.param(
             (" name_1:",),

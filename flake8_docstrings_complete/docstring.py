@@ -56,7 +56,7 @@ _SECTION_NAMES = {
     "raises": {"raises", "raise"},
 }
 _WHITESPACE_REGEX = r"\s*"
-_SECTION_START_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
+_SECTION_NAME_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
 _SUB_SECTION_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+)( \(.*\))?:")
 _SECTION_END_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}$")
 
@@ -82,16 +82,19 @@ def _get_sections(lines: Iterable[str]) -> Iterator[_Section]:
     with contextlib.suppress(StopIteration):
         while True:
             # Find the start of the next section
-            section_name = next(
-                filter(None, (_SECTION_START_PATTERN.match(line) for line in lines))
-            ).group(1)
+            section_start = next(line for line in lines if line.strip())
+            section_name_match = _SECTION_NAME_PATTERN.match(section_start)
+            section_name = section_name_match.group(1) if section_name_match else None
+
             # Get all the lines of the section
             section_lines = itertools.takewhile(
                 lambda line: _SECTION_END_PATTERN.match(line) is None, lines
             )
+
             # Retrieve sub section from section lines
             sub_section_matches = (_SUB_SECTION_PATTERN.match(line) for line in section_lines)
             sub_sections = (match.group(1) for match in sub_section_matches if match is not None)
+
             yield _Section(name=section_name, subs=tuple(sub_sections))
 
 
