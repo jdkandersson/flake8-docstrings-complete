@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [v1.0.1] - 2023-01-03
+
+### Fixed
+
+- Fixed definition of a section start to be a non-empty line rather than based
+  on whether it has a named header like
+
 ## [v1.0.0] - 2023-01-02
 
 ### Added
@@ -63,3 +70,4 @@
 
 [//]: # "Release links"
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0
+[v1.0.1]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.1
