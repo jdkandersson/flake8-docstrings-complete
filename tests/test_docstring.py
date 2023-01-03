@@ -307,7 +307,7 @@ Attributes:
 
 Returns:
     """,
-            docstring.Docstring(returns=True, returns_sections=("Returns",)),
+            docstring.Docstring(returns_sections=("Returns",)),
             id="returns empty",
         ),
         pytest.param(
@@ -316,7 +316,7 @@ Returns:
 Returns:
     The return value.
     """,
-            docstring.Docstring(returns=True, returns_sections=("Returns",)),
+            docstring.Docstring(returns_sections=("Returns",)),
             id="returns single line",
         ),
         pytest.param(
@@ -324,7 +324,7 @@ Returns:
 
 Return:
     """,
-            docstring.Docstring(returns=True, returns_sections=("Return",)),
+            docstring.Docstring(returns_sections=("Return",)),
             id="returns alternate",
         ),
         pytest.param(
@@ -334,7 +334,7 @@ Returns:
 
 Returns:
     """,
-            docstring.Docstring(returns=True, returns_sections=("Returns", "Returns")),
+            docstring.Docstring(returns_sections=("Returns", "Returns")),
             id="multiple returns",
         ),
         pytest.param(
@@ -344,7 +344,7 @@ Returns:
 
 Return:
     """,
-            docstring.Docstring(returns=True, returns_sections=("Returns", "Return")),
+            docstring.Docstring(returns_sections=("Returns", "Return")),
             id="multiple returns alternate",
         ),
         pytest.param(
@@ -352,7 +352,7 @@ Return:
 
 Yields:
     """,
-            docstring.Docstring(yields=True, yields_sections=("Yields",)),
+            docstring.Docstring(yields_sections=("Yields",)),
             id="yields empty",
         ),
         pytest.param(
@@ -361,7 +361,7 @@ Yields:
 Yields:
     The return value.
     """,
-            docstring.Docstring(yields=True, yields_sections=("Yields",)),
+            docstring.Docstring(yields_sections=("Yields",)),
             id="yields single line",
         ),
         pytest.param(
@@ -369,7 +369,7 @@ Yields:
 
 Yield:
     """,
-            docstring.Docstring(yields=True, yields_sections=("Yield",)),
+            docstring.Docstring(yields_sections=("Yield",)),
             id="yields alternate",
         ),
         pytest.param(
@@ -379,7 +379,7 @@ Yields:
 
 Yields:
     """,
-            docstring.Docstring(yields=True, yields_sections=("Yields", "Yields")),
+            docstring.Docstring(yields_sections=("Yields", "Yields")),
             id="multiple yields",
         ),
         pytest.param(
@@ -389,7 +389,7 @@ Yields:
 
 Yield:
     """,
-            docstring.Docstring(yields=True, yields_sections=("Yields", "Yield")),
+            docstring.Docstring(yields_sections=("Yields", "Yield")),
             id="multiple yields alternate",
         ),
         pytest.param(
@@ -479,9 +479,7 @@ Raises:
                 args_sections=("Args",),
                 attrs=("attr_1",),
                 attrs_sections=("Attrs",),
-                returns=True,
                 returns_sections=("Returns",),
-                yields=True,
                 yields_sections=("Yields",),
                 raises=("exc_1",),
                 raises_sections=("Raises",),

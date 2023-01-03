@@ -92,7 +92,7 @@ def _check_returns(
     return_nodes_with_value = list(node for node in return_nodes if node.value is not None)
 
     # Check for return statements with value and no returns section in docstring
-    if return_nodes_with_value and not docstr_info.returns:
+    if return_nodes_with_value and not docstr_info.returns_sections:
         yield from (
             types_.Problem(node.lineno, node.col_offset, RETURNS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in return_nodes_with_value
@@ -107,7 +107,7 @@ def _check_returns(
         )
 
     # Check for returns section in docstring in function that does not return a value
-    if not return_nodes_with_value and docstr_info.returns:
+    if not return_nodes_with_value and docstr_info.returns_sections:
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, RETURNS_SECTION_IN_DOCSTR_MSG
         )
@@ -131,7 +131,7 @@ def _check_yields(
     yield_nodes_with_value = list(node for node in yield_nodes if node.value is not None)
 
     # Check for yield statements with value and no yields section in docstring
-    if yield_nodes_with_value and not docstr_info.yields:
+    if yield_nodes_with_value and not docstr_info.yields_sections:
         yield from (
             types_.Problem(node.lineno, node.col_offset, YIELDS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in yield_nodes_with_value
@@ -146,7 +146,7 @@ def _check_yields(
         )
 
     # Check for yields section in docstring in function that does not yield a value
-    if not yield_nodes_with_value and docstr_info.yields:
+    if not yield_nodes_with_value and docstr_info.yields_sections:
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, YIELDS_SECTION_IN_DOCSTR_MSG
         )
