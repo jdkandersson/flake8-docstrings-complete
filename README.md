@@ -1540,3 +1540,4 @@ Section information is extracted using the following algorithm:
 - Check that argument, exceptions and attributes have non-empty description.
 - Check that arguments, exceptions and attributes are only documented once.
 - Check that arguments, exceptions and attributes have meaningful descriptions.
+- Check other other PEP257 conventions

@@ -17,7 +17,7 @@ class _Section(NamedTuple):
             sub-sections.
     """
 
-    name: str
+    name: str | None
     subs: tuple[str, ...]
 
 
@@ -111,7 +111,11 @@ def _get_section_by_name(name: str, sections: Iterable[_Section]) -> _Section | 
     """
     sections = iter(sections)
     return next(
-        (section for section in sections if section.name.lower() in _SECTION_NAMES[name]),
+        (
+            section
+            for section in sections
+            if section.name is not None and section.name.lower() in _SECTION_NAMES[name]
+        ),
         None,
     )
 
@@ -128,7 +132,9 @@ def _get_all_section_names_by_name(name: str, sections: Iterable[_Section]) -> I
     """
     sections = iter(sections)
     yield from (
-        section.name for section in sections if section.name.lower() in _SECTION_NAMES[name]
+        section.name
+        for section in sections
+        if section.name is not None and section.name.lower() in _SECTION_NAMES[name]
     )
 
 
