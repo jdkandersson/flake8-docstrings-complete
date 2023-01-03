@@ -17,7 +17,7 @@ class _Section(NamedTuple):
             sub-sections.
     """
 
-    name: str
+    name: str | None
     subs: tuple[str, ...]
 
 
@@ -31,9 +31,7 @@ class Docstring(NamedTuple):
         attrs: The attributes described in the docstring. None if the docstring doesn't have the
             attrs section.
         attrs_sections: All the attributes sections.
-        returns: Whether the docstring has the returns section.
         returns_sections: All the returns sections.
-        yields: Whether the docstring has the yields section.
         yields_sections: All the yields sections.
         raises: The exceptions described in the docstring. None if the docstring doesn't have the
             raises section.
@@ -44,9 +42,7 @@ class Docstring(NamedTuple):
     args_sections: tuple[str, ...] = ()
     attrs: tuple[str, ...] | None = None
     attrs_sections: tuple[str, ...] = ()
-    returns: bool = False
     returns_sections: tuple[str, ...] = ()
-    yields: bool = False
     yields_sections: tuple[str, ...] = ()
     raises: tuple[str, ...] | None = None
     raises_sections: tuple[str, ...] = ()
@@ -60,7 +56,7 @@ _SECTION_NAMES = {
     "raises": {"raises", "raise"},
 }
 _WHITESPACE_REGEX = r"\s*"
-_SECTION_START_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
+_SECTION_NAME_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
 _SUB_SECTION_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+)( \(.*\))?:")
 _SECTION_END_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}$")
 
@@ -86,16 +82,19 @@ def _get_sections(lines: Iterable[str]) -> Iterator[_Section]:
     with contextlib.suppress(StopIteration):
         while True:
             # Find the start of the next section
-            section_name = next(
-                filter(None, (_SECTION_START_PATTERN.match(line) for line in lines))
-            ).group(1)
+            section_start = next(line for line in lines if line.strip())
+            section_name_match = _SECTION_NAME_PATTERN.match(section_start)
+            section_name = section_name_match.group(1) if section_name_match else None
+
             # Get all the lines of the section
             section_lines = itertools.takewhile(
                 lambda line: _SECTION_END_PATTERN.match(line) is None, lines
             )
+
             # Retrieve sub section from section lines
             sub_section_matches = (_SUB_SECTION_PATTERN.match(line) for line in section_lines)
             sub_sections = (match.group(1) for match in sub_section_matches if match is not None)
+
             yield _Section(name=section_name, subs=tuple(sub_sections))
 
 
@@ -111,7 +110,11 @@ def _get_section_by_name(name: str, sections: Iterable[_Section]) -> _Section | 
     """
     sections = iter(sections)
     return next(
-        (section for section in sections if section.name.lower() in _SECTION_NAMES[name]),
+        (
+            section
+            for section in sections
+            if section.name is not None and section.name.lower() in _SECTION_NAMES[name]
+        ),
         None,
     )
 
@@ -128,7 +131,9 @@ def _get_all_section_names_by_name(name: str, sections: Iterable[_Section]) -> I
     """
     sections = iter(sections)
     yield from (
-        section.name for section in sections if section.name.lower() in _SECTION_NAMES[name]
+        section.name
+        for section in sections
+        if section.name is not None and section.name.lower() in _SECTION_NAMES[name]
     )
 
 
@@ -152,9 +157,7 @@ def parse(value: str) -> Docstring:
         args_sections=tuple(_get_all_section_names_by_name(name="args", sections=sections)),
         attrs=attrs_section.subs if attrs_section is not None else None,
         attrs_sections=tuple(_get_all_section_names_by_name(name="attrs", sections=sections)),
-        returns=_get_section_by_name("returns", sections) is not None,
         returns_sections=tuple(_get_all_section_names_by_name(name="returns", sections=sections)),
-        yields=_get_section_by_name("yields", sections) is not None,
         yields_sections=tuple(_get_all_section_names_by_name(name="yields", sections=sections)),
         raises=raises_section.subs if raises_section is not None else None,
         raises_sections=tuple(_get_all_section_names_by_name(name="raises", sections=sections)),
