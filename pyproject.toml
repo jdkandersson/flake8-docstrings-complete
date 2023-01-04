@@ -23,23 +23,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
-flake8 = ">= 4"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7"
-mypy = "^0.991"
-isort = "^5"
-black = "^22"
-coverage = {extras = ["toml"], version = "^6"}
-pytest-cov = "^4"
-flake8-docstrings = "^1"
-flake8-builtins = "^2"
-pep8-naming = "^0"
-codespell = "^2"
-pylint = "^2"
-pydocstyle = "^6"
-toml = "^0"
-astpretty = "^3"
+flake8 = ">= 5"
 
 [build-system]
 requires = ["poetry-core"]
