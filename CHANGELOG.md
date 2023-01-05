@@ -6,7 +6,7 @@
 
 ### Added
 
-- Support for properties
+- Support for class properties
 
 ## [v1.0.2] - 2023-01-04
 

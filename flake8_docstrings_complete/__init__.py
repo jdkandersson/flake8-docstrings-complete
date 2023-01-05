@@ -275,7 +275,7 @@ class Visitor(ast.NodeVisitor):
             node: The node to check.
 
         Returns:
-            Whether the node is a decorator fixture.
+            Whether the node is a fixture decorator.
         """
         # Handle variable
         fixture_name: str | None = None

@@ -46,7 +46,7 @@ def is_property_decorator(node: ast.expr) -> bool:
         node: The node to check.
 
     Returns:
-        Whether the node is a decorator property.
+        Whether the node is a property decorator.
     """
     if isinstance(node, ast.Name):
         return node.id == "property"
