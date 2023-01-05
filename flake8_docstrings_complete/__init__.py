@@ -298,17 +298,26 @@ class Visitor(ast.NodeVisitor):
     def _skip_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check whether to skip a function.
 
+        A function is skipped if it is a test function in a test file, if it is a fixture in a test
+        or fixture file or if it is a property.
+
         Args:
             node: The function to check
 
         Returns:
             Whether to skip the function.
         """
+        # Check for properties
+        if any(attrs.is_property_decorator(decorator) for decorator in node.decorator_list):
+            return True
+
+        # Check for test functions
         if self._file_type == types_.FileType.TEST and re.match(
             self._test_function_pattern, node.name
         ):
             return True
 
+        # Check for fixtures
         if self._file_type in {types_.FileType.TEST, types_.FileType.FIXTURE}:
             return any(self._is_fixture_decorator(decorator) for decorator in node.decorator_list)
 

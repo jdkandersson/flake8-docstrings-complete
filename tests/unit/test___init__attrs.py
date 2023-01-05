@@ -188,6 +188,70 @@ class Class1:
 
     Attrs:
     """
+    @property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single property docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    @property
+    def attr_1(self):
+        """Docstring 2."""
+        self.attr_2 = "value 2"
+        return "value 1"
+''',
+            (
+                f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",
+                f"10:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
+            ),
+            id="class has single property with assignment docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    @property
+    async def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single async property docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    @property()
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single property call docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
     def __init__(self):
         """Docstring 2."""
     attr_1 = "value 1"
@@ -267,6 +331,28 @@ class Class1:
                 f"9:22 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
             ),
             id="class has multiple attr in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    @property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+    @property
+    def attr_2():
+        """Docstring 3."""
+        return "value 3"
+''',
+            (
+                f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",
+                f"12:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
+            ),
+            id="class has multiple property docstring no attr",
         ),
         pytest.param(
             '''
@@ -535,6 +621,22 @@ class Class1:
 ''',
             (),
             id="class single attr docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    @property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (),
+            id="class single property docstring single attr",
         ),
         pytest.param(
             '''

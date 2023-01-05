@@ -550,6 +550,54 @@ class Class1:
         ),
         pytest.param(
             '''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        function_1:
+    """
+    @property
+    def function_1(self):
+        """Docstring 1."""
+        return 1
+''',
+            (),
+            id="property return value docstring no returns section",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        function_1:
+    """
+    @property
+    async def function_1(self):
+        """Docstring 1."""
+        return 1
+''',
+            (),
+            id="async property return value docstring no returns section",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        function_1:
+    """
+    @property()
+    def function_1(self):
+        """Docstring 1."""
+        return 1
+''',
+            (),
+            id="property call return value docstring no returns section",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring 1."""
     yield
@@ -646,6 +694,22 @@ class Class1:
 ''',
             (),
             id="method yield value docstring yields section",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        function_1:
+    """
+    @property
+    def function_1(self):
+        """Docstring 1."""
+        yield 1
+''',
+            (),
+            id="property yield value docstring no yields section",
         ),
     ],
 )
