@@ -1316,6 +1316,16 @@ class FooClass:
         self.bar = "bar"
 
 class FooClass:
+    """Perform foo action.
+
+    Attrs:
+    """
+
+    @property
+    def bar(self):
+        return "bar"
+
+class FooClass:
     """Perform foo action."""
 
     def bar(self):
@@ -1360,6 +1370,17 @@ class FooClass:
 
     def __init__(self):
         self.bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+    @property
+    def bar(self):
+        return "bar"
 
 class FooClass:
     """Perform foo action.
