@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [v1.0.3] - 2023-01-05
+
+### Added
+
+- Support for class properties
+
 ## [v1.0.2] - 2023-01-04
 
 ### Added
@@ -78,3 +84,4 @@
 [v1.0.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.0
 [v1.0.1]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.1
 [v1.0.2]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.2
+[v1.0.3]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.3

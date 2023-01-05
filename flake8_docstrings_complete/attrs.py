@@ -26,7 +26,7 @@ MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG = (
 )
 ATTR_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}063"
 ATTR_NOT_IN_DOCSTR_MSG = (
-    f'{ATTR_NOT_IN_DOCSTR_CODE} "%s" attribute should be described in the docstring'
+    f'{ATTR_NOT_IN_DOCSTR_CODE} "%s" attribute/ property should be described in the docstring'
     f"{MORE_INFO_BASE}{ATTR_NOT_IN_DOCSTR_CODE.lower()}"
 )
 ATTR_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}064"
@@ -37,6 +37,25 @@ ATTR_IN_DOCSTR_MSG = (
 
 CLASS_SELF_CLS = {"self", "cls"}
 PRIVATE_ATTR_PREFIX = "_"
+
+
+def is_property_decorator(node: ast.expr) -> bool:
+    """Determine whether an expression is a property decorator.
+
+    Args:
+        node: The node to check.
+
+    Returns:
+        Whether the node is a property decorator.
+    """
+    if isinstance(node, ast.Name):
+        return node.id == "property"
+
+    # Handle call
+    if isinstance(node, ast.Call):
+        return is_property_decorator(node=node.func)
+
+    return False
 
 
 def _get_class_target_name(target: ast.expr) -> ast.Name | None:
@@ -61,7 +80,7 @@ def _get_class_target_name(target: ast.expr) -> ast.Name | None:
 
 
 def _iter_class_attrs(
-    nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
+    nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign | types_.Node],
 ) -> Iterator[types_.Node]:
     """Get the node of the variable being assigned at the class level if the target is a Name.
 
@@ -72,7 +91,9 @@ def _iter_class_attrs(
         All the nodes of name targets of the assignment expressions.
     """
     for node in nodes:
-        if isinstance(node, ast.Assign):
+        if isinstance(node, types_.Node):
+            yield node
+        elif isinstance(node, ast.Assign):
             target_names = filter(
                 None, (_get_class_target_name(target) for target in node.targets)
             )
@@ -136,7 +157,7 @@ def _iter_method_attrs(
 def check(
     docstr_info: docstring.Docstring,
     docstr_node: ast.Constant,
-    class_assign_nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
+    class_assign_nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign | types_.Node],
     method_assign_nodes: Iterable[ast.Assign | ast.AnnAssign | ast.AugAssign],
 ) -> Iterator[types_.Problem]:
     """Check that all class attributes are described in the docstring.
@@ -211,7 +232,7 @@ class VisitorWithinClass(ast.NodeVisitor):
         method_assign_nodes: All the return nodes encountered within the class methods.
     """
 
-    class_assign_nodes: list[ast.Assign | ast.AnnAssign | ast.AugAssign]
+    class_assign_nodes: list[ast.Assign | ast.AnnAssign | ast.AugAssign | types_.Node]
     method_assign_nodes: list[ast.Assign | ast.AnnAssign | ast.AugAssign]
     _visited_once: bool
     _visited_top_level: bool
@@ -236,6 +257,18 @@ class VisitorWithinClass(ast.NodeVisitor):
 
         # Ensure recursion continues
         self.generic_visit(node)
+
+    def visit_any_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        """Visit a function definition node.
+
+        Args:
+            node: The function definition to check.
+        """
+        if any(is_property_decorator(decorator) for decorator in node.decorator_list):
+            self.class_assign_nodes.append(
+                types_.Node(lineno=node.lineno, col_offset=node.col_offset, name=node.name)
+            )
+        self.visit_top_level(node=node)
 
     def visit_once(self, node: ast.AST) -> None:
         """Visit the node once and then skip.
@@ -264,6 +297,6 @@ class VisitorWithinClass(ast.NodeVisitor):
     visit_AnnAssign = visit_assign  # noqa: N815,DCO063
     visit_AugAssign = visit_assign  # noqa: N815,DCO063
     # Ensure that nested functions and classes are not iterated over
-    visit_FunctionDef = visit_top_level  # noqa: N815,DCO063
-    visit_AsyncFunctionDef = visit_top_level  # noqa: N815,DCO063
+    visit_FunctionDef = visit_any_function  # noqa: N815,DCO063
+    visit_AsyncFunctionDef = visit_any_function  # noqa: N815,DCO063
     visit_ClassDef = visit_once  # noqa: N815,DCO063
