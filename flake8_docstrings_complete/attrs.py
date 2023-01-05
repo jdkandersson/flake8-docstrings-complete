@@ -26,7 +26,7 @@ MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG = (
 )
 ATTR_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}063"
 ATTR_NOT_IN_DOCSTR_MSG = (
-    f'{ATTR_NOT_IN_DOCSTR_CODE} "%s" attribute should be described in the docstring'
+    f'{ATTR_NOT_IN_DOCSTR_CODE} "%s" attribute/ property should be described in the docstring'
     f"{MORE_INFO_BASE}{ATTR_NOT_IN_DOCSTR_CODE.lower()}"
 )
 ATTR_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}064"
