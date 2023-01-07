@@ -2,7 +2,9 @@
 
 Linter that checks docstrings of functions, methods and classes. It should be
 used in conjunction with `pydocstyle` (or `flake8-docstrings`) as the linter
-assumes that the docstrings already pass `pydocstyle` checks.
+assumes that the docstrings already pass `pydocstyle` checks. This
+[blog post](https://jdkandersson.com/2023/01/07/writing-great-docstrings-in-python/)
+discusses how to write great docstrings and the motivation for this linter!
 
 ## Getting Started
 
