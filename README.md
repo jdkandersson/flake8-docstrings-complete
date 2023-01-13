@@ -1314,24 +1314,9 @@ class FooClass:
     Attrs:
     """
 
-    def __init__(self):
-        self.bar = "bar"
-
-class FooClass:
-    """Perform foo action.
-
-    Attrs:
-    """
-
     @property
     def bar(self):
         return "bar"
-
-class FooClass:
-    """Perform foo action."""
-
-    def bar(self):
-        self.baz = "baz"
 
 class FooClass:
     """Perform foo action.
@@ -1358,20 +1343,10 @@ class FooClass:
 class FooClass:
     """Perform foo action.
 
-    Attrs:
-        bar: The value to perform the foo action on.
-    """
-    bar = "bar"
-
-class FooClass:
-    """Perform foo action.
-
     Attributes:
         bar: The value to perform the foo action on.
     """
-
-    def __init__(self):
-        self.bar = "bar"
+    bar = "bar"
 
 class FooClass:
     """Perform foo action.
@@ -1383,16 +1358,6 @@ class FooClass:
     @property
     def bar(self):
         return "bar"
-
-class FooClass:
-    """Perform foo action.
-
-    Attributes:
-        baz: The value to perform the foo action on.
-    """
-
-    def bar(self):
-        self.baz = "baz"
 
 class FooClass:
     """Perform foo action.
@@ -1453,6 +1418,16 @@ class FooClass:
         bar: The value to perform the foo action on.
     """
     bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        self.bar = "bar"
 ```
 
 ## Docstring Examples
