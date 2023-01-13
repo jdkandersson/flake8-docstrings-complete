@@ -1427,6 +1427,7 @@ class FooClass:
     """
 
     def __init__(self):
+        """Construct."""
         self.bar = "bar"
 ```
 
