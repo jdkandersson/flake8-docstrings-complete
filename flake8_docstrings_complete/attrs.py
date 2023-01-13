@@ -175,15 +175,14 @@ def check(
     Yields:
         All the problems with the attributes.
     """
-    all_targets = list(
-        chain(_iter_class_attrs(class_assign_nodes), _iter_method_attrs(method_assign_nodes))
+    all_class_targets = list(_iter_class_attrs(class_assign_nodes))
+    all_public_class_targets = list(
+        target for target in all_class_targets if not target.name.startswith(PRIVATE_ATTR_PREFIX)
     )
-    all_public_targets = list(
-        target for target in all_targets if not target.name.startswith(PRIVATE_ATTR_PREFIX)
-    )
+    all_targets = list(chain(all_class_targets, _iter_method_attrs(method_assign_nodes)))
 
     # Check that attrs section is in docstring if function/ method has public attributes
-    if all_public_targets and docstr_info.attrs is None:
+    if all_public_class_targets and docstr_info.attrs is None:
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_NOT_IN_DOCSTR_MSG
         )
@@ -206,7 +205,7 @@ def check(
         # Check for class attributes that are not in the docstring
         yield from (
             types_.Problem(target.lineno, target.col_offset, ATTR_NOT_IN_DOCSTR_MSG % target.name)
-            for target in all_public_targets
+            for target in all_public_class_targets
             if target.name not in docstr_attrs
         )
 
@@ -218,7 +217,7 @@ def check(
         )
 
         # Check for empty attrs section
-        if not all_public_targets and len(docstr_info.attrs) == 0:
+        if not all_public_class_targets and len(docstr_info.attrs) == 0:
             yield types_.Problem(
                 docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_IN_DOCSTR_MSG
             )

@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [v1.0.4] - 2023-01-13
+
+### Changed
+
+- Changed only class attributes to be required in class attributes section,
+  instance attributes are now optional
+
 ## [v1.0.3] - 2023-01-05
 
 ### Added
@@ -85,3 +92,4 @@
 [v1.0.1]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.1
 [v1.0.2]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.2
 [v1.0.3]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.3
+[v1.0.4]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.4

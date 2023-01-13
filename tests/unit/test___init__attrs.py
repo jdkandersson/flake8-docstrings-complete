@@ -1,5 +1,8 @@
 """Unit tests for attrs checks in the plugin."""
 
+# The lines represent the number of test cases
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import pytest
@@ -51,28 +54,6 @@ class Class2:
                 f"7:4 {ATTRS_SECTION_NOT_IN_DOCSTR_MSG}",
             ),
             id="multiple class has single class attr docstring no attrs section",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1."""
-    def __init__(self):
-        """Docstring 2."""
-        self.attr_1 = "value 1"
-''',
-            (f"3:4 {ATTRS_SECTION_NOT_IN_DOCSTR_MSG}",),
-            id="class has single __init__ attr docstring no attrs section",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1."""
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1 = "value 1"
-''',
-            (f"3:4 {ATTRS_SECTION_NOT_IN_DOCSTR_MSG}",),
-            id="class has single method attr docstring no attrs section",
         ),
         pytest.param(
             '''
@@ -209,10 +190,7 @@ class Class1:
         self.attr_2 = "value 2"
         return "value 1"
 ''',
-            (
-                f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",
-                f"10:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
-            ),
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
             id="class has single property with assignment docstring no attr",
         ),
         pytest.param(
@@ -266,79 +244,6 @@ class Class1:
 
     Attrs:
     """
-    def __init__(self):
-        """Docstring 2."""
-        self.attr_1 = "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr in init docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1 = "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr in method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1: str = "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr typed in method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1 += "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr augmented in method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1 = self.attr_2 = "value 1"
-''',
-            (
-                f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",
-                f"9:22 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
-            ),
-            id="class has multiple attr in method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
     @property
     def attr_1():
         """Docstring 2."""
@@ -353,83 +258,6 @@ class Class1:
                 f"12:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
             ),
             id="class has multiple property docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1.nested_attr_1 = "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr nested in method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1.nested_attr_1.nested_attr_2 = "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr deep nested in method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    def method_1(self):
-        """Docstring 2."""
-        self.attr_1 = "value 1"
-    def method_2(self):
-        """Docstring 3."""
-        self.attr_2 = "value 2"
-''',
-            (
-                f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",
-                f"12:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}",
-            ),
-            id="class has multiple attr in multiple method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    async def method_1(self):
-        """Docstring 2."""
-        self.attr_1 = "value 1"
-''',
-            (f"9:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr in async method docstring no attr",
-        ),
-        pytest.param(
-            '''
-class Class1:
-    """Docstring 1.
-
-    Attrs:
-    """
-    @classmethod
-    def method_1(cls):
-        """Docstring 2."""
-        cls.attr_1 = "value 1"
-''',
-            (f"10:8 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
-            id="class has single attr in classmethod method docstring no attr",
         ),
         pytest.param(
             '''
@@ -761,6 +589,317 @@ class Class1:
 ''',
             (),
             id="class single var init docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    @property
+    def attr_1(self):
+        """Docstring 2."""
+        self.attr_2 = "value 2"
+        return "value 1"
+''',
+            (),
+            id="class has single property with assignment docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_2:
+    """
+    @property
+    def attr_1(self):
+        """Docstring 2."""
+        self.attr_2 = "value 2"
+        return "value 1"
+''',
+            (),
+            id="class has single property with assignment docstring both attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def __init__(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr in init docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1: str = "value 1"
+''',
+            (),
+            id="class has single attr typed in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1: str = "value 1"
+''',
+            (),
+            id="class has single attr typed in method docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 += "value 1"
+''',
+            (),
+            id="class has single attr augmented in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 += "value 1"
+''',
+            (),
+            id="class has single attr augmented in method docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = self.attr_2 = "value 1"
+''',
+            (),
+            id="class has multiple attr in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_2:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = self.attr_2 = "value 1"
+''',
+            (),
+            id="class has multiple attr in method docstring multiple attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1.nested_attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr nested in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1.nested_attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr nested in method docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1.nested_attr_1.nested_attr_2 = "value 1"
+''',
+            (),
+            id="class has single attr deep nested in method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1.nested_attr_1.nested_attr_2 = "value 1"
+''',
+            (),
+            id="class has single attr deep nested in method docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+    def method_2(self):
+        """Docstring 3."""
+        self.attr_2 = "value 2"
+''',
+            (),
+            id="class has multiple attr in multiple method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+    def method_2(self):
+        """Docstring 3."""
+        self.attr_2 = "value 2"
+''',
+            (),
+            id="class has multiple attr in multiple method docstring single attr first",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_2:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+    def method_2(self):
+        """Docstring 3."""
+        self.attr_2 = "value 2"
+''',
+            (),
+            id="class has multiple attr in multiple method docstring single attr second",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_2:
+    """
+    def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+    def method_2(self):
+        """Docstring 3."""
+        self.attr_2 = "value 2"
+''',
+            (),
+            id="class has multiple attr in multiple method docstring multiple attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    async def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr in async method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    async def method_1(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr in async method docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1."""
+    @classmethod
+    def method_1(cls):
+        """Docstring 2."""
+        cls.attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr in classmethod method docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    @classmethod
+    def method_1(cls):
+        """Docstring 2."""
+        cls.attr_1 = "value 1"
+''',
+            (),
+            id="class has single attr in classmethod method docstring single attr",
         ),
         pytest.param(
             '''
