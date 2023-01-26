@@ -96,7 +96,7 @@ def check(
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG
         )
-    elif all_args and docstr_info.args is not None:
+    if all_args and docstr_info.args is not None:
         docstr_args = set(docstr_info.args)
 
         # Check for multiple args sections
