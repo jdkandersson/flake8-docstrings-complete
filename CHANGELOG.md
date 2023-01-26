@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [v1.1.0] - 2023-01-26
+
 ### Added
 
 - Lint check that ensures all function/ method arguments are described only
@@ -100,3 +102,4 @@
 [v1.0.2]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.2
 [v1.0.3]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.3
 [v1.0.4]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.4
+[v1.1.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.1.0
