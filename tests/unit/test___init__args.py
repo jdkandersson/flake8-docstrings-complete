@@ -9,8 +9,8 @@ from flake8_docstrings_complete.args import (
     ARG_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_IN_DOCSTR_MSG,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
-    MULT_ARGS_SECTIONS_IN_DOCSTR_MSG,
     DUPLICATE_ARG_MSG,
+    MULT_ARGS_SECTIONS_IN_DOCSTR_MSG,
 )
 
 from . import result

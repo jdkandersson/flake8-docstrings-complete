@@ -143,11 +143,11 @@ def check(
         )
 
         # Check for duplicate exceptions in raises
-        exc_occurences = Counter(docstr_info.raises)
+        exc_occurrences = Counter(docstr_info.raises)
         yield from (
             types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_EXC_MSG % exc)
-            for exc, occurences in exc_occurences.items()
-            if occurences > 1
+            for exc, occurrences in exc_occurrences.items()
+            if occurrences > 1
         )
 
         # Check for exceptions in the docstring that are not raised unless function has a raises

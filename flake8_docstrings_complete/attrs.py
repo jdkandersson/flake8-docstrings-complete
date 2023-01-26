@@ -226,11 +226,11 @@ def check(
         )
 
         # Check for duplicate attributes
-        attr_occurences = Counter(docstr_info.attrs)
+        attr_occurrences = Counter(docstr_info.attrs)
         yield from (
             types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_ATTR_MSG % attr)
-            for attr, occurences in attr_occurences.items()
-            if occurences > 1
+            for attr, occurrences in attr_occurrences.items()
+            if occurrences > 1
         )
 
         # Check for empty attrs section

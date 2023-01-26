@@ -5,13 +5,13 @@ from __future__ import annotations
 import pytest
 
 from flake8_docstrings_complete.raises import (
+    DUPLICATE_EXC_MSG,
     EXC_IN_DOCSTR_MSG,
     EXC_NOT_IN_DOCSTR_MSG,
     MULT_RAISES_SECTIONS_IN_DOCSTR_MSG,
     RAISES_SECTION_IN_DOCSTR_MSG,
     RAISES_SECTION_NOT_IN_DOCSTR_MSG,
     RE_RAISE_NO_EXC_IN_DOCSTR_MSG,
-    DUPLICATE_EXC_MSG,
 )
 
 from . import result

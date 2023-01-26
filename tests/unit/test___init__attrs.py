@@ -13,8 +13,8 @@ from flake8_docstrings_complete.attrs import (
     ATTR_NOT_IN_DOCSTR_MSG,
     ATTRS_SECTION_IN_DOCSTR_MSG,
     ATTRS_SECTION_NOT_IN_DOCSTR_MSG,
-    MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG,
     DUPLICATE_ATTR_MSG,
+    MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG,
 )
 
 from . import result

@@ -125,11 +125,11 @@ def check(
         )
 
         # Check for duplicate arguments
-        arg_occurences = Counter(docstr_info.args)
+        arg_occurrences = Counter(docstr_info.args)
         yield from (
             types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_ARG_MSG % arg)
-            for arg, occurences in arg_occurences.items()
-            if occurences > 1
+            for arg, occurrences in arg_occurrences.items()
+            if occurrences > 1
         )
 
         # Check for empty args section
