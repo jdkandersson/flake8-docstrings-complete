@@ -388,7 +388,7 @@ def function_1(_arg_1):
         _arg_1:
     """
 ''',
-            (f"3:4 {DUPLICATE_ARG_MSG % 'arg_1'}",),
+            (f"3:4 {DUPLICATE_ARG_MSG % '_arg_1'}",),
             id="function single unused arg docstring duplicate arg",
         ),
         pytest.param(
@@ -670,7 +670,7 @@ class Class1:
             arg_1:
         """
 ''',
-            (f"4:25 {DUPLICATE_ARG_MSG % 'arg_1'}",),
+            (f"5:8 {DUPLICATE_ARG_MSG % 'arg_1'}",),
             id="method single arg docstring single arg duplicate",
         ),
         pytest.param(

@@ -32,6 +32,7 @@ from flake8_docstrings_complete.args import (
     ARGS_SECTION_NOT_IN_DOCSTR_CODE,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
     MULT_ARGS_SECTIONS_IN_DOCSTR_CODE,
+    DUPLICATE_ARG_CODE,
 )
 from flake8_docstrings_complete.attrs import (
     ATTR_IN_DOCSTR_CODE,
@@ -244,6 +245,20 @@ def foo(arg_1):
             "source.py",
             "",
             id=f"{ARG_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+def foo(arg_1):
+    """Docstring.
+
+    Args:
+        arg_1:
+        arg_1:
+    """  # noqa: {DUPLICATE_ARG_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{DUPLICATE_ARG_CODE} disabled",
         ),
         pytest.param(
             f'''

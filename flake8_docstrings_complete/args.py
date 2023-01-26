@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 from typing import Iterator
 
 from . import docstring, types_
@@ -96,6 +97,8 @@ def check(
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG
         )
+
+    # Checks for function with arguments and args section
     if all_args and docstr_info.args is not None:
         docstr_args = set(docstr_info.args)
 
@@ -119,6 +122,14 @@ def check(
         yield from (
             types_.Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
             for arg in sorted(docstr_args - func_args)
+        )
+
+        # Check for duplicate arguments
+        arg_occurences = Counter(docstr_info.args)
+        yield from (
+            types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_ARG_MSG % arg)
+            for arg, occurences in arg_occurences.items()
+            if occurences > 1
         )
 
         # Check for empty args section
