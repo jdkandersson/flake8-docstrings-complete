@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 from typing import Iterable, Iterator
 
 from . import docstring, types_
@@ -41,6 +42,11 @@ RE_RAISE_NO_EXC_IN_DOCSTR_MSG = (
     f"{RE_RAISE_NO_EXC_IN_DOCSTR_CODE} a function/ method that re-raises exceptions should "
     "describe at least one exception in the raises section of the docstring"
     f"{MORE_INFO_BASE}{RE_RAISE_NO_EXC_IN_DOCSTR_CODE.lower()}"
+)
+DUPLICATE_EXC_CODE = f"{ERROR_CODE_PREFIX}056"
+DUPLICATE_EXC_MSG = (
+    f'{DUPLICATE_EXC_CODE} "%s" exception documented multiple times{MORE_INFO_BASE}'
+    f"{DUPLICATE_EXC_CODE.lower()}"
 )
 
 
@@ -116,7 +122,9 @@ def check(
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, RE_RAISE_NO_EXC_IN_DOCSTR_MSG
         )
-    elif all_excs and docstr_info.raises is not None:
+
+    # Checks for exceptions raised and raises section in docstring
+    if all_excs and docstr_info.raises is not None:
         docstr_raises = set(docstr_info.raises)
 
         # Check for multiple raises sections
@@ -132,6 +140,14 @@ def check(
             types_.Problem(exc.lineno, exc.col_offset, EXC_NOT_IN_DOCSTR_MSG % exc.name)
             for exc in all_excs
             if exc and exc.name not in docstr_raises
+        )
+
+        # Check for duplicate exceptions in raises
+        exc_occurences = Counter(docstr_info.raises)
+        yield from (
+            types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_EXC_MSG % exc)
+            for exc, occurences in exc_occurences.items()
+            if occurences > 1
         )
 
         # Check for exceptions in the docstring that are not raised unless function has a raises

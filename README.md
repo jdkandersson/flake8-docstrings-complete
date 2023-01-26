@@ -134,6 +134,8 @@ A few rules have been defined to allow for selective suppression:
   docstring which are not raised in the function/ method.
 - `DCO055`: function/ method that has a raise without an exception has an empty
   raises section in the docstring.
+- `DCO056`: function/ method has one or more exceptions described in the
+  docstring multiple times.
 - `DCO060`: class has one or more public attributes and the docstring does not
   have an attributes section.
 - `DCO061`: class with no attributes and the docstring has an attributes
@@ -1168,6 +1170,55 @@ class FooClass:
             bar()
         except BarError:
             raise
+```
+
+### Fix DCO056
+
+This linting rule is triggered by a function/ method that raises one or more
+exceptions and a docstring that describes one or more exceptions where on or
+more of the described exceptions are described multiple times. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+These examples can be fixed by removing the duplicate descriptions from the
+docstring:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
 ```
 
 ### Fix DCO060

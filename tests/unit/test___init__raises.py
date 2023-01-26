@@ -11,6 +11,7 @@ from flake8_docstrings_complete.raises import (
     RAISES_SECTION_IN_DOCSTR_MSG,
     RAISES_SECTION_NOT_IN_DOCSTR_MSG,
     RE_RAISE_NO_EXC_IN_DOCSTR_MSG,
+    DUPLICATE_EXC_MSG,
 )
 
 from . import result
@@ -389,6 +390,87 @@ def function_1():
     """Docstring 1.
 
     Raises:
+        Exc1:
+        Exc1:
+    """
+    raise Exc1
+''',
+            (f"3:4 {DUPLICATE_EXC_MSG}" % "Exc1",),
+            id="function single raise docstring raises duplicate",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+        Exc1:
+        Exc1:
+        Exc1:
+    """
+    raise Exc1
+''',
+            (f"3:4 {DUPLICATE_EXC_MSG}" % "Exc1",),
+            id="function single raise docstring raises duplicate many",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+        Exc1:
+        Exc1:
+        Exc2:
+    """
+    raise Exc1
+    raise Exc2
+''',
+            (f"3:4 {DUPLICATE_EXC_MSG}" % "Exc1",),
+            id="function multiple raise docstring raises duplicate first",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+        Exc1:
+        Exc2:
+        Exc2:
+    """
+    raise Exc1
+    raise Exc2
+''',
+            (f"3:4 {DUPLICATE_EXC_MSG}" % "Exc2",),
+            id="function multiple raise docstring raises duplicate second",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+        Exc1:
+        Exc1:
+        Exc2:
+        Exc2:
+    """
+    raise Exc1
+    raise Exc2
+''',
+            (
+                f"3:4 {DUPLICATE_EXC_MSG}" % "Exc1",
+                f"3:4 {DUPLICATE_EXC_MSG}" % "Exc2",
+            ),
+            id="function multiple raise docstring raises duplicate all",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
       Exc1:
     """
     raise
@@ -407,7 +489,7 @@ def function_1():
     raise Exc1
 ''',
             (),
-            id="function single raise no exc docstring raises",
+            id="function single raise exc docstring raises",
         ),
         pytest.param(
             '''
