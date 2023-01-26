@@ -64,12 +64,14 @@ def foo(bar, baz):
    section is included.
 7. If a function/ method raises an exception, the raises section is included
    with a description for each exception that is raised.
-8. If a class has public attributes, that the attributes section is included.
-9. If a class has public attributes, that all public attributes are in the
+8. Each raised exception is only described once.
+9. If a class has public attributes, that the attributes section is included.
+10. If a class has public attributes, that all public attributes are in the
    attributes section.
-10. If an attributes section is in the class docstring, the attributes section
+11. If an attributes section is in the class docstring, the attributes section
    contains no attributes the class doesn't have.
-11. Any of the sections being checked are not present multiple times.
+12. Class attributes are only documented once.
+13. Any of the sections being checked are not present multiple times.
 
 Note:
 
