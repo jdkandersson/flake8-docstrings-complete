@@ -144,6 +144,8 @@ A few rules have been defined to allow for selective suppression:
   docstring.
 - `DCO064`: class has one or more attributes described in the docstring which
   are not attributes of the class.
+- `DCO065`: class has one or more attributes described in the docstring
+  multiple times.
 
 ### Fix DCO010
 
@@ -1464,6 +1466,61 @@ class FooClass:
     Attrs:
         bar: The value to perform the foo action on.
     """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        """Construct."""
+        self.bar = "bar"
+```
+
+### Fix DCO065
+
+This linting rule is triggered by a class that has one or more attributes and a
+docstring that describes one or more attributes where on or more
+of the described attributes are described multiple times. For example:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        bar: The value to perform the foo action on.
+    """
+
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        """Construct."""
+        self.bar = "bar"
+```
+
+These examples can be fixed by removing the duplicate descriptions from the
+docstring:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
     bar = "bar"
 
 class FooClass:

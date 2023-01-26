@@ -14,6 +14,7 @@ from flake8_docstrings_complete.attrs import (
     ATTRS_SECTION_IN_DOCSTR_MSG,
     ATTRS_SECTION_NOT_IN_DOCSTR_MSG,
     MULT_ATTRS_SECTIONS_IN_DOCSTR_MSG,
+    DUPLICATE_ATTR_MSG,
 )
 
 from . import result
@@ -436,6 +437,117 @@ class Class1:
         ''',
             (f"10:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_2'}", f"3:4 {ATTR_IN_DOCSTR_MSG % 'attr_3'}"),
             id="class multiple attr docstring multiple attrs second different",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_1:
+    """
+    attr_1 = "value 1"
+''',
+            (f"3:4 {DUPLICATE_ATTR_MSG % 'attr_1'}",),
+            id="class single attr docstring single attr duplicate",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        _attr_1:
+        _attr_1:
+    """
+    _attr_1 = "value 1"
+''',
+            (f"3:4 {DUPLICATE_ATTR_MSG % '_attr_1'}",),
+            id="class single private attr docstring single attr duplicate",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_1:
+        attr_1:
+    """
+    attr_1 = "value 1"
+''',
+            (f"3:4 {DUPLICATE_ATTR_MSG % 'attr_1'}",),
+            id="class single attr docstring single attr duplicate many",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_1:
+        attr_2:
+    """
+    attr_1 = "value 1"
+    attr_2 = "value 2"
+''',
+            (f"3:4 {DUPLICATE_ATTR_MSG % 'attr_1'}",),
+            id="class multiple attr docstring duplicate attr first",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_2:
+        attr_2:
+    """
+    attr_1 = "value 1"
+    attr_2 = "value 2"
+''',
+            (f"3:4 {DUPLICATE_ATTR_MSG % 'attr_2'}",),
+            id="class multiple attr docstring duplicate attr second",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_1:
+        attr_2:
+        attr_2:
+    """
+    attr_1 = "value 1"
+    attr_2 = "value 2"
+''',
+            (
+                f"3:4 {DUPLICATE_ATTR_MSG % 'attr_1'}",
+                f"3:4 {DUPLICATE_ATTR_MSG % 'attr_2'}",
+            ),
+            id="class multiple attr docstring duplicate attr all",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+        attr_1:
+    """
+    def __init__(self):
+        """Docstring 2."""
+        self.attr_1 = "value 1"
+''',
+            (f"3:4 {DUPLICATE_ATTR_MSG % 'attr_1'}",),
+            id="class single attr init docstring single attr duplicate",
         ),
         pytest.param(
             '''

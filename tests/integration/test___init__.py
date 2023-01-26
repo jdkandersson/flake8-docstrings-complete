@@ -40,6 +40,7 @@ from flake8_docstrings_complete.attrs import (
     ATTRS_SECTION_IN_DOCSTR_CODE,
     ATTRS_SECTION_NOT_IN_DOCSTR_CODE,
     MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE,
+    DUPLICATE_ATTR_CODE,
 )
 from flake8_docstrings_complete.raises import (
     EXC_IN_DOCSTR_CODE,
@@ -531,6 +532,22 @@ class Class1:
             "source.py",
             "",
             id=f"{ATTR_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        attr_1:
+        attr_1:
+    """  # noqa: {DUPLICATE_ATTR_CODE}
+
+    attr_1 = "value 1"
+''',
+            "source.py",
+            "",
+            id=f"{DUPLICATE_ATTR_CODE} disabled",
         ),
     ],
 )
