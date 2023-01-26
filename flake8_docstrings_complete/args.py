@@ -35,6 +35,11 @@ ARG_IN_DOCSTR_MSG = (
     f'{ARG_IN_DOCSTR_CODE} "%s" argument should not be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_IN_DOCSTR_CODE.lower()}"
 )
+DUPLICATE_ARG_CODE = f"{ERROR_CODE_PREFIX}025"
+DUPLICATE_ARG_MSG = (
+    f'{DUPLICATE_ARG_CODE} "%s" argument documented multiple times{MORE_INFO_BASE}'
+    f"{DUPLICATE_ARG_CODE.lower()}"
+)
 
 SKIP_ARGS = {"self", "cls"}
 UNUSED_ARGS_PREFIX = "_"

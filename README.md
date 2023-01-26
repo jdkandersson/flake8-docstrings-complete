@@ -57,18 +57,19 @@ def foo(bar, baz):
    in the argument section.
 3. If an arguments section is in the function/ method docstring, the argument
    section contains no arguments the function/ method doesn't have.
-4. If a function/ method has a return statement with a value, the return value
+4. Function/ method arguments are only documented once.
+5. If a function/ method has a return statement with a value, the return value
    section is included.
-5. If a function/ method has a yield statement with a value, the yield value
+6. If a function/ method has a yield statement with a value, the yield value
    section is included.
-6. If a function/ method raises an exception, the raises section is included
+7. If a function/ method raises an exception, the raises section is included
    with a description for each exception that is raised.
-7. If a class has public attributes, that the attributes section is included.
-8. If a class has public attributes, that all public attributes are in the
+8. If a class has public attributes, that the attributes section is included.
+9. If a class has public attributes, that all public attributes are in the
    attributes section.
-9. If an attributes section is in the class docstring, the attributes section
+10. If an attributes section is in the class docstring, the attributes section
    contains no attributes the class doesn't have.
-10. Any of the sections being checked are not present multiple times.
+11. Any of the sections being checked are not present multiple times.
 
 Note:
 
@@ -107,6 +108,8 @@ A few rules have been defined to allow for selective suppression:
   docstring.
 - `DCO024`: function/ method has one or more arguments described in the
   docstring which are not arguments of the function/ method.
+- `DCO025`: function/ method has one or more arguments described in the
+  docstring multiple times.
 - `DCO030`: function/ method that returns a value does not have the returns
   section in the docstring.
 - `DCO031`: function/ method that does not return a value has the returns
@@ -428,6 +431,50 @@ class FooClass:
 
 These examples can be fixed by removing the arguments the function/ method
 doesn't have from the docstring:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+    """
+
+class FooClass:
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
+```
+
+### Fix DCO025
+
+This linting rule is triggered by a function/ method that has one or more
+arguments and a docstring that describes one or more arguments where on or more
+of the described arguments are described multiple times. For example:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+        bar: the value to perform the foo action on.
+    """
+
+class FooClass:
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+            bar: the value to perform the foo action on.
+        """
+```
+
+These examples can be fixed by removing the duplicate arguments from the docstring:
 
 ```Python
 def foo(bar):

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Lint check that ensures all function/ method arguments are described only
+  once.
+
 ## [v1.0.4] - 2023-01-13
 
 ### Changed
