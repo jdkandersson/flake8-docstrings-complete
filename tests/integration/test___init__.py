@@ -31,6 +31,7 @@ from flake8_docstrings_complete.args import (
     ARGS_SECTION_IN_DOCSTR_CODE,
     ARGS_SECTION_NOT_IN_DOCSTR_CODE,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
+    DUPLICATE_ARG_CODE,
     MULT_ARGS_SECTIONS_IN_DOCSTR_CODE,
 )
 from flake8_docstrings_complete.attrs import (
@@ -38,9 +39,11 @@ from flake8_docstrings_complete.attrs import (
     ATTR_NOT_IN_DOCSTR_CODE,
     ATTRS_SECTION_IN_DOCSTR_CODE,
     ATTRS_SECTION_NOT_IN_DOCSTR_CODE,
+    DUPLICATE_ATTR_CODE,
     MULT_ATTRS_SECTIONS_IN_DOCSTR_CODE,
 )
 from flake8_docstrings_complete.raises import (
+    DUPLICATE_EXC_CODE,
     EXC_IN_DOCSTR_CODE,
     EXC_NOT_IN_DOCSTR_CODE,
     MULT_RAISES_SECTIONS_IN_DOCSTR_CODE,
@@ -247,6 +250,20 @@ def foo(arg_1):
         ),
         pytest.param(
             f'''
+def foo(arg_1):
+    """Docstring.
+
+    Args:
+        arg_1:
+        arg_1:
+    """  # noqa: {DUPLICATE_ARG_CODE}
+''',
+            "source.py",
+            "",
+            id=f"{DUPLICATE_ARG_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
 def foo():
     """Docstring."""
     return 1  # noqa: {RETURNS_SECTION_NOT_IN_DOCSTR_CODE}
@@ -430,6 +447,25 @@ def foo():
         ),
         pytest.param(
             f'''
+class Exc1Error(Exception):
+    """Docstring."""
+
+
+def foo():
+    """Docstring.
+
+    Raises:
+        Exc1Error:
+        Exc1Error:
+    """  # noqa: {DUPLICATE_EXC_CODE}
+    raise Exc1Error
+''',
+            "source.py",
+            "",
+            id=f"{DUPLICATE_EXC_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
 class Class1:
     """Docstring."""  # noqa: {ATTRS_SECTION_NOT_IN_DOCSTR_CODE}
 
@@ -516,6 +552,22 @@ class Class1:
             "source.py",
             "",
             id=f"{ATTR_IN_DOCSTR_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        attr_1:
+        attr_1:
+    """  # noqa: {DUPLICATE_ATTR_CODE}
+
+    attr_1 = "value 1"
+''',
+            "source.py",
+            "",
+            id=f"{DUPLICATE_ATTR_CODE} disabled",
         ),
     ],
 )

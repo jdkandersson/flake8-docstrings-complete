@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 from itertools import chain
 from typing import Iterable, Iterator
 
@@ -33,6 +34,11 @@ ATTR_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}064"
 ATTR_IN_DOCSTR_MSG = (
     f'{ATTR_IN_DOCSTR_CODE} "%s" attribute should not be described in the docstring'
     f"{MORE_INFO_BASE}{ATTR_IN_DOCSTR_CODE.lower()}"
+)
+DUPLICATE_ATTR_CODE = f"{ERROR_CODE_PREFIX}065"
+DUPLICATE_ATTR_MSG = (
+    f'{DUPLICATE_ATTR_CODE} "%s" attribute documented multiple times{MORE_INFO_BASE}'
+    f"{DUPLICATE_ATTR_CODE.lower()}"
 )
 
 CLASS_SELF_CLS = {"self", "cls"}
@@ -186,12 +192,15 @@ def check(
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_NOT_IN_DOCSTR_MSG
         )
+
     # Check that attrs section is not in docstring if class has no attributes
     if not all_targets and docstr_info.attrs is not None:
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ATTRS_SECTION_IN_DOCSTR_MSG
         )
-    elif all_targets and docstr_info.attrs is not None:
+
+    # Checks for class with attributes and an attrs section
+    if all_targets and docstr_info.attrs is not None:
         docstr_attrs = set(docstr_info.attrs)
 
         # Check for multiple attrs sections
@@ -214,6 +223,14 @@ def check(
         yield from (
             types_.Problem(docstr_node.lineno, docstr_node.col_offset, ATTR_IN_DOCSTR_MSG % attr)
             for attr in sorted(docstr_attrs - class_attrs)
+        )
+
+        # Check for duplicate attributes
+        attr_occurrences = Counter(docstr_info.attrs)
+        yield from (
+            types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_ATTR_MSG % attr)
+            for attr, occurrences in attr_occurrences.items()
+            if occurrences > 1
         )
 
         # Check for empty attrs section

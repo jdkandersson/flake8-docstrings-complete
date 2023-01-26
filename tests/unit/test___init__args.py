@@ -9,6 +9,7 @@ from flake8_docstrings_complete.args import (
     ARG_NOT_IN_DOCSTR_MSG,
     ARGS_SECTION_IN_DOCSTR_MSG,
     ARGS_SECTION_NOT_IN_DOCSTR_MSG,
+    DUPLICATE_ARG_MSG,
     MULT_ARGS_SECTIONS_IN_DOCSTR_MSG,
 )
 
@@ -371,6 +372,89 @@ def function_1(arg_1):
 
     Args:
         arg_1:
+        arg_1:
+    """
+''',
+            (f"3:4 {DUPLICATE_ARG_MSG % 'arg_1'}",),
+            id="function single arg docstring duplicate arg",
+        ),
+        pytest.param(
+            '''
+def function_1(_arg_1):
+    """Docstring 1.
+
+    Args:
+        _arg_1:
+        _arg_1:
+    """
+''',
+            (f"3:4 {DUPLICATE_ARG_MSG % '_arg_1'}",),
+            id="function single unused arg docstring duplicate arg",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+        arg_1:
+        arg_1:
+    """
+''',
+            (f"3:4 {DUPLICATE_ARG_MSG % 'arg_1'}",),
+            id="function single arg docstring duplicate arg many",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+        arg_1:
+        arg_2:
+    """
+''',
+            (f"3:4 {DUPLICATE_ARG_MSG % 'arg_1'}",),
+            id="function multiple arg docstring duplicate arg first",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+        arg_2:
+        arg_2:
+    """
+''',
+            (f"3:4 {DUPLICATE_ARG_MSG % 'arg_2'}",),
+            id="function multiple arg docstring duplicate arg second",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1, arg_2):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+        arg_1:
+        arg_2:
+        arg_2:
+    """
+''',
+            (f"3:4 {DUPLICATE_ARG_MSG % 'arg_1'}", f"3:4 {DUPLICATE_ARG_MSG % 'arg_2'}"),
+            id="function multiple arg docstring duplicate arg all",
+        ),
+        pytest.param(
+            '''
+def function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+        arg_1:
     """
 ''',
             (),
@@ -573,6 +657,21 @@ class Class1:
 ''',
             (f"5:24 {ARG_NOT_IN_DOCSTR_MSG % 'arg_1'}",),
             id="method has single arg docstring no arg classmethod",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring."""
+    def function_1(self, arg_1):
+        """Docstring 1.
+
+        Args:
+            arg_1:
+            arg_1:
+        """
+''',
+            (f"5:8 {DUPLICATE_ARG_MSG % 'arg_1'}",),
+            id="method single arg docstring single arg duplicate",
         ),
         pytest.param(
             '''

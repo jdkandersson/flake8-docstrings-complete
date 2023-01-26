@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 from typing import Iterator
 
 from . import docstring, types_
@@ -34,6 +35,11 @@ ARG_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}024"
 ARG_IN_DOCSTR_MSG = (
     f'{ARG_IN_DOCSTR_CODE} "%s" argument should not be described in the docstring{MORE_INFO_BASE}'
     f"{ARG_IN_DOCSTR_CODE.lower()}"
+)
+DUPLICATE_ARG_CODE = f"{ERROR_CODE_PREFIX}025"
+DUPLICATE_ARG_MSG = (
+    f'{DUPLICATE_ARG_CODE} "%s" argument documented multiple times{MORE_INFO_BASE}'
+    f"{DUPLICATE_ARG_CODE.lower()}"
 )
 
 SKIP_ARGS = {"self", "cls"}
@@ -91,7 +97,9 @@ def check(
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_IN_DOCSTR_MSG
         )
-    elif all_args and docstr_info.args is not None:
+
+    # Checks for function with arguments and args section
+    if all_args and docstr_info.args is not None:
         docstr_args = set(docstr_info.args)
 
         # Check for multiple args sections
@@ -114,6 +122,14 @@ def check(
         yield from (
             types_.Problem(docstr_node.lineno, docstr_node.col_offset, ARG_IN_DOCSTR_MSG % arg)
             for arg in sorted(docstr_args - func_args)
+        )
+
+        # Check for duplicate arguments
+        arg_occurrences = Counter(docstr_info.args)
+        yield from (
+            types_.Problem(docstr_node.lineno, docstr_node.col_offset, DUPLICATE_ARG_MSG % arg)
+            for arg, occurrences in arg_occurrences.items()
+            if occurrences > 1
         )
 
         # Check for empty args section

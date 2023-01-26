@@ -57,18 +57,21 @@ def foo(bar, baz):
    in the argument section.
 3. If an arguments section is in the function/ method docstring, the argument
    section contains no arguments the function/ method doesn't have.
-4. If a function/ method has a return statement with a value, the return value
+4. Function/ method arguments are only documented once.
+5. If a function/ method has a return statement with a value, the return value
    section is included.
-5. If a function/ method has a yield statement with a value, the yield value
+6. If a function/ method has a yield statement with a value, the yield value
    section is included.
-6. If a function/ method raises an exception, the raises section is included
+7. If a function/ method raises an exception, the raises section is included
    with a description for each exception that is raised.
-7. If a class has public attributes, that the attributes section is included.
-8. If a class has public attributes, that all public attributes are in the
+8. Each raised exception is only described once.
+9. If a class has public attributes, that the attributes section is included.
+10. If a class has public attributes, that all public attributes are in the
    attributes section.
-9. If an attributes section is in the class docstring, the attributes section
+11. If an attributes section is in the class docstring, the attributes section
    contains no attributes the class doesn't have.
-10. Any of the sections being checked are not present multiple times.
+12. Class attributes are only documented once.
+13. Any of the sections being checked are not present multiple times.
 
 Note:
 
@@ -107,6 +110,8 @@ A few rules have been defined to allow for selective suppression:
   docstring.
 - `DCO024`: function/ method has one or more arguments described in the
   docstring which are not arguments of the function/ method.
+- `DCO025`: function/ method has one or more arguments described in the
+  docstring multiple times.
 - `DCO030`: function/ method that returns a value does not have the returns
   section in the docstring.
 - `DCO031`: function/ method that does not return a value has the returns
@@ -131,6 +136,8 @@ A few rules have been defined to allow for selective suppression:
   docstring which are not raised in the function/ method.
 - `DCO055`: function/ method that has a raise without an exception has an empty
   raises section in the docstring.
+- `DCO056`: function/ method has one or more exceptions described in the
+  docstring multiple times.
 - `DCO060`: class has one or more public attributes and the docstring does not
   have an attributes section.
 - `DCO061`: class with no attributes and the docstring has an attributes
@@ -141,6 +148,8 @@ A few rules have been defined to allow for selective suppression:
   docstring.
 - `DCO064`: class has one or more attributes described in the docstring which
   are not attributes of the class.
+- `DCO065`: class has one or more attributes described in the docstring
+  multiple times.
 
 ### Fix DCO010
 
@@ -428,6 +437,50 @@ class FooClass:
 
 These examples can be fixed by removing the arguments the function/ method
 doesn't have from the docstring:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+    """
+
+class FooClass:
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+        """
+```
+
+### Fix DCO025
+
+This linting rule is triggered by a function/ method that has one or more
+arguments and a docstring that describes one or more arguments where on or more
+of the described arguments are described multiple times. For example:
+
+```Python
+def foo(bar):
+    """Perform foo action.
+
+    Args:
+        bar: the value to perform the foo action on.
+        bar: the value to perform the foo action on.
+    """
+
+class FooClass:
+    def foo(self, bar):
+        """Perform foo action.
+
+        Args:
+            bar: the value to perform the foo action on.
+            bar: the value to perform the foo action on.
+        """
+```
+
+These examples can be fixed by removing the duplicate arguments from the docstring:
 
 ```Python
 def foo(bar):
@@ -1121,6 +1174,55 @@ class FooClass:
             raise
 ```
 
+### Fix DCO056
+
+This linting rule is triggered by a function/ method that raises one or more
+exceptions and a docstring that describes one or more exceptions where on or
+more of the described exceptions are described multiple times. For example:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
+These examples can be fixed by removing the duplicate descriptions from the
+docstring:
+
+```Python
+def foo():
+    """Perform foo action.
+
+    Raises:
+        BarError: the value to perform the foo action on was wrong.
+    """
+    raise BarError
+
+class FooClass:
+    def foo(self):
+        """Perform foo action.
+
+        Raises:
+            BarError: the value to perform the foo action on was wrong.
+        """
+        raise BarError
+```
+
 ### Fix DCO060
 
 This linting rule is triggered by a class that has one or more public
@@ -1417,6 +1519,61 @@ class FooClass:
     Attrs:
         bar: The value to perform the foo action on.
     """
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        """Construct."""
+        self.bar = "bar"
+```
+
+### Fix DCO065
+
+This linting rule is triggered by a class that has one or more attributes and a
+docstring that describes one or more attributes where on or more
+of the described attributes are described multiple times. For example:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        bar: The value to perform the foo action on.
+    """
+
+    bar = "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+        bar: The value to perform the foo action on.
+    """
+
+    def __init__(self):
+        """Construct."""
+        self.bar = "bar"
+```
+
+These examples can be fixed by removing the duplicate descriptions from the
+docstring:
+
+```Python
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
     bar = "bar"
 
 class FooClass:
