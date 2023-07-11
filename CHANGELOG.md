@@ -109,3 +109,4 @@
 [v1.0.3]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.3
 [v1.0.4]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.4
 [v1.1.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.1.0
+[v1.2.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.2.0
