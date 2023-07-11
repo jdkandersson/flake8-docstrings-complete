@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [v1.2.0] - 2023-07-12
+
+### Added
+
+- Support for `functools.cached_property`.
+
 ## [v1.1.0] - 2023-01-26
 
 ### Added
