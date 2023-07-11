@@ -185,6 +185,36 @@ class Class1:
 
     Attrs:
     """
+    @cached_property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single cached_property docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
+    @functools.cached_property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (f"8:4 {ATTR_NOT_IN_DOCSTR_MSG % 'attr_1'}",),
+            id="class has single functools.cached_property docstring no attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+    """
     @property
     def attr_1(self):
         """Docstring 2."""
@@ -577,6 +607,38 @@ class Class1:
 ''',
             (),
             id="class single property docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    @cached_property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (),
+            id="class single cached_property docstring single attr",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring 1.
+
+    Attrs:
+        attr_1:
+    """
+    @functools.cached_property
+    def attr_1():
+        """Docstring 2."""
+        return "value 1"
+''',
+            (),
+            id="class single functools.cached_property docstring single attr",
         ),
         pytest.param(
             '''

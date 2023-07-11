@@ -572,6 +572,38 @@ class Class1:
     Attrs:
         function_1:
     """
+    @cached_property
+    def function_1(self):
+        """Docstring 1."""
+        return 1
+''',
+            (),
+            id="cached_property return value docstring no returns section",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        function_1:
+    """
+    @functools.cached_property
+    def function_1(self):
+        """Docstring 1."""
+        return 1
+''',
+            (),
+            id="functools.cached_property return value docstring no returns section",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring.
+
+    Attrs:
+        function_1:
+    """
     @property
     async def function_1(self):
         """Docstring 1."""
