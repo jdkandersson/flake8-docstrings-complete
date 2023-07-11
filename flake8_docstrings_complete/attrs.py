@@ -55,13 +55,23 @@ def is_property_decorator(node: ast.expr) -> bool:
         Whether the node is a property decorator.
     """
     if isinstance(node, ast.Name):
-        return node.id == "property"
+        return node.id in {"property", "cached_property"}
 
     # Handle call
     if isinstance(node, ast.Call):
         return is_property_decorator(node=node.func)
 
-    return False
+    # Handle attr
+    if isinstance(node, ast.Attribute):
+        value = node.value
+        return (
+            node.attr == "cached_property"
+            and isinstance(value, ast.Name)
+            and value.id == "functools"
+        )
+
+    # There is no valid syntax that gets to here
+    return False  # pragma: nocover
 
 
 def _get_class_target_name(target: ast.expr) -> ast.Name | None:

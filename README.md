@@ -1424,6 +1424,16 @@ class FooClass:
     """Perform foo action.
 
     Attrs:
+    """
+
+    @functools.cached_property
+    def bar(self):
+        return "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
         bar: The value to perform the foo action on.
     """
     bar = "bar"
@@ -1458,6 +1468,17 @@ class FooClass:
     """
 
     @property
+    def bar(self):
+        return "bar"
+
+class FooClass:
+    """Perform foo action.
+
+    Attrs:
+        bar: The value to perform the foo action on.
+    """
+
+    @functools.cached_property
     def bar(self):
         return "bar"
 
