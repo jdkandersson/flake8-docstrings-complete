@@ -18,7 +18,7 @@ jobs:
       package_name: ${{ steps.output.outputs.package_name }}
       package_version: ${{ steps.output.outputs.package_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -30,7 +30,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -52,7 +52,7 @@ jobs:
           - "test-flake85"
           - "test-flake86"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
@@ -75,7 +75,7 @@ jobs:
       - test
       - lint
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -114,7 +114,7 @@ jobs:
     needs:
       - test-release-test-pypi
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -133,7 +133,7 @@ jobs:
         run: |
           echo current_version=${GITHUB_REF#refs/tags/v} >> $GITHUB_OUTPUT
         shell: bash
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get latest Changelog Entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
