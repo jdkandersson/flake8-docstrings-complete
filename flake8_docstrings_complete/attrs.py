@@ -74,6 +74,31 @@ def is_property_decorator(node: ast.expr) -> bool:
     return False  # pragma: nocover
 
 
+def is_overload_decorator(node: ast.expr) -> bool:
+    """Determine whether an expression is an overload decorator.
+
+    Args:
+        node: The node to check.
+
+    Returns:
+        Whether the node is an overload decorator.
+    """
+    if isinstance(node, ast.Name):
+        return node.id == "overload"
+
+    # Handle call
+    if isinstance(node, ast.Call):
+        return is_overload_decorator(node=node.func)
+
+    # Handle attr
+    if isinstance(node, ast.Attribute):
+        value = node.value
+        return node.attr == "overload" and isinstance(value, ast.Name) and value.id == "typing"
+
+    # There is no valid syntax that gets to here
+    return False  # pragma: nocover
+
+
 def _get_class_target_name(target: ast.expr) -> ast.Name | None:
     """Get the name of the target for an assignment on the class.
 

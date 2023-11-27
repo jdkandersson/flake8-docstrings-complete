@@ -299,7 +299,7 @@ class Visitor(ast.NodeVisitor):
         """Check whether to skip a function.
 
         A function is skipped if it is a test function in a test file, if it is a fixture in a test
-        or fixture file or if it is a property.
+        or fixture file, if it is a property or if it is an overload.
 
         Args:
             node: The function to check
@@ -320,6 +320,10 @@ class Visitor(ast.NodeVisitor):
         # Check for fixtures
         if self._file_type in {types_.FileType.TEST, types_.FileType.FIXTURE}:
             return any(self._is_fixture_decorator(decorator) for decorator in node.decorator_list)
+
+        # Check for overload
+        if any(attrs.is_overload_decorator(decorator) for decorator in node.decorator_list):
+            return True
 
         return False
 

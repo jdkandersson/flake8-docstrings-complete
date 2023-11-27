@@ -569,6 +569,32 @@ class Class1:
             "",
             id=f"{DUPLICATE_ATTR_CODE} disabled",
         ),
+        pytest.param(
+            """
+from typing import overload
+
+
+@overload
+def foo():
+    ...
+""",
+            "source.py",
+            "",
+            id="overload",
+        ),
+        pytest.param(
+            """
+import typing
+
+
+@typing.overload
+def foo():
+    ...
+""",
+            "source.py",
+            "",
+            id="typing.overload",
+        ),
     ],
 )
 def test_pass(code: str, filename: str, extra_args: str, tmp_path: Path):
