@@ -10,6 +10,7 @@ import pytest
 
 from flake8_docstrings_complete import (
     DOCSTR_MISSING_CODE,
+    DOCSTR_MISSING_MSG,
     FIXTURE_DECORATOR_PATTERN_ARG_NAME,
     FIXTURE_DECORATOR_PATTERN_DEFAULT,
     FIXTURE_FILENAME_PATTERN_ARG_NAME,
@@ -618,6 +619,48 @@ def test_pass(code: str, filename: str, extra_args: str, tmp_path: Path):
 
         assert not stdout, stdout
         assert not proc.returncode
+
+
+def test_fail_overload_import_from_bar(tmp_path: Path):
+    """
+    given: files with Python code that passes the linting
+    when: flake8 is run against the code
+    then: the process exits with zero code and empty stdout
+    """
+    code_file = create_code_file(
+        """
+import bar
+
+
+@bar.overload
+def foo():
+    ...
+""",
+        "foo.py",
+        tmp_path,
+    )
+    create_code_file(
+        """
+def overload(func):
+    return func
+""",
+        "bar.py",
+        tmp_path,
+    )
+    (config_file := tmp_path / ".flake8").touch()
+
+    with subprocess.Popen(
+        (
+            f"{sys.executable} -m flake8 {code_file} --ignore D205,D400,D103 "
+            f"--config {config_file}"
+        ),
+        stdout=subprocess.PIPE,
+        shell=True,
+    ) as proc:
+        stdout = proc.communicate()[0].decode(encoding="utf-8")
+
+        assert DOCSTR_MISSING_MSG in stdout
+        assert proc.returncode
 
 
 def test_self():
