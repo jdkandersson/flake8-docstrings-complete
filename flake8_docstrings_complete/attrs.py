@@ -86,10 +86,6 @@ def is_overload_decorator(node: ast.expr) -> bool:
     if isinstance(node, ast.Name):
         return node.id == "overload"
 
-    # Handle call
-    if isinstance(node, ast.Call):
-        return is_overload_decorator(node=node.func)
-
     # Handle attr
     if isinstance(node, ast.Attribute):
         value = node.value
