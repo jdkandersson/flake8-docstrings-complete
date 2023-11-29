@@ -296,13 +296,13 @@ class Visitor(ast.NodeVisitor):
         return False  # pragma: nocover
 
     def _is_overload_decorator(self, node: ast.expr) -> bool:
-        """Determine whether an expression is a overload decorator.
+        """Determine whether an expression is an overload decorator.
 
         Args:
             node: The node to check.
 
         Returns:
-            Whether the node is a overload decorator.
+            Whether the node is an overload decorator.
         """
         if isinstance(node, ast.Name):
             return node.id == "overload"
