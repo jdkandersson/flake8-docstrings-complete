@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- For magic methods, such as `__init__`, `DCO011` code is now used.
+
 ## [v1.3.0] - 2023-11-29
 
 ### Added
