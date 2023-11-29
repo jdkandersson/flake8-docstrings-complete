@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [v1.3.0] - 2023-11-29
+
+### Added
+
+- Support for `typing.overload`.
+
 ## [v1.2.0] - 2023-07-12
 
 ### Added
@@ -110,3 +116,4 @@
 [v1.0.4]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.0.4
 [v1.1.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.1.0
 [v1.2.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.2.0
+[v1.3.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.3.0
