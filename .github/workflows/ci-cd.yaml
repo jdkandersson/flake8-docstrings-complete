@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - id: output
         run: |
           echo package_name=$(python -c 'import tomllib;from pathlib import Path;print(tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["tool"]["poetry"]["name"])') >> $GITHUB_OUTPUT
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install tox
         run: python -m pip install tox
       - name: Run linting
@@ -48,6 +48,7 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
         env:
           - "test-flake85"
           - "test-flake86"
@@ -78,7 +79,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install poetry
         run: python -m pip install poetry
       - name: Publish
@@ -98,6 +99,7 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -117,7 +119,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install poetry
         run: python -m pip install poetry
       - name: Publish
@@ -164,6 +166,7 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
