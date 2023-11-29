@@ -31,6 +31,33 @@ def function_1():
         ),
         pytest.param(
             """
+@overload
+def function_1():
+    ...
+""",
+            (),
+            id="function docstring missing overload",
+        ),
+        pytest.param(
+            """
+@overload()
+def function_1():
+    ...
+""",
+            (),
+            id="function docstring missing overload call",
+        ),
+        pytest.param(
+            """
+@typing.overload
+def function_1():
+    ...
+""",
+            (),
+            id="function docstring missing overload attr",
+        ),
+        pytest.param(
+            """
 def function_1():
     return
 

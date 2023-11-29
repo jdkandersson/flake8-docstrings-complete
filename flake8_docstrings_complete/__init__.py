@@ -295,6 +295,30 @@ class Visitor(ast.NodeVisitor):
         # No valid syntax can reach here
         return False  # pragma: nocover
 
+    def _is_overload_decorator(self, node: ast.expr) -> bool:
+        """Determine whether an expression is an overload decorator.
+
+        Args:
+            node: The node to check.
+
+        Returns:
+            Whether the node is an overload decorator.
+        """
+        if isinstance(node, ast.Name):
+            return node.id == "overload"
+
+        # Handle call
+        if isinstance(node, ast.Call):
+            return self._is_overload_decorator(node=node.func)
+
+        # Handle attr
+        if isinstance(node, ast.Attribute):
+            value = node.value
+            return node.attr == "overload" and isinstance(value, ast.Name) and value.id == "typing"
+
+        # There is no valid syntax that gets to here
+        return False  # pragma: nocover
+
     def _skip_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check whether to skip a function.
 
@@ -320,6 +344,10 @@ class Visitor(ast.NodeVisitor):
         # Check for fixtures
         if self._file_type in {types_.FileType.TEST, types_.FileType.FIXTURE}:
             return any(self._is_fixture_decorator(decorator) for decorator in node.decorator_list)
+
+        # Check for overload
+        if any(self._is_overload_decorator(decorator) for decorator in node.decorator_list):
+            return True
 
         return False
 

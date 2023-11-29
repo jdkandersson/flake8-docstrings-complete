@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "flake8-docstrings-complete"
-version = "1.2.0"
+version = "1.3.0"
 description = "A linter that checks docstrings are complete"
 authors = ["David Andersson <david@jdkandersson.com>"]
 license = "Apache 2.0"
 readme = "README.md"
-packages = [{include = "flake8_docstrings_complete"}]
+packages = [{ include = "flake8_docstrings_complete" }]
 classifiers = [
     "Framework :: Flake8",
     "Environment :: Console",
@@ -13,6 +13,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.9",
@@ -57,9 +58,5 @@ module = "tests.*"
 disallow_untyped_defs = false
 
 [tool.pylint.messages_control]
-enable = [
-    "useless-suppression"
-]
-disable = [
-    "wrong-import-position"
-]
+enable = ["useless-suppression"]
+disable = ["wrong-import-position"]

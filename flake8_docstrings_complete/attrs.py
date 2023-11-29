@@ -1,4 +1,4 @@
-"""The arguments section checks."""
+"""The attributes section checks."""
 
 from __future__ import annotations
 
