@@ -4,7 +4,8 @@
 
 ### Changed
 
-- For magic methods, such as `__init__`, `DCO011` code is now used.
+- For `__init__` method, `DCO012` code is now used.
+- For other magic methods, such as `__str__`, `DCO011` code is now used.
 
 ## [v1.3.0] - 2023-11-29
 
