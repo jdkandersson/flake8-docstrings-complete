@@ -14,6 +14,7 @@ from flake8_docstrings_complete import (
     FIXTURE_DECORATOR_PATTERN_DEFAULT,
     FIXTURE_FILENAME_PATTERN_ARG_NAME,
     FIXTURE_FILENAME_PATTERN_DEFAULT,
+    INIT_METHOD_DOCSTR_MISSING_CODE,
     MAGIC_METHOD_DOCSTR_MISSING_CODE,
     MULT_RETURNS_SECTIONS_IN_DOCSTR_CODE,
     MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE,
@@ -172,12 +173,23 @@ def foo():  # noqa: {DOCSTR_MISSING_CODE}
             f'''
 class Foo:
     """Docstring."""
-    def __init__():  # noqa: {MAGIC_METHOD_DOCSTR_MISSING_CODE}
+    def __str__():  # noqa: {MAGIC_METHOD_DOCSTR_MISSING_CODE}
         pass
 ''',
             "source.py",
             "",
             id=f"{MAGIC_METHOD_DOCSTR_MISSING_CODE} disabled",
+        ),
+        pytest.param(
+            f'''
+class Foo:
+    """Docstring."""
+    def __init__():  # noqa: {INIT_METHOD_DOCSTR_MISSING_CODE}
+        pass
+''',
+            "source.py",
+            "",
+            id=f"{INIT_METHOD_DOCSTR_MISSING_CODE} disabled",
         ),
         pytest.param(
             f'''

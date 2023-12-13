@@ -6,6 +6,7 @@ import pytest
 
 from flake8_docstrings_complete import (
     DOCSTR_MISSING_MSG,
+    INIT_METHOD_DOCSTR_MISSING_MSG,
     MAGIC_METHOD_DOCSTR_MISSING_MSG,
     MULT_RETURNS_SECTIONS_IN_DOCSTR_MSG,
     MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG,
@@ -501,11 +502,21 @@ class Class1:
             '''
 class Class1:
     """Docstring."""
-    def __init__(self):
-        return
+    def __str__(self):
+        return "Foo"
 ''',
             (f"4:4 {MAGIC_METHOD_DOCSTR_MISSING_MSG}",),
             id="magic method docstring missing return",
+        ),
+        pytest.param(
+            '''
+class Class1:
+    """Docstring."""
+    def __init__(self):
+        return
+''',
+            (f"4:4 {INIT_METHOD_DOCSTR_MISSING_MSG}",),
+            id="__init__ method docstring missing return",
         ),
         pytest.param(
             '''

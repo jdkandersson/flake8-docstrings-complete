@@ -23,6 +23,11 @@ MAGIC_METHOD_DOCSTR_MISSING_MSG = (
     f"{MAGIC_METHOD_DOCSTR_MISSING_CODE} docstring should be defined for a magic method"
     f"{MORE_INFO_BASE}{MAGIC_METHOD_DOCSTR_MISSING_CODE.lower()}"
 )
+INIT_METHOD_DOCSTR_MISSING_CODE = f"{ERROR_CODE_PREFIX}012"
+INIT_METHOD_DOCSTR_MISSING_MSG = (
+    f"{INIT_METHOD_DOCSTR_MISSING_CODE} docstring should be defined for a __init__ method"
+    f"{MORE_INFO_BASE}{INIT_METHOD_DOCSTR_MISSING_CODE.lower()}"
+)
 RETURNS_SECTION_NOT_IN_DOCSTR_CODE = f"{ERROR_CODE_PREFIX}030"
 RETURNS_SECTION_NOT_IN_DOCSTR_MSG = (
     f"{RETURNS_SECTION_NOT_IN_DOCSTR_CODE} function/ method that returns a value should have the "
@@ -365,11 +370,12 @@ class Visitor(ast.NodeVisitor):
         if not self._skip_function(node=node):
             # Check docstring is defined
             if ast.get_docstring(node) is None:
-                docstr_missing_msg = (
-                    MAGIC_METHOD_DOCSTR_MISSING_MSG
-                    if node.name.startswith("__") and node.name.endswith("__")
-                    else DOCSTR_MISSING_MSG
-                )
+                if node.name == "__init__":
+                    docstr_missing_msg = INIT_METHOD_DOCSTR_MISSING_MSG
+                elif node.name.startswith("__") and node.name.endswith("__"):
+                    docstr_missing_msg = MAGIC_METHOD_DOCSTR_MISSING_MSG
+                else:
+                    docstr_missing_msg = DOCSTR_MISSING_MSG
                 self.problems.append(
                     types_.Problem(
                         lineno=node.lineno, col_offset=node.col_offset, msg=docstr_missing_msg

@@ -100,7 +100,8 @@ The plugin adds the following configurations to `flake8`:
 A few rules have been defined to allow for selective suppression:
 
 - `DCO010`: docstring missing on a function/ method/ class.
-- `DCO011`: docstring missing on a magic method.
+- `DCO011`: docstring missing on a magic method, except `__init__`.
+- `DCO012`: docstring missing on a `__init__` method.
 - `DCO020`: function/ method has one or more arguments and the docstring does
   not have an arguments section.
 - `DCO021`: function/ method with no arguments and the docstring has an
@@ -187,6 +188,28 @@ class FooClass:
 ### Fix DCO011
 
 This linting rule is triggered by a magic method without a docstring. For
+example:
+
+```Python
+class FooClass:
+    """Perform foo action."""
+    def __str__(self):
+        return "Foo"
+```
+
+This example can be fixed by adding a docstring:
+
+```Python
+class FooClass:
+    """Perform foo action."""
+    def __str__(self):
+        """Perform foo action."""
+        return "Foo"
+```
+
+### Fix DCO012
+
+This linting rule is triggered by a `__init__` method without a docstring. For
 example:
 
 ```Python
