@@ -56,8 +56,8 @@ _SECTION_NAMES = {
     "raises": {"raises", "raise"},
 }
 _WHITESPACE_REGEX = r"\s*"
-_SECTION_NAME_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+):")
-_SUB_SECTION_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+)( \(.*\))?:")
+_SECTION_NAME_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+)(:|\n{_WHITESPACE_REGEX}-+$)")
+_SUB_SECTION_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}(\w+)( \(.*\))?\s?:")
 _SECTION_END_PATTERN = re.compile(rf"{_WHITESPACE_REGEX}$")
 
 
@@ -82,7 +82,7 @@ def _get_sections(lines: Iterable[str]) -> Iterator[_Section]:
     with contextlib.suppress(StopIteration):
         while True:
             # Find the start of the next section
-            section_start = next(line for line in lines if line.strip())
+            section_start = next(line for line in lines if line.strip()) + "\n" + next(lines)
             section_name_match = _SECTION_NAME_PATTERN.match(section_start)
             section_name = section_name_match.group(1) if section_name_match else None
 
