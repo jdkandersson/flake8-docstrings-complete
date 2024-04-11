@@ -107,6 +107,18 @@ def function_1():
 
     Raises:
     """
+    raise Exc1.from_exc_data()
+''',
+            (f"7:10 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
+            id="function raises single exc from exc data docstring no exc",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+    """
     raise Exc1
     raise
 ''',
@@ -490,6 +502,19 @@ def function_1():
 ''',
             (),
             id="function single raise exc docstring raises",
+        ),
+        pytest.param(
+            '''
+def function_1():
+    """Docstring 1.
+
+    Raises:
+        Exc1:
+    """
+    raise Exc1.from_exc_data()
+''',
+            (),
+            id="function single raise exc docstring raises from exception data",
         ),
         pytest.param(
             '''

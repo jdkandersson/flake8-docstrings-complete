@@ -6,6 +6,8 @@ import ast
 from collections import Counter
 from typing import Iterable, Iterator
 
+from astpretty import pprint
+
 from . import docstring, types_
 from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 
@@ -75,6 +77,12 @@ def _get_exc_node(node: ast.Raise) -> types_.Node | None:
                 col_offset=node.exc.func.col_offset,
             )
         if isinstance(node.exc.func, ast.Attribute):
+            if node.exc.func.attr == "from_exc_data":
+                return types_.Node(
+                    name=node.exc.func.value.id,
+                    lineno=node.exc.func.lineno,
+                    col_offset=node.exc.func.col_offset,
+                )
             return types_.Node(
                 name=node.exc.func.attr,
                 lineno=node.exc.func.lineno,
