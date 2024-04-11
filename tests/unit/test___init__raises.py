@@ -107,7 +107,7 @@ def function_1():
 
     Raises:
     """
-    raise Exc1.from_exc_data()
+    raise Exc1.from_exception_data()
 ''',
             (f"7:10 {EXC_NOT_IN_DOCSTR_MSG % 'Exc1'}",),
             id="function raises single exc from exc data docstring no exc",
@@ -511,7 +511,7 @@ def function_1():
     Raises:
         Exc1:
     """
-    raise Exc1.from_exc_data()
+    raise Exc1.from_exception_data()
 ''',
             (),
             id="function single raise exc docstring raises from exception data",

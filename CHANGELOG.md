@@ -6,7 +6,7 @@
 
 ### Added
 
-- Support for `Exception.from_exc_data`.
+- Support for `Exception.from_exception_data`.
 
 ## [v1.3.0] - 2023-11-29
 

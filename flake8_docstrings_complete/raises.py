@@ -75,7 +75,7 @@ def _get_exc_node(node: ast.Raise) -> types_.Node | None:
                 col_offset=node.exc.func.col_offset,
             )
         if isinstance(node.exc.func, ast.Attribute):
-            if node.exc.func.attr == "from_exc_data":
+            if node.exc.func.attr == "from_exception_data":
                 return types_.Node(
                     name=node.exc.func.value.id,
                     lineno=node.exc.func.lineno,
