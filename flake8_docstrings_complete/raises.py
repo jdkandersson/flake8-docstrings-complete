@@ -6,8 +6,6 @@ import ast
 from collections import Counter
 from typing import Iterable, Iterator
 
-from astpretty import pprint
-
 from . import docstring, types_
 from .constants import ERROR_CODE_PREFIX, MORE_INFO_BASE
 
