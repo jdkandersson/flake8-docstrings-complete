@@ -31,6 +31,14 @@ def function_1():
         ),
         pytest.param(
             """
+def _function_1():
+    return
+""",
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
+            id="private function docstring missing return",
+        ),
+        pytest.param(
+            """
 @overload
 def function_1():
     ...

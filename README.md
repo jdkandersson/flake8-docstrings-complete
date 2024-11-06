@@ -6,6 +6,12 @@ assumes that the docstrings already pass `pydocstyle` checks. This
 [blog post](https://jdkandersson.com/2023/01/07/writing-great-docstrings-in-python/)
 discusses how to write great docstrings and the motivation for this linter!
 
+Following [PEP-8](https://peps.python.org/pep-0008/#documentation-strings),
+Docstrings are not necessary for non-public methods, but you should have a
+comment that describes what the method does. The definition taken for private
+is just a single `_`. This could be extended `__` see [name mangling](https://docs.python.org/3/tutorial/classes.html#private-variables).
+
+
 ## Getting Started
 
 ```shell

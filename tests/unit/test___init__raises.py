@@ -31,6 +31,15 @@ def function_1():
         ),
         pytest.param(
             '''
+def _function_1():
+    """Docstring 1."""
+    raise Exc1
+''',
+            (),
+            id="private function raises single exc docstring no raises section",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring 1."""
     raise Exc1

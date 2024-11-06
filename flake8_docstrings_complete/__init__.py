@@ -53,6 +53,7 @@ MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG = (
     f"{MORE_INFO_BASE}{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
 
+PRIVATE_FUNCTION_PATTERN = r"_[^_].*"
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
@@ -366,11 +367,13 @@ class Visitor(ast.NodeVisitor):
                     )
                 )
 
+            is_private = bool(re.match(PRIVATE_FUNCTION_PATTERN, node.name))
             if (
                 node.body
                 and isinstance(node.body[0], ast.Expr)
                 and isinstance(node.body[0].value, ast.Constant)
                 and isinstance(node.body[0].value.value, str)
+                and not is_private
             ):
                 # Check args
                 docstr_info = docstring.parse(value=node.body[0].value.value)

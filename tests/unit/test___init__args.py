@@ -474,6 +474,14 @@ def function_1(_arg_1):
         ),
         pytest.param(
             '''
+def _function_1(arg_1):
+    """Docstring 1."""
+''',
+            (),
+            id="prive function single arg docstring no arg",
+        ),
+        pytest.param(
+            '''
 def function_1(_arg_1):
     """Docstring 1."""
 ''',
