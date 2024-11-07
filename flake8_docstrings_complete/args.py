@@ -67,7 +67,10 @@ def _iter_args(args: ast.arguments) -> Iterator[ast.arg]:
 
 
 def check(
-    docstr_info: docstring.Docstring, docstr_node: ast.Constant, args: ast.arguments
+    docstr_info: docstring.Docstring,
+    docstr_node: ast.Constant,
+    args: ast.arguments,
+    is_private: bool,
 ) -> Iterator[types_.Problem]:
     """Check that all function/ method arguments are described in the docstring.
 
@@ -80,6 +83,7 @@ def check(
         docstr_info: Information about the docstring.
         docstr_node: The docstring node.
         args: The arguments of the function.
+        is_private: If the function for the docstring is private.
 
     Yields:
         All the problems with the arguments.
@@ -88,7 +92,7 @@ def check(
     all_used_args = list(arg for arg in all_args if not arg.arg.startswith(UNUSED_ARGS_PREFIX))
 
     # Check that args section is in docstring if function/ method has used arguments
-    if all_used_args and docstr_info.args is None:
+    if all_used_args and docstr_info.args is None and not is_private:
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, ARGS_SECTION_NOT_IN_DOCSTR_MSG
         )

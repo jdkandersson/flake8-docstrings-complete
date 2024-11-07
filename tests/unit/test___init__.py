@@ -258,6 +258,15 @@ def function_1():
         ),
         pytest.param(
             '''
+def _function_1():
+    """Docstring."""
+    yield 1
+''',
+            (),
+            id="private function single yield value yields not in docstring",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring."""
     yield from tuple()
