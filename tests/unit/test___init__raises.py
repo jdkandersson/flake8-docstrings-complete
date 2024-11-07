@@ -67,6 +67,17 @@ def function_1():
         ),
         pytest.param(
             '''
+def _function_1():
+    """Docstring 1.
+
+    Raises:
+    """
+''',
+            (f"3:4 {RAISES_SECTION_IN_DOCSTR_MSG}",),
+            id="private function raises no exc docstring raises section",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring 1.
 
@@ -486,6 +497,19 @@ def function_1():
 ''',
             (),
             id="function single raise no exc docstring raises exc",
+        ),
+        pytest.param(
+            '''
+def _function_1():
+    """Docstring 1.
+
+    Raises:
+      Exc1:
+    """
+    raise
+''',
+            (),
+            id="private function single raise no exc docstring raises exc",
         ),
         pytest.param(
             '''

@@ -54,6 +54,17 @@ def function_1():
         ),
         pytest.param(
             '''
+def _function_1():
+    """Docstring 1.
+
+    Args:
+    """
+''',
+            (f"3:4 {ARGS_SECTION_IN_DOCSTR_MSG}",),
+            id="private function has no args docstring args section",
+        ),
+        pytest.param(
+            '''
 def function_1(arg_1):
     """Docstring 1.
 
@@ -462,6 +473,18 @@ def function_1(arg_1):
         ),
         pytest.param(
             '''
+def _function_1(arg_1):
+    """Docstring 1.
+
+    Args:
+        arg_1:
+    """
+''',
+            (),
+            id="private function single arg docstring single arg",
+        ),
+        pytest.param(
+            '''
 def function_1(_arg_1):
     """Docstring 1.
 
@@ -478,7 +501,7 @@ def _function_1(arg_1):
     """Docstring 1."""
 ''',
             (),
-            id="prive function single arg docstring no arg",
+            id="private function single arg docstring no arg",
         ),
         pytest.param(
             '''
