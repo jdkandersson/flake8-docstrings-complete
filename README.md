@@ -9,7 +9,7 @@ discusses how to write great docstrings and the motivation for this linter!
 Following [PEP-8](https://peps.python.org/pep-0008/#documentation-strings),
 Docstrings are not necessary for non-public methods, but you should have a
 comment that describes what the method does. The definition taken for private
-is just a single `_`. This could be extended `__` see [name mangling](https://docs.python.org/3/tutorial/classes.html#private-variables).
+functions/methods is that they start with a single underscore (`_`).
 
 
 ## Getting Started
@@ -1678,3 +1678,6 @@ Section information is extracted using the following algorithm:
 - Check that argument, exceptions and attributes have non-empty description.
 - Check that arguments, exceptions and attributes have meaningful descriptions.
 - Check other other PEP257 conventions
+- The definition for private functions is a function starting with a single `_`. This could be extended to functions starting with `__`
+  and not ending in `__`, that is functions with [name mangling](https://docs.python.org/3/tutorial/classes.html#private-variables)
+  but not [magic methods](https://docs.python.org/3/reference/datamodel.html#special-lookup).
