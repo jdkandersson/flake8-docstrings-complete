@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [v1.4.1] - 2024-11-07
+
+### Added
+
+- Support for Python 3.12 and 3.13 and Flake8 7.
+
 ## [v1.4.0] - 2024-11-07
 
 ### Added
@@ -124,3 +130,4 @@
 [v1.2.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.2.0
 [v1.3.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.3.0
 [v1.4.0]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.4.0
+[v1.4.1]: https://github.com/jdkandersson/flake8-docstrings-complete/releases/v1.4.1
