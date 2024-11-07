@@ -85,7 +85,10 @@ def _get_exc_node(node: ast.Raise) -> types_.Node | None:
 
 
 def check(
-    docstr_info: docstring.Docstring, docstr_node: ast.Constant, raise_nodes: Iterable[ast.Raise]
+    docstr_info: docstring.Docstring,
+    docstr_node: ast.Constant,
+    raise_nodes: Iterable[ast.Raise],
+    is_private: bool,
 ) -> Iterator[types_.Problem]:
     """Check that all raised exceptions arguments are described in the docstring.
 
@@ -97,6 +100,7 @@ def check(
         docstr_info: Information about the docstring.
         docstr_node: The docstring node.
         raise_nodes: The raise nodes.
+        is_private: If the function for the docstring is private.
 
     Yields:
         All the problems with exceptions.
@@ -106,7 +110,7 @@ def check(
     all_raise_no_value = all(exc is None for exc in all_excs)
 
     # Check that raises section is in docstring if function/ method raises exceptions
-    if all_excs and docstr_info.raises is None:
+    if all_excs and docstr_info.raises is None and not is_private:
         yield types_.Problem(
             docstr_node.lineno, docstr_node.col_offset, RAISES_SECTION_NOT_IN_DOCSTR_MSG
         )

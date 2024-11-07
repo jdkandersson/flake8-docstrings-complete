@@ -53,6 +53,7 @@ MULT_YIELDS_SECTIONS_IN_DOCSTR_MSG = (
     f"{MORE_INFO_BASE}{MULT_YIELDS_SECTIONS_IN_DOCSTR_CODE.lower()}"
 )
 
+PRIVATE_FUNCTION_PATTERN = r"_[^_].*"
 TEST_FILENAME_PATTERN_ARG_NAME = "--docstrings-complete-test-filename-pattern"
 TEST_FILENAME_PATTERN_DEFAULT = r"test_.*\.py"
 TEST_FUNCTION_PATTERN_ARG_NAME = "--docstrings-complete-test-function-pattern"
@@ -77,7 +78,10 @@ def _cli_arg_name_to_attr(cli_arg_name: str) -> str:
 
 
 def _check_returns(
-    docstr_info: docstring.Docstring, docstr_node: ast.Constant, return_nodes: Iterable[ast.Return]
+    docstr_info: docstring.Docstring,
+    docstr_node: ast.Constant,
+    return_nodes: Iterable[ast.Return],
+    is_private: bool,
 ) -> Iterator[types_.Problem]:
     """Check function/ method returns section.
 
@@ -85,6 +89,7 @@ def _check_returns(
         docstr_info: Information about the docstring.
         docstr_node: The docstring node.
         return_nodes: The return nodes of the function.
+        is_private: If the function for the docstring is private.
 
     Yields:
         All the problems with the returns section.
@@ -92,7 +97,7 @@ def _check_returns(
     return_nodes_with_value = list(node for node in return_nodes if node.value is not None)
 
     # Check for return statements with value and no returns section in docstring
-    if return_nodes_with_value and not docstr_info.returns_sections:
+    if return_nodes_with_value and not docstr_info.returns_sections and not is_private:
         yield from (
             types_.Problem(node.lineno, node.col_offset, RETURNS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in return_nodes_with_value
@@ -117,6 +122,7 @@ def _check_yields(
     docstr_info: docstring.Docstring,
     docstr_node: ast.Constant,
     yield_nodes: Iterable[ast.Yield | ast.YieldFrom],
+    is_private: bool,
 ) -> Iterator[types_.Problem]:
     """Check function/ method yields section.
 
@@ -124,6 +130,7 @@ def _check_yields(
         docstr_info: Information about the docstring.
         docstr_node: The docstring node.
         yield_nodes: The yield and yield from nodes of the function.
+        is_private: If the function for the docstring is private.
 
     Yields:
         All the problems with the yields section.
@@ -131,7 +138,7 @@ def _check_yields(
     yield_nodes_with_value = list(node for node in yield_nodes if node.value is not None)
 
     # Check for yield statements with value and no yields section in docstring
-    if yield_nodes_with_value and not docstr_info.yields_sections:
+    if yield_nodes_with_value and not docstr_info.yields_sections and not is_private:
         yield from (
             types_.Problem(node.lineno, node.col_offset, YIELDS_SECTION_NOT_IN_DOCSTR_MSG)
             for node in yield_nodes_with_value
@@ -372,11 +379,17 @@ class Visitor(ast.NodeVisitor):
                 and isinstance(node.body[0].value, ast.Constant)
                 and isinstance(node.body[0].value.value, str)
             ):
+                is_private = bool(re.match(PRIVATE_FUNCTION_PATTERN, node.name))
                 # Check args
                 docstr_info = docstring.parse(value=node.body[0].value.value)
                 docstr_node = node.body[0].value
                 self.problems.extend(
-                    args.check(docstr_info=docstr_info, docstr_node=docstr_node, args=node.args)
+                    args.check(
+                        docstr_info=docstr_info,
+                        docstr_node=docstr_node,
+                        args=node.args,
+                        is_private=is_private,
+                    )
                 )
 
                 # Check returns
@@ -387,6 +400,7 @@ class Visitor(ast.NodeVisitor):
                         docstr_info=docstr_info,
                         docstr_node=docstr_node,
                         return_nodes=visitor_within_function.return_nodes,
+                        is_private=is_private,
                     )
                 )
 
@@ -396,6 +410,7 @@ class Visitor(ast.NodeVisitor):
                         docstr_info=docstr_info,
                         docstr_node=docstr_node,
                         yield_nodes=visitor_within_function.yield_nodes,
+                        is_private=is_private,
                     )
                 )
 
@@ -405,6 +420,7 @@ class Visitor(ast.NodeVisitor):
                         docstr_info=docstr_info,
                         docstr_node=docstr_node,
                         raise_nodes=visitor_within_function.raise_nodes,
+                        is_private=is_private,
                     )
                 )
 

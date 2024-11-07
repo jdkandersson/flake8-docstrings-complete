@@ -1,5 +1,8 @@
 """Unit tests for plugin except for args rules."""
 
+# The lines represent the number of test cases
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import pytest
@@ -28,6 +31,14 @@ def function_1():
 """,
             (f"2:0 {DOCSTR_MISSING_MSG}",),
             id="function docstring missing return",
+        ),
+        pytest.param(
+            """
+def _function_1():
+    return
+""",
+            (f"2:0 {DOCSTR_MISSING_MSG}",),
+            id="private function docstring missing return",
         ),
         pytest.param(
             """
@@ -93,6 +104,17 @@ def function_1():
 ''',
             (f"3:4 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
             id="function no return returns in docstring",
+        ),
+        pytest.param(
+            '''
+def _function_1():
+    """Docstring.
+
+    Returns:
+    """
+''',
+            (f"3:4 {RETURNS_SECTION_IN_DOCSTR_MSG}",),
+            id="private function no return returns in docstring",
         ),
         pytest.param(
             '''
@@ -250,6 +272,15 @@ def function_1():
         ),
         pytest.param(
             '''
+def _function_1():
+    """Docstring."""
+    yield 1
+''',
+            (),
+            id="private function single yield value yields not in docstring",
+        ),
+        pytest.param(
+            '''
 def function_1():
     """Docstring."""
     yield from tuple()
@@ -384,6 +415,17 @@ def function_1():
         ),
         pytest.param(
             '''
+def _function_1():
+    """Docstring.
+
+    Yields:
+    """
+''',
+            (f"3:4 {YIELDS_SECTION_IN_DOCSTR_MSG}",),
+            id="private function no yield yields in docstring",
+        ),
+        pytest.param(
+            '''
 class Class1:
     """Docstring."""
     def function_1():
@@ -508,6 +550,18 @@ def function_1():
 ''',
             (),
             id="function return value docstring returns section",
+        ),
+        pytest.param(
+            '''
+def _function_1():
+    """Docstring 1.
+
+    Returns:
+    """
+    return 1
+''',
+            (),
+            id="private function return value docstring returns section",
         ),
         pytest.param(
             '''
@@ -675,6 +729,18 @@ def function_1():
 ''',
             (),
             id="function yield value docstring yields section",
+        ),
+        pytest.param(
+            '''
+def _function_1():
+    """Docstring 1.
+
+    Yields:
+    """
+    yield 1
+''',
+            (),
+            id="private function yield value docstring yields section",
         ),
         pytest.param(
             '''
