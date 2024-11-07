@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-docstrings-complete"
-version = "1.4.0"
+version = "1.4.1"
 description = "A linter that checks docstrings are complete"
 authors = ["David Andersson <david@jdkandersson.com>"]
 license = "Apache 2.0"
