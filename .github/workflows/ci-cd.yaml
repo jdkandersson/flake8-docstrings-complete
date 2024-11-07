@@ -52,6 +52,7 @@ jobs:
         env:
           - "test-flake85"
           - "test-flake86"
+          - "test-flake87"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
